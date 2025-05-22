@@ -1,4 +1,4 @@
-export default function Custom404Page() {
+export default function Custom404() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
       <h1 className="text-6xl font-bold text-gray-900 dark:text-gray-100">404</h1>
