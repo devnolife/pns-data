@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { FileText, Download, Eye } from "lucide-react"
+import { FileText, Eye } from "lucide-react"
 import { formatDate } from "@/lib/utils"
 
 type PublicCollectionProps = {
@@ -62,14 +62,10 @@ export function PublicCollectionCard({ collection }: PublicCollectionProps) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between border-t bg-muted/50 px-6 py-3">
+      <CardFooter className="flex justify-center border-t bg-muted/50 px-6 py-3">
         <Button variant="outline" size="sm">
           <Eye className="mr-1 h-4 w-4" />
           Preview
-        </Button>
-        <Button size="sm">
-          <Download className="mr-1 h-4 w-4" />
-          Download
         </Button>
       </CardFooter>
     </Card>
