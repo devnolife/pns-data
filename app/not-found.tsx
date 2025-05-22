@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Suspense } from "react"
 
 export default function NotFound() {
   return (
@@ -10,12 +11,14 @@ export default function NotFound() {
         The page you are looking for doesn't exist or has been moved.
       </p>
       <div className="mt-8 space-x-4">
-        <Button asChild>
-          <Link href="/">Go Home</Link>
-        </Button>
-        <Button variant="outline" asChild>
-          <Link href="/public-collections">Browse Collections</Link>
-        </Button>
+        <Suspense fallback={<div>Loading...</div>}>
+          <Button asChild>
+            <Link href="/">Go Home</Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/public-collections">Browse Collections</Link>
+          </Button>
+        </Suspense>
       </div>
     </div>
   )
