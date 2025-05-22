@@ -3,7 +3,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -135,15 +134,6 @@ export default function RegisterPage() {
     <div className="flex min-h-screen flex-col lg:flex-row">
       {/* Left Column - Visual/Benefits */}
       <div className="relative hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/90 to-primary/70 text-white">
-        <div className="absolute inset-0 opacity-10">
-          <Image
-            src="/digital-library.png"
-            alt="Digital Collection Background"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
         <div className="relative z-10 flex flex-col justify-center px-12 py-16 space-y-8">
           <div>
             <h1 className="text-4xl font-bold mb-4">Bergabung dengan DigiCollect</h1>
