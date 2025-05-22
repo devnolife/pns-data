@@ -31,14 +31,14 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!username || !password) {
-      return NextResponse.json({ error: "Username and password are required" }, { status: 400 })
+      return NextResponse.json({ error: "Username dan kata sandi diperlukan" }, { status: 400 })
     }
 
     // Find the user
     const user = mockUsers.find((u) => u.username === username && u.password === password)
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid username or password" }, { status: 401 })
+      return NextResponse.json({ error: "Username atau kata sandi tidak valid" }, { status: 401 })
     }
 
     // Create a user object without the password
@@ -53,6 +53,6 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error("Error in login API:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json({ error: "Terjadi kesalahan pada server" }, { status: 500 })
   }
 }
