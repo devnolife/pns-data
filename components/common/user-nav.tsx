@@ -1,6 +1,8 @@
 "use client"
 
-import { useAuth } from "@/context/auth-context"
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,17 +14,34 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogOut, Settings, User } from "lucide-react"
-import Link from "next/link"
+import { useAuth } from "@/context/auth-context"
+import { LogIn, User, Settings, LogOut } from "lucide-react"
 
 export function UserNav() {
   const { user, logout } = useAuth()
+  const router = useRouter()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
 
-  // If user is not logged in, show login button
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true)
+      await logout()
+      router.push("/login")
+    } catch (error) {
+      console.error("Logout failed:", error)
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
+
+  // If no user is logged in, show login button
   if (!user) {
     return (
       <Button variant="outline" size="sm" asChild>
-        <Link href="/login">Login</Link>
+        <Link href="/login" className="gap-2">
+          <LogIn className="h-4 w-4" />
+          Login
+        </Link>
       </Button>
     )
   }
@@ -34,11 +53,7 @@ export function UserNav() {
       .map((n) => n[0])
       .join("")
       .toUpperCase()
-  }
-
-  // Get dashboard link based on user role
-  const getDashboardLink = () => {
-    return user.role === "admin" ? "/dashboard/admin" : "/dashboard/user"
+      .substring(0, 2)
   }
 
   return (
@@ -46,11 +61,8 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            {user.image ? (
-              <AvatarImage src={user.image || "/placeholder.svg"} alt={user.name} />
-            ) : (
-              <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
-            )}
+            <AvatarImage src="/diverse-avatars.png" alt={user.name} />
+            <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -63,23 +75,26 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <Link href={getDashboardLink()}>
-            <DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={user.role === "admin" ? "/dashboard/admin" : "/dashboard/user"} className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>Dashboard</span>
-            </DropdownMenuItem>
-          </Link>
-          <Link href={`${getDashboardLink()}/profile`}>
-            <DropdownMenuItem>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link
+              href={user.role === "admin" ? "/dashboard/admin/profile" : "/dashboard/user/profile"}
+              className="cursor-pointer"
+            >
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
-            </DropdownMenuItem>
-          </Link>
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={logout}>
+        <DropdownMenuItem onClick={handleLogout} disabled={isLoggingOut} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Log out</span>
+          <span>{isLoggingOut ? "Logging out..." : "Log out"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

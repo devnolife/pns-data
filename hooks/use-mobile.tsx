@@ -2,17 +2,21 @@
 
 import { useState, useEffect } from "react"
 
+// Mobile breakpoint in pixels
+const MOBILE_BREAKPOINT = 768
+
 /**
  * Hook to detect if the current viewport is mobile-sized
  * @returns boolean indicating if the viewport is mobile-sized
  */
 export function useMobile(): boolean {
-  const [isMobile, setIsMobile] = useState(false)
+  // Initialize with undefined to prevent hydration mismatch
+  const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined)
 
   useEffect(() => {
     // Function to check if the screen is mobile-sized
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768) // 768px is a common breakpoint for mobile devices
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
     }
 
     // Check on mount
@@ -27,5 +31,6 @@ export function useMobile(): boolean {
     }
   }, [])
 
-  return isMobile
+  // Return false during SSR, then the actual value once mounted
+  return isMobile ?? false
 }

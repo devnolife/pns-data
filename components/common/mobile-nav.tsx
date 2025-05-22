@@ -1,46 +1,56 @@
 "use client"
 
-import * as React from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu } from "lucide-react"
-
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
+import { Menu } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-interface MobileNavProps {
-  items: {
-    title: string
-    href: string
-  }[]
-}
-
-export function MobileNav({ items }: MobileNavProps) {
+export function MobileNav() {
+  const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  const [open, setOpen] = React.useState(false)
+
+  const navItems = [
+    {
+      name: "Home",
+      href: "/",
+    },
+    {
+      name: "Collections",
+      href: "/public-collections",
+    },
+    {
+      name: "Guestbook",
+      href: "/guestbook",
+    },
+  ]
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" className="md:hidden" size="icon">
+        <Button variant="ghost" size="icon" className="md:hidden">
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
       <SheetContent side="right">
-        <nav className="flex flex-col gap-4 mt-8">
-          {items.map((item) => (
+        <SheetHeader>
+          <SheetTitle>Navigation</SheetTitle>
+        </SheetHeader>
+        <nav className="mt-8 flex flex-col gap-4">
+          {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
                 "text-base font-medium transition-colors hover:text-primary",
-                pathname === item.href ? "text-primary" : "text-muted-foreground",
+                pathname === item.href ? "text-foreground" : "text-muted-foreground",
               )}
               onClick={() => setOpen(false)}
             >
-              {item.title}
+              {item.name}
             </Link>
           ))}
         </nav>
