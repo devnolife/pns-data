@@ -1,0 +1,120 @@
+{
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "success": "Berhasil",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Ubah",
+    "create": "Buat",
+    "submit": "Kirim",
+    "back": "Kembali",
+    "preview": "Pratinjau",
+    "download": "Unduh",
+    "search": "Cari",
+    "filter": "Filter",
+    "all": "Semua",
+    "at": "pukul",
+    "purpose": "Tujuan"
+  },
+  "auth": {
+    "signIn": "Masuk",
+    "signOut": "Keluar",
+    "register": "Daftar",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "forgotPassword": "Lupa Kata Sandi?",
+    "loginToAccess": "Masuk untuk mengakses lebih banyak koleksi",
+    "loginNote": "Catatan: Akses dokumen lengkap dibatasi untuk pengguna terdaftar. Silakan masuk atau daftar untuk mengakses dokumen lengkap."
+  },
+  "validation": {
+    "required": "Wajib diisi",
+    "invalidEmail": "Email tidak valid",
+    "minLength": "Minimal {length} karakter",
+    "maxLength": "Maksimal {length} karakter"
+  },
+  "collections": {
+    "categories": {
+      "CPNS": "CPNS",
+      "General": "Umum",
+      "PKP": "PKP",
+      "PKA": "PKA",
+      "PKN": "PKN"
+    },
+    "filters": {
+      "allCategories": "Semua Kategori",
+      "allYears": "Semua Tahun",
+      "byCategory": "Filter berdasarkan kategori",
+      "byYear": "Filter berdasarkan tahun",
+      "searchPlaceholder": "Cari koleksi...",
+      "noResults": "Tidak ada koleksi yang sesuai dengan kriteria Anda."
+    },
+    "labels": {
+      "batch": "Batch",
+      "abstract": "Abstrak",
+      "year": "Tahun",
+      "updated": "Diperbarui"
+    },
+    "pageTitle": "Koleksi Digital Publik",
+    "pageDescription": "Jelajahi koleksi dokumen dan sumber daya publik kami",
+    "mockData": {
+      "cpnsTraining": {
+        "title": "Panduan Pelatihan CPNS 2024",
+        "abstract": "Panduan lengkap untuk program pelatihan CPNS, termasuk struktur kurikulum, kriteria penilaian, dan tujuan pembelajaran untuk PNS baru."
+      },
+      "pkpLeadership": {
+        "title": "Modul PKP 3: Prinsip Kepemimpinan",
+        "abstract": "Modul ini membahas prinsip-prinsip kepemimpinan penting untuk manajer layanan publik, termasuk komunikasi efektif, pembentukan tim, dan pengambilan keputusan strategis."
+      },
+      "pkaTemplates": {
+        "title": "Template Presentasi PKA",
+        "abstract": "Template presentasi standar untuk peserta PKA, dirancang untuk memastikan konsistensi dan profesionalisme dalam semua presentasi resmi."
+      },
+      "pknMethodology": {
+        "title": "Metodologi Penelitian PKN",
+        "abstract": "Panduan komprehensif metodologi penelitian untuk peserta PKN, mencakup pendekatan kualitatif dan kuantitatif, teknik pengumpulan data, dan metode analisis."
+      },
+      "cpnsLatsar": {
+        "title": "Panduan Proyek Akhir Latsar CPNS",
+        "abstract": "Panduan untuk peserta Latsar CPNS dalam menyiapkan dan mengumpulkan proyek akhir, termasuk persyaratan format, kriteria evaluasi, dan prosedur pengumpulan."
+      },
+      "pkpAssessment": {
+        "title": "Kriteria Penilaian PKP",
+        "abstract": "Kriteria penilaian terperinci untuk peserta program PKP, menguraikan indikator kinerja, metode evaluasi, dan persyaratan sertifikasi."
+      },
+      "pkaWorkshop": {
+        "title": "Materi Workshop PKA",
+        "abstract": "Materi workshop lengkap untuk peserta PKA, termasuk latihan, studi kasus, dan aplikasi praktis prinsip administrasi publik."
+      },
+      "pknTemplates": {
+        "title": "Template Analisis Data PKN",
+        "abstract": "Template standar untuk analisis data dalam proyek penelitian PKN, dirancang untuk memfasilitasi analisis temuan penelitian yang konsisten dan akurat."
+      },
+      "publicService": {
+        "title": "Pengenalan Pelayanan Publik",
+        "abstract": "Pengenalan prinsip dan praktik pelayanan publik untuk PNS baru, mencakup standar etika, penyampaian layanan, dan perilaku profesional."
+      }
+    }
+  },
+  "guestbook": {
+    "pageTitle": "Buku Tamu Koleksi Digital",
+    "pageDescription": "Silakan isi buku tamu sebelum mengakses koleksi digital",
+    "signGuestbook": "Isi Buku Tamu",
+    "recentVisitors": "Pengunjung Terbaru",
+    "membership": {
+      "PKP": "PKP",
+      "PKA": "PKA",
+      "PKN": "PKN",
+      "CPNS": "Peserta Latsar CPNS",
+      "employee": "Pegawai Pusjar",
+      "guest": "Tamu"
+    },
+    "purposes": {
+      "references": "Mencari referensi",
+      "visiting": "Berkunjung",
+      "research": "Kolaborasi penelitian",
+      "others": "Lainnya"
+    }
+  }
+} 

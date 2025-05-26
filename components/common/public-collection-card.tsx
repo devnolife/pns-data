@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { FileText, Eye } from "lucide-react"
 import { formatDate } from "@/lib/utils"
+import { t } from "@/lib/i18n"
 
 type PublicCollectionProps = {
   collection: {
@@ -14,9 +15,10 @@ type PublicCollectionProps = {
     createdAt?: string
     updatedAt?: string
   }
+  onViewClick: (id: string) => void
 }
 
-export function PublicCollectionCard({ collection }: PublicCollectionProps) {
+export function PublicCollectionCard({ collection, onViewClick }: PublicCollectionProps) {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case "CPNS":
@@ -53,19 +55,23 @@ export function PublicCollectionCard({ collection }: PublicCollectionProps) {
           <div className="flex-1 space-y-1">
             <div className="flex items-start justify-between">
               <h3 className="font-medium">{collection.title}</h3>
-              <Badge className={getCategoryColor(collection.category)}>{collection.category}</Badge>
+              <Badge className={getCategoryColor(collection.category)}>
+                {t(`collections.categories.${collection.category}`)}
+              </Badge>
             </div>
             <p className="text-sm text-muted-foreground">{collection.description}</p>
             {collection.updatedAt && (
-              <p className="text-xs text-muted-foreground">Updated: {formatDate(collection.updatedAt)}</p>
+              <p className="text-xs text-muted-foreground">
+                {t("collections.labels.updated")}: {formatDate(collection.updatedAt)}
+              </p>
             )}
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex justify-center border-t bg-muted/50 px-6 py-3">
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="sm" onClick={() => onViewClick(collection.id)}>
           <Eye className="mr-1 h-4 w-4" />
-          Preview
+          {t("common.preview")}
         </Button>
       </CardFooter>
     </Card>

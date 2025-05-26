@@ -5,9 +5,17 @@ import { ToastProvider } from "@/components/providers/toast-provider"
 import { AuthProviderWrapper } from "@/components/providers/auth-provider"
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.dev",
+  title: "PNS Data App",
+  description: "Aplikasi Data PNS",
+  generator: "Next.js",
+  applicationName: "PNS Data",
+  keywords: ["pns", "data", "indonesia", "aplikasi"],
+  authors: [{ name: "Developer" }],
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 }
 
 export default function RootLayout({
@@ -16,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body>
         <AuthProviderWrapper>{children}</AuthProviderWrapper>
         <ToastProvider />

@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 const collections = [
   {
     id: "1",
-    title: "CPNS Training Guidelines 2024",
+    title: "Panduan Pelatihan CPNS 2024",
     category: "CPNS",
     type: "PDF",
     date: "2024-05-10",
@@ -14,7 +14,7 @@ const collections = [
   },
   {
     id: "2",
-    title: "PKP Module 3: Leadership Principles",
+    title: "Modul PKP 3: Prinsip Kepemimpinan",
     category: "PKP",
     type: "PDF",
     date: "2024-04-22",
@@ -24,7 +24,7 @@ const collections = [
   },
   {
     id: "3",
-    title: "PKA Presentation Templates",
+    title: "Template Presentasi PKA",
     category: "PKA",
     type: "PPTX",
     date: "2024-03-15",
@@ -34,7 +34,7 @@ const collections = [
   },
   {
     id: "4",
-    title: "PKN Research Methodology",
+    title: "Metodologi Penelitian PKN",
     category: "PKN",
     type: "PDF",
     date: "2024-05-05",
@@ -44,7 +44,7 @@ const collections = [
   },
   {
     id: "5",
-    title: "CPNS Latsar Final Project Guidelines",
+    title: "Panduan Proyek Akhir Latsar CPNS",
     category: "CPNS",
     type: "DOCX",
     date: "2024-04-30",
@@ -54,7 +54,7 @@ const collections = [
   },
   {
     id: "6",
-    title: "PKP Assessment Criteria",
+    title: "Kriteria Penilaian PKP",
     category: "PKP",
     type: "PDF",
     date: "2024-05-12",
@@ -64,7 +64,7 @@ const collections = [
   },
   {
     id: "7",
-    title: "PKA Workshop Materials",
+    title: "Materi Workshop PKA",
     category: "PKA",
     type: "ZIP",
     date: "2024-04-18",
@@ -74,7 +74,7 @@ const collections = [
   },
   {
     id: "8",
-    title: "PKN Data Analysis Templates",
+    title: "Template Analisis Data PKN",
     category: "PKN",
     type: "XLSX",
     date: "2024-05-08",
@@ -84,7 +84,7 @@ const collections = [
   },
   {
     id: "9",
-    title: "CPNS Overview Guide",
+    title: "Panduan Umum CPNS",
     category: "CPNS",
     type: "PDF",
     date: "2024-05-01",
@@ -94,7 +94,7 @@ const collections = [
   },
   {
     id: "10",
-    title: "Training Programs Brochure",
+    title: "Brosur Program Pelatihan",
     category: "General",
     type: "PDF",
     date: "2024-04-15",
@@ -104,7 +104,7 @@ const collections = [
   },
   {
     id: "11",
-    title: "Public Service Introduction",
+    title: "Pengenalan Pelayanan Publik",
     category: "General",
     type: "PDF",
     date: "2024-03-20",

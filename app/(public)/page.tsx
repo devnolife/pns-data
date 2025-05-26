@@ -108,34 +108,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="container py-12 md:py-16 lg:py-20">
-        <PageHeader
-          heading="Apa Kata Pengguna Kami"
-          subheading="Dengarkan pengalaman dari pengguna yang telah menggunakan platform kami"
-          className="text-center"
-        />
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <TestimonialCard
-            quote="Sistem ini sangat membantu saya mengorganisir koleksi digital untuk penelitian saya. Antarmuka yang intuitif dan fitur pencarian yang kuat membuat pekerjaan saya jauh lebih efisien."
-            author="Dr. Budi Santoso"
-            role="Peneliti"
-            imageSrc="/diverse-avatars.png"
-          />
-          <TestimonialCard
-            quote="Sebagai pustakawan, saya sangat terkesan dengan kemampuan platform ini dalam mengelola ribuan dokumen digital. Fitur kategorisasi dan metadata sangat berguna."
-            author="Siti Rahayu"
-            role="Pustakawan"
-            imageSrc="/diverse-avatars.png"
-          />
-          <TestimonialCard
-            quote="Platform ini telah mengubah cara kami menyimpan dan membagikan materi pendidikan. Mahasiswa kami sekarang dapat mengakses sumber belajar dengan mudah dari mana saja."
-            author="Prof. Agus Wijaya"
-            role="Dosen Universitas"
-            imageSrc="/diverse-avatars.png"
-          />
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="bg-primary text-primary-foreground">
@@ -163,71 +135,6 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Featured Collections Section */}
-      <section className="container py-12 md:py-16 lg:py-20">
-        <PageHeader
-          heading="Koleksi Unggulan"
-          subheading="Jelajahi beberapa koleksi digital populer di platform kami"
-        />
-        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <Link href="/public-collections" className="group">
-            <div className="overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md">
-              <div className="relative aspect-video">
-                <Image
-                  src="/digital-library.png"
-                  alt="Perpustakaan Digital"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold">Perpustakaan Digital</h3>
-                <p className="text-muted-foreground">Koleksi e-book dan jurnal ilmiah terbaru</p>
-              </div>
-            </div>
-          </Link>
-          <Link href="/public-collections" className="group">
-            <div className="overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md">
-              <div className="relative aspect-video">
-                <Image
-                  src="/research-methodology.png"
-                  alt="Metodologi Penelitian"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold">Metodologi Penelitian</h3>
-                <p className="text-muted-foreground">Panduan dan template untuk penelitian akademik</p>
-              </div>
-            </div>
-          </Link>
-          <Link href="/public-collections" className="group">
-            <div className="overflow-hidden rounded-lg border shadow-sm transition-all hover:shadow-md">
-              <div className="relative aspect-video">
-                <Image
-                  src="/leadership-principles.png"
-                  alt="Prinsip Kepemimpinan"
-                  fill
-                  className="object-cover transition-transform group-hover:scale-105"
-                />
-              </div>
-              <div className="p-4">
-                <h3 className="text-xl font-bold">Prinsip Kepemimpinan</h3>
-                <p className="text-muted-foreground">Materi pelatihan dan pengembangan kepemimpinan</p>
-              </div>
-            </div>
-          </Link>
-        </div>
-        <div className="mt-8 text-center">
-          <Button asChild variant="outline">
-            <Link href="/public-collections" className="gap-1">
-              Lihat Semua Koleksi <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
         </div>
       </section>
     </div>

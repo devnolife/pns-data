@@ -12,6 +12,10 @@ const nextConfig = {
     domains: ['images.unsplash.com', 'via.placeholder.com'],
     unoptimized: true,
   },
+  i18n: {
+    locales: ['id'],
+    defaultLocale: 'id',
+  }
 }
 
 export default nextConfig

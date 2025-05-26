@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { FileText, Download, Eye } from "lucide-react"
+import { t } from "@/lib/i18n"
 
 type PublicCollection = {
   id: string
@@ -25,24 +26,24 @@ export default function PublicCollections() {
         const mockCollections: PublicCollection[] = [
           {
             id: "1",
-            title: "CPNS Overview Guide",
+            title: t("collections.mockData.cpnsOverview.title"),
             category: "CPNS",
             type: "PDF",
-            description: "A general overview of the CPNS program and requirements.",
+            description: t("collections.mockData.cpnsOverview.description"),
           },
           {
             id: "2",
-            title: "Training Programs Brochure",
+            title: t("collections.mockData.trainingPrograms.title"),
             category: "General",
             type: "PDF",
-            description: "Information about available training programs.",
+            description: t("collections.mockData.trainingPrograms.description"),
           },
           {
             id: "3",
-            title: "Public Service Introduction",
+            title: t("collections.mockData.publicService.title"),
             category: "General",
             type: "PDF",
-            description: "An introduction to public service careers and opportunities.",
+            description: t("collections.mockData.publicService.description"),
           },
         ]
 
@@ -66,6 +67,10 @@ export default function PublicCollections() {
     }
   }
 
+  const getTranslatedCategory = (category: string) => {
+    return t(`collections.categories.${category}`)
+  }
+
   return (
     <div className="space-y-4">
       {collections.map((collection) => (
@@ -81,16 +86,18 @@ export default function PublicCollections() {
                     <h3 className="font-medium">{collection.title}</h3>
                     <p className="text-sm text-gray-500 mt-1">{collection.description}</p>
                   </div>
-                  <Badge className={getCategoryColor(collection.category)}>{collection.category}</Badge>
+                  <Badge className={getCategoryColor(collection.category)}>
+                    {getTranslatedCategory(collection.category)}
+                  </Badge>
                 </div>
                 <div className="flex gap-2 mt-3">
                   <Button variant="outline" size="sm">
                     <Eye className="h-4 w-4 mr-1" />
-                    Preview
+                    {t("common.preview")}
                   </Button>
                   <Button size="sm">
                     <Download className="h-4 w-4 mr-1" />
-                    Download
+                    {t("common.download")}
                   </Button>
                 </div>
               </div>
@@ -100,7 +107,7 @@ export default function PublicCollections() {
       ))}
 
       <div className="text-center pt-2">
-        <Button variant="link">Login to access more collections →</Button>
+        <Button variant="link">{t("auth.loginToAccess")} →</Button>
       </div>
     </div>
   )

@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Search, Filter } from "lucide-react"
 import Image from "next/image"
+import { t } from "@/lib/i18n"
 
 interface Collection {
   id: string
@@ -17,6 +18,8 @@ interface Collection {
   abstract: string
   year: string
   batch: string
+  type: string
+  description: string
 }
 
 export default function PublicCollectionsPage() {
@@ -35,91 +38,100 @@ export default function PublicCollectionsPage() {
       const mockCollections: Collection[] = [
         {
           id: "1",
-          title: "CPNS Training Guidelines 2024",
+          title: t("collections.mockData.cpnsTraining.title"),
           category: "CPNS",
           coverImage: "/cpns-training-guidelines.png",
-          abstract:
-            "Comprehensive guidelines for CPNS training programs, including curriculum structure, assessment criteria, and learning objectives for new civil servants.",
+          abstract: t("collections.mockData.cpnsTraining.abstract"),
+          description: t("collections.mockData.cpnsTraining.abstract"),
+          type: "PDF",
           year: "2024",
           batch: "1",
         },
         {
           id: "2",
-          title: "PKP Module 3: Leadership Principles",
+          title: t("collections.mockData.pkpLeadership.title"),
           category: "PKP",
           coverImage: "/leadership-principles.png",
-          abstract:
-            "This module explores essential leadership principles for public service managers, including effective communication, team building, and strategic decision-making.",
+          abstract: t("collections.mockData.pkpLeadership.abstract"),
+          description: t("collections.mockData.pkpLeadership.abstract"),
+          type: "PDF",
           year: "2023",
           batch: "2",
         },
         {
           id: "3",
-          title: "PKA Presentation Templates",
+          title: t("collections.mockData.pkaTemplates.title"),
           category: "PKA",
           coverImage: "/placeholder-mxzy1.png",
-          abstract:
-            "Standardized presentation templates for PKA participants, designed to ensure consistency and professionalism in all official presentations.",
+          abstract: t("collections.mockData.pkaTemplates.abstract"),
+          description: t("collections.mockData.pkaTemplates.abstract"),
+          type: "PDF",
           year: "2023",
           batch: "3",
         },
         {
           id: "4",
-          title: "PKN Research Methodology",
+          title: t("collections.mockData.pknMethodology.title"),
           category: "PKN",
           coverImage: "/placeholder.svg?height=400&width=300&query=Research%20Methodology",
-          abstract:
-            "A comprehensive guide to research methodologies for PKN participants, covering qualitative and quantitative approaches, data collection techniques, and analysis methods.",
+          abstract: t("collections.mockData.pknMethodology.abstract"),
+          description: t("collections.mockData.pknMethodology.abstract"),
+          type: "PDF",
           year: "2024",
           batch: "1",
         },
         {
           id: "5",
-          title: "CPNS Latsar Final Project Guidelines",
+          title: t("collections.mockData.cpnsLatsar.title"),
           category: "CPNS",
           coverImage: "/placeholder.svg?height=400&width=300&query=Final%20Project%20Guidelines",
-          abstract:
-            "Guidelines for CPNS Latsar participants on preparing and submitting their final projects, including format requirements, evaluation criteria, and submission procedures.",
+          abstract: t("collections.mockData.cpnsLatsar.abstract"),
+          description: t("collections.mockData.cpnsLatsar.abstract"),
+          type: "PDF",
           year: "2023",
           batch: "4",
         },
         {
           id: "6",
-          title: "PKP Assessment Criteria",
+          title: t("collections.mockData.pkpAssessment.title"),
           category: "PKP",
           coverImage: "/placeholder.svg?height=400&width=300&query=Assessment%20Criteria",
-          abstract:
-            "Detailed assessment criteria for PKP program participants, outlining performance indicators, evaluation methods, and certification requirements.",
+          abstract: t("collections.mockData.pkpAssessment.abstract"),
+          description: t("collections.mockData.pkpAssessment.abstract"),
+          type: "PDF",
           year: "2024",
           batch: "2",
         },
         {
           id: "7",
-          title: "PKA Workshop Materials",
+          title: t("collections.mockData.pkaWorkshop.title"),
           category: "PKA",
           coverImage: "/placeholder.svg?height=400&width=300&query=Workshop%20Materials",
-          abstract:
-            "Comprehensive workshop materials for PKA participants, including exercises, case studies, and practical applications of public administration principles.",
+          abstract: t("collections.mockData.pkaWorkshop.abstract"),
+          description: t("collections.mockData.pkaWorkshop.abstract"),
+          type: "PDF",
           year: "2022",
           batch: "5",
         },
         {
           id: "8",
-          title: "PKN Data Analysis Templates",
+          title: t("collections.mockData.pknTemplates.title"),
           category: "PKN",
           coverImage: "/placeholder.svg?height=400&width=300&query=Data%20Analysis%20Templates",
-          abstract:
-            "Standardized templates for data analysis in PKN research projects, designed to facilitate consistent and accurate analysis of research findings.",
+          abstract: t("collections.mockData.pknTemplates.abstract"),
+          description: t("collections.mockData.pknTemplates.abstract"),
+          type: "PDF",
           year: "2023",
           batch: "2",
         },
         {
           id: "9",
-          title: "Public Service Introduction",
+          title: t("collections.mockData.publicService.title"),
           category: "General",
           coverImage: "/placeholder.svg?height=400&width=300&query=Public%20Service%20Introduction",
-          abstract:
-            "An introduction to public service principles and practices for new civil servants, covering ethical standards, service delivery, and professional conduct.",
+          abstract: t("collections.mockData.publicService.abstract"),
+          description: t("collections.mockData.publicService.abstract"),
+          type: "PDF",
           year: "2024",
           batch: "1",
         },
@@ -165,15 +177,15 @@ export default function PublicCollectionsPage() {
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
       <PageHeader
-        heading="Public Digital Collections"
-        text="Browse our collection of publicly available documents and resources"
+        heading={t("collections.pageTitle")}
+        subheading={t("collections.pageDescription")}
       />
 
       <div className="flex flex-col md:flex-row gap-4 my-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search collections..."
+            placeholder={t("collections.filters.searchPlaceholder")}
             className="pl-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -183,25 +195,25 @@ export default function PublicCollectionsPage() {
           <Select value={categoryFilter} onValueChange={setCategoryFilter}>
             <SelectTrigger className="w-[180px]">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filter by category" />
+              <SelectValue placeholder={t("collections.filters.byCategory")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="CPNS">CPNS</SelectItem>
-              <SelectItem value="PKP">PKP</SelectItem>
-              <SelectItem value="PKA">PKA</SelectItem>
-              <SelectItem value="PKN">PKN</SelectItem>
-              <SelectItem value="General">General</SelectItem>
+              <SelectItem value="all">{t("collections.filters.allCategories")}</SelectItem>
+              <SelectItem value="CPNS">{t("collections.categories.CPNS")}</SelectItem>
+              <SelectItem value="PKP">{t("collections.categories.PKP")}</SelectItem>
+              <SelectItem value="PKA">{t("collections.categories.PKA")}</SelectItem>
+              <SelectItem value="PKN">{t("collections.categories.PKN")}</SelectItem>
+              <SelectItem value="General">{t("collections.categories.General")}</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={yearFilter} onValueChange={setYearFilter}>
             <SelectTrigger className="w-[150px]">
               <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filter by year" />
+              <SelectValue placeholder={t("collections.filters.byYear")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Years</SelectItem>
+              <SelectItem value="all">{t("collections.filters.allYears")}</SelectItem>
               {years.map((year) => (
                 <SelectItem key={year} value={year}>
                   {year}
@@ -215,7 +227,7 @@ export default function PublicCollectionsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {filteredCollections.length === 0 ? (
           <div className="col-span-full text-center py-12">
-            <p className="text-gray-500">No collections found matching your criteria.</p>
+            <p className="text-gray-500">{t("collections.filters.noResults")}</p>
           </div>
         ) : (
           filteredCollections.map((collection) => (
@@ -230,7 +242,7 @@ export default function PublicCollectionsPage() {
             <DialogHeader>
               <DialogTitle>{selectedCollection.title}</DialogTitle>
               <DialogDescription>
-                {selectedCollection.category} • {selectedCollection.year} • Batch {selectedCollection.batch}
+                {t(`collections.categories.${selectedCollection.category}`)} • {selectedCollection.year} • {t("collections.labels.batch")} {selectedCollection.batch}
               </DialogDescription>
             </DialogHeader>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -244,12 +256,11 @@ export default function PublicCollectionsPage() {
                 />
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-2">Abstract</h3>
+                <h3 className="text-lg font-semibold mb-2">{t("collections.labels.abstract")}</h3>
                 <p className="text-gray-700">{selectedCollection.abstract}</p>
                 <div className="mt-6">
                   <p className="text-sm text-gray-500 italic">
-                    Note: Full document access is restricted to registered users. Please login or register to access the
-                    complete document.
+                    {t("auth.loginNote")}
                   </p>
                 </div>
               </div>
