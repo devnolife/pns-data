@@ -2,13 +2,23 @@ import { NextResponse } from "next/server"
 
 export async function POST() {
   try {
-    // Simulate a delay to mimic a real API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    // Create a response
+    const response = NextResponse.json({ success: true })
 
-    // In a real app, you might invalidate the token on the server
-    // For this mock, we'll just return a success response
+    // Clear the auth cookies
+    response.cookies.set("auth-token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      path: "/",
+    })
 
-    return NextResponse.json({ success: true })
+    response.cookies.set("user-role", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      path: "/",
+    })
+
+    return response
   } catch (error) {
     console.error("Error in logout API:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })

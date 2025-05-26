@@ -57,6 +57,14 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Chart colors
+        chart: {
+          1: "221.2 83.2% 53.3%",
+          2: "262.1 83.3% 57.8%",
+          3: "316.6 73.3% 52.5%",
+          4: "175.9 84.8% 39.8%",
+          5: "47.9 95.8% 53.1%",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -72,10 +80,15 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "pulse-subtle": {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.8 },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-subtle": "pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
       },
     },
   },

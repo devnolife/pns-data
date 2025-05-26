@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-// Mock user data
+// Mock user data (shared with register route)
 const mockUsers = [
   {
     id: "1",
@@ -9,6 +9,9 @@ const mockUsers = [
     name: "Regular User",
     email: "user@example.com",
     role: "user",
+    training: "PKP",
+    class: "Class A",
+    phone: "1234567890",
   },
   {
     id: "2",
@@ -31,28 +34,45 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!username || !password) {
-      return NextResponse.json({ error: "Username and password are required" }, { status: 400 })
+      return NextResponse.json({ error: "Username dan kata sandi diperlukan" }, { status: 400 })
     }
 
     // Find the user
     const user = mockUsers.find((u) => u.username === username && u.password === password)
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid username or password" }, { status: 401 })
+      return NextResponse.json({ error: "Username atau kata sandi tidak valid" }, { status: 401 })
     }
 
     // Create a user object without the password
     const { password: _, ...userWithoutPassword } = user
 
-    // In a real app, you would create a JWT token here
-    const token = `mock-jwt-token-${user.id}-${Date.now()}`
+    // Create a simple token (in a real app, this would be a JWT)
+    const token = `mock-token-${user.id}-${Date.now()}`
 
-    return NextResponse.json({
+    // Set cookies for middleware
+    const response = NextResponse.json({
       user: userWithoutPassword,
       token,
     })
+
+    response.cookies.set("auth-token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    })
+
+    response.cookies.set("user-role", user.role, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+      path: "/",
+    })
+
+    return response
   } catch (error) {
     console.error("Error in login API:", error)
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    return NextResponse.json({ error: "Terjadi kesalahan pada server" }, { status: 500 })
   }
 }

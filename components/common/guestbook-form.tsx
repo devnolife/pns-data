@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 // Mock API client since we don't have access to the real one
 const mockApiClient = {
@@ -28,12 +28,16 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
+  institution: z.string().min(2, {
+    message: "Institution must be at least 2 characters.",
   }),
-  message: z.string().min(10, {
-    message: "Message must be at least 10 characters.",
+  membership: z.enum(["Pegawai Pusjar", "Peserta PKA", "Peserta PKP", "Peserta PKN", "Peserta Latsar CPNS", "Tamu"], {
+    message: "Please select a membership type.",
   }),
+  visitPurpose: z.enum(["Mencari referensi laporan", "Berkunjung", "lainnya"], {
+    message: "Please select a visit purpose.",
+  }),
+  otherPurpose: z.string().optional(),
 })
 
 export function GuestbookForm() {
@@ -44,8 +48,10 @@ export function GuestbookForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      email: "",
-      message: "",
+      institution: "",
+      membership: undefined,
+      visitPurpose: undefined,
+      otherPurpose: "",
     },
   })
 
@@ -80,9 +86,9 @@ export function GuestbookForm() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Nama</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your name" {...field} />
+                    <Input placeholder="Nama lengkap" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -90,35 +96,79 @@ export function GuestbookForm() {
             />
             <FormField
               control={form.control}
-              name="email"
+              name="institution"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Asal Instansi</FormLabel>
                   <FormControl>
-                    <Input placeholder="Your email" {...field} />
+                    <Input placeholder="Asal instansi" {...field} />
                   </FormControl>
-                  <FormDescription>We'll never share your email with anyone else.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
-              name="message"
+              name="membership"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Share your thoughts or feedback..."
-                      className="min-h-[120px] resize-none"
-                      {...field}
-                    />
-                  </FormControl>
+                  <FormLabel>Keanggotaan</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pilih keanggotaan" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Pegawai Pusjar">Pegawai Pusjar</SelectItem>
+                      <SelectItem value="Peserta PKA">Peserta PKA</SelectItem>
+                      <SelectItem value="Peserta PKP">Peserta PKP</SelectItem>
+                      <SelectItem value="Peserta PKN">Peserta PKN</SelectItem>
+                      <SelectItem value="Peserta Latsar CPNS">Peserta Latsar CPNS</SelectItem>
+                      <SelectItem value="Tamu">Tamu</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="visitPurpose"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tujuan Kunjungan</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Pilih tujuan kunjungan" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Mencari referensi laporan">Mencari referensi laporan</SelectItem>
+                      <SelectItem value="Berkunjung">Berkunjung</SelectItem>
+                      <SelectItem value="lainnya">Lainnya</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {form.watch("visitPurpose") === "lainnya" && (
+              <FormField
+                control={form.control}
+                name="otherPurpose"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tujuan Lainnya</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Sebutkan tujuan kunjungan" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? (

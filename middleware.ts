@@ -24,12 +24,6 @@ const userRoutes = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Get the authentication token from the cookies
-  const token = request.cookies.get("auth-token")?.value
-
-  // Get the user role from the cookies
-  const role = request.cookies.get("user-role")?.value
-
   // Check if the route is public
   const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))
 
@@ -38,8 +32,21 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  // Get the authentication token from the cookies
+  const token = request.cookies.get("auth-token")?.value
+
   // If no token exists, redirect to login
   if (!token) {
+    const url = new URL("/login", request.url)
+    url.searchParams.set("callbackUrl", encodeURI(pathname))
+    return NextResponse.redirect(url)
+  }
+
+  // Get the user role from the cookies
+  const role = request.cookies.get("user-role")?.value
+
+  if (!role) {
+    // If role is missing, redirect to login
     const url = new URL("/login", request.url)
     url.searchParams.set("callbackUrl", encodeURI(pathname))
     return NextResponse.redirect(url)

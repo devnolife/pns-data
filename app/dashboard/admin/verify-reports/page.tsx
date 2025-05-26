@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useToast } from "@/hooks/use-toast"
+import { useToastId } from "@/hooks/use-toast-id"
 import { Search, Filter, Eye, CheckCircle, XCircle, FileText, Download, File } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
@@ -39,7 +39,7 @@ type Report = {
 export default function VerifyReportsPage() {
   const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
-  const { toast } = useToast()
+  const { success } = useToastId()
 
   const [searchTerm, setSearchTerm] = useState("")
   const [reports, setReports] = useState<Report[]>([])
@@ -209,10 +209,7 @@ export default function VerifyReportsPage() {
   const handleVerifyReport = (reportId: string) => {
     setReports((prev) => prev.map((report) => (report.id === reportId ? { ...report, status: "verified" } : report)))
 
-    toast({
-      title: "Report verified",
-      description: "The report has been verified and is now available in the system.",
-    })
+    success("reportVerify", { description: "Laporan telah diverifikasi dan sekarang tersedia dalam sistem." })
 
     setViewDialogOpen(false)
   }
@@ -220,10 +217,7 @@ export default function VerifyReportsPage() {
   const handleRejectReport = (reportId: string) => {
     setReports((prev) => prev.map((report) => (report.id === reportId ? { ...report, status: "rejected" } : report)))
 
-    toast({
-      title: "Report rejected",
-      description: "The report has been rejected and the user will be notified.",
-    })
+    success("reportReject", { description: "Laporan telah ditolak dan pengguna akan diberitahu." })
 
     setViewDialogOpen(false)
   }

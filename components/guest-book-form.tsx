@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
+import { useToastId } from "@/hooks/use-toast-id"
 import { Loader2 } from "lucide-react"
 
 export default function GuestBookForm() {
@@ -18,7 +18,7 @@ export default function GuestBookForm() {
     purpose: "",
   })
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+  const { success } = useToastId()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -32,10 +32,7 @@ export default function GuestBookForm() {
     // Simulate API call
     setTimeout(() => {
       setLoading(false)
-      toast({
-        title: "Guest book entry submitted",
-        description: "Thank you for filling out our guest book!",
-      })
+      success("guestbookSubmit")
 
       // Reset form
       setFormData({

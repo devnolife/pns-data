@@ -6,7 +6,7 @@ import { apiClient, type User } from "@/lib/api-client"
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string) => Promise<void>
+  login: (username: string, password: string) => Promise<void>
   register: (userData: any) => Promise<void>
   logout: () => Promise<void>
   isLoading: boolean
@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
       try {
         // Check if token exists in localStorage
-        const token = localStorage.getItem("authToken")
+        const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null
         if (token) {
           // Verify token and get user data
           const userData = await apiClient.getCurrentUser()
@@ -35,7 +35,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } catch (err) {
         console.error("Auth check failed:", err)
         // Clear invalid token
-        localStorage.removeItem("authToken")
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("authToken")
+        }
       } finally {
         setIsLoading(false)
       }
@@ -45,12 +47,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Login function
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setIsLoading(true)
     setError(null)
     try {
-      const { user, token } = await apiClient.login(email, password)
-      localStorage.setItem("authToken", token)
+      const { user, token } = await apiClient.login(username, password)
+      if (typeof window !== "undefined") {
+        localStorage.setItem("authToken", token)
+      }
       setUser(user)
 
       // Redirect based on user role
@@ -73,7 +77,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null)
     try {
       const { user, token } = await apiClient.register(userData)
-      localStorage.setItem("authToken", token)
+      if (typeof window !== "undefined") {
+        localStorage.setItem("authToken", token)
+      }
       setUser(user)
       router.push("/dashboard/user")
     } catch (err: any) {
@@ -89,7 +95,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     try {
       await apiClient.logout()
-      localStorage.removeItem("authToken")
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("authToken")
+      }
       setUser(null)
       router.push("/")
     } catch (err: any) {

@@ -1,126 +1,218 @@
+import { Users, FileText, FolderOpen, BarChart3, ClipboardCheck, FolderPlus, UserPlus, Bell } from "lucide-react"
+import { WelcomeBanner } from "@/components/dashboard/welcome-banner"
+import { StatCard } from "@/components/dashboard/stat-card"
+import { ActivityItem } from "@/components/dashboard/activity-item"
+import { ActionCard } from "@/components/dashboard/action-card"
+import { OverviewChart } from "@/components/dashboard/overview-chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { BarChart, ClipboardCheck, FolderPlus, Users } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function AdminDashboard() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          Welcome to the administrative dashboard for digital collection management.
-        </p>
-      </div>
+      {/* Welcome Banner */}
+      <WelcomeBanner username="Administrator" role="Super Admin" />
 
+      {/* Stats Overview */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Total Users</CardTitle>
-            <CardDescription>Active users in the system</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">128</div>
-            <p className="text-xs text-muted-foreground">+12% from last month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Collections</CardTitle>
-            <CardDescription>Total digital collections</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">56</div>
-            <p className="text-xs text-muted-foreground">+8% from last month</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Reports</CardTitle>
-            <CardDescription>Pending verification</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">23</div>
-            <p className="text-xs text-muted-foreground">5 new since yesterday</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Visitors</CardTitle>
-            <CardDescription>This week's visitors</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">1,204</div>
-            <p className="text-xs text-muted-foreground">+18% from last week</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Pengguna"
+          value="128"
+          description="Pengguna aktif dalam sistem"
+          trend={{ value: "12%", isPositive: true }}
+          icon={<Users className="h-6 w-6" />}
+          variant="info"
+        />
+        <StatCard
+          title="Koleksi Digital"
+          value="56"
+          description="Total koleksi digital"
+          trend={{ value: "8%", isPositive: true }}
+          icon={<FolderOpen className="h-6 w-6" />}
+          variant="success"
+        />
+        <StatCard
+          title="Laporan"
+          value="23"
+          description="Menunggu verifikasi"
+          trend={{ value: "5", isPositive: false }}
+          icon={<FileText className="h-6 w-6" />}
+          variant="warning"
+        />
+        <StatCard
+          title="Pengunjung"
+          value="1,204"
+          description="Pengunjung minggu ini"
+          trend={{ value: "18%", isPositive: true }}
+          icon={<BarChart3 className="h-6 w-6" />}
+          variant="primary"
+        />
       </div>
 
+      {/* Main Content */}
+      <div className="grid gap-6 lg:grid-cols-7">
+        {/* Chart - Takes 4/7 of the grid */}
+        <div className="lg:col-span-4">
+          <OverviewChart />
+        </div>
+
+        {/* Quick Actions - Takes 3/7 of the grid */}
+        <div className="lg:col-span-3">
+          <Card>
+            <CardHeader>
+              <CardTitle>Aksi Cepat</CardTitle>
+              <CardDescription>Tugas administratif umum</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4 sm:grid-cols-2">
+              <ActionCard
+                title="Verifikasi Laporan"
+                description="Periksa dan verifikasi laporan yang masuk"
+                icon={<ClipboardCheck className="h-5 w-5" />}
+                href="/dashboard/admin/verify-reports"
+              />
+              <ActionCard
+                title="Kelola Pengguna"
+                description="Tambah, edit, atau hapus pengguna"
+                icon={<UserPlus className="h-5 w-5" />}
+                href="/dashboard/admin/manage-users"
+              />
+              <ActionCard
+                title="Kelola Folder"
+                description="Atur struktur folder koleksi"
+                icon={<FolderPlus className="h-5 w-5" />}
+                href="/dashboard/admin/manage-folders"
+              />
+              <ActionCard
+                title="Lihat Statistik"
+                description="Analisis data pengunjung"
+                icon={<BarChart3 className="h-5 w-5" />}
+                href="/dashboard/admin/number-of-visitors"
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Activity and Notifications */}
       <div className="grid gap-6 md:grid-cols-2">
+        {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common administrative tasks</CardDescription>
+            <CardTitle>Aktivitas Terbaru</CardTitle>
+            <CardDescription>Aktivitas sistem terkini</CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-4 sm:grid-cols-2">
-            <Button asChild className="flex items-center justify-start gap-2">
-              <Link href="/dashboard/admin/verify-reports">
-                <ClipboardCheck className="h-4 w-4" />
-                Verify Reports
-              </Link>
-            </Button>
-            <Button asChild className="flex items-center justify-start gap-2">
-              <Link href="/dashboard/admin/manage-users">
-                <Users className="h-4 w-4" />
-                Manage Users
-              </Link>
-            </Button>
-            <Button asChild className="flex items-center justify-start gap-2">
-              <Link href="/dashboard/admin/manage-folders">
-                <FolderPlus className="h-4 w-4" />
-                Manage Folders
-              </Link>
-            </Button>
-            <Button asChild className="flex items-center justify-start gap-2">
-              <Link href="/dashboard/admin/number-of-visitors">
-                <BarChart className="h-4 w-4" />
-                View Statistics
-              </Link>
-            </Button>
+          <CardContent>
+            <Tabs defaultValue="all">
+              <TabsList className="mb-4 w-full">
+                <TabsTrigger value="all" className="flex-1">
+                  Semua
+                </TabsTrigger>
+                <TabsTrigger value="users" className="flex-1">
+                  Pengguna
+                </TabsTrigger>
+                <TabsTrigger value="reports" className="flex-1">
+                  Laporan
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="all" className="space-y-4">
+                <ActivityItem
+                  title="Pengguna Baru Terdaftar"
+                  description="Jane Smith (jane@example.com) membuat akun"
+                  timestamp="1 jam yang lalu"
+                  icon={<UserPlus className="h-4 w-4 text-blue-500" />}
+                  variant="highlight"
+                />
+                <ActivityItem
+                  title="Laporan Dikirimkan"
+                  description="Laporan baru 'Anggaran Tahunan' menunggu verifikasi"
+                  timestamp="3 jam yang lalu"
+                  icon={<FileText className="h-4 w-4 text-yellow-500" />}
+                />
+                <ActivityItem
+                  title="Koleksi Dibuat"
+                  description="Koleksi baru 'Laporan Keuangan 2025' dibuat"
+                  timestamp="Kemarin"
+                  icon={<FolderPlus className="h-4 w-4 text-green-500" />}
+                />
+              </TabsContent>
+              <TabsContent value="users" className="space-y-4">
+                <ActivityItem
+                  title="Pengguna Baru Terdaftar"
+                  description="Jane Smith (jane@example.com) membuat akun"
+                  timestamp="1 jam yang lalu"
+                  icon={<UserPlus className="h-4 w-4 text-blue-500" />}
+                />
+                <ActivityItem
+                  title="Profil Diperbarui"
+                  description="John Doe memperbarui informasi profil"
+                  timestamp="5 jam yang lalu"
+                  icon={<Users className="h-4 w-4 text-blue-500" />}
+                />
+              </TabsContent>
+              <TabsContent value="reports" className="space-y-4">
+                <ActivityItem
+                  title="Laporan Dikirimkan"
+                  description="Laporan baru 'Anggaran Tahunan' menunggu verifikasi"
+                  timestamp="3 jam yang lalu"
+                  icon={<FileText className="h-4 w-4 text-yellow-500" />}
+                />
+                <ActivityItem
+                  title="Laporan Diverifikasi"
+                  description="Laporan 'Laporan Kuartal Q1' telah diverifikasi"
+                  timestamp="Kemarin"
+                  icon={<ClipboardCheck className="h-4 w-4 text-green-500" />}
+                />
+              </TabsContent>
+            </Tabs>
           </CardContent>
         </Card>
 
+        {/* System Notifications */}
         <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest system activities</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Notifikasi Sistem</CardTitle>
+              <CardDescription>Pemberitahuan dan peringatan sistem</CardDescription>
+            </div>
+            <div className="relative">
+              <Bell className="h-5 w-5 text-muted-foreground" />
+              <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                3
+              </span>
+            </div>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 rounded-lg border p-4">
-                <div className="flex-1">
-                  <p className="text-sm font-medium">New User Registered</p>
-                  <p className="text-sm text-muted-foreground">Jane Smith (jane@example.com) created an account</p>
-                </div>
-                <div className="text-sm text-muted-foreground">1 hour ago</div>
+          <CardContent className="space-y-4">
+            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <Bell className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Pemeliharaan Sistem</h4>
               </div>
-              <div className="flex items-center gap-4 rounded-lg border p-4">
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Report Submitted</p>
-                  <p className="text-sm text-muted-foreground">New report "Annual Budget" awaiting verification</p>
-                </div>
-                <div className="text-sm text-muted-foreground">3 hours ago</div>
+              <p className="text-xs text-yellow-700 dark:text-yellow-400">
+                Sistem akan mengalami pemeliharaan pada tanggal 15 Juni 2025 pukul 02:00 - 04:00 WIB.
+              </p>
+              <p className="mt-2 text-xs text-yellow-600 dark:text-yellow-500">2 hari lagi</p>
+            </div>
+
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <Bell className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300">Pembaruan Sistem</h4>
               </div>
-              <div className="flex items-center gap-4 rounded-lg border p-4">
-                <div className="flex-1">
-                  <p className="text-sm font-medium">Collection Created</p>
-                  <p className="text-sm text-muted-foreground">New collection "Financial Reports 2025" created</p>
-                </div>
-                <div className="text-sm text-muted-foreground">Yesterday</div>
+              <p className="text-xs text-blue-700 dark:text-blue-400">
+                Versi baru 2.5.0 telah dirilis dengan fitur pencarian lanjutan dan perbaikan bug.
+              </p>
+              <p className="mt-2 text-xs text-blue-600 dark:text-blue-500">5 jam yang lalu</p>
+            </div>
+
+            <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-900/20">
+              <div className="mb-2 flex items-center gap-2">
+                <Bell className="h-4 w-4 text-red-600 dark:text-red-400" />
+                <h4 className="text-sm font-medium text-red-800 dark:text-red-300">Peringatan Keamanan</h4>
               </div>
+              <p className="text-xs text-red-700 dark:text-red-400">
+                Terdeteksi 3 percobaan login yang gagal dari alamat IP tidak dikenal. Harap periksa log keamanan.
+              </p>
+              <p className="mt-2 text-xs text-red-600 dark:text-red-500">1 jam yang lalu</p>
             </div>
           </CardContent>
         </Card>

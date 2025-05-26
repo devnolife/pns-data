@@ -3,10 +3,9 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import * as z from "zod"
+import { registerSchema, type RegisterFormData } from "@/schemas/registerSchema"
 import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -23,38 +22,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 
-const formSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "Name must be at least 2 characters.",
-    }),
-    training: z.string({
-      required_error: "Please select a training program.",
-    }),
-    class: z.string().min(1, {
-      message: "Class is required.",
-    }),
-    phone: z
-      .string()
-      .min(10, {
-        message: "Phone number must be at least 10 digits.",
-      })
-      .regex(/^\d+$/, {
-        message: "Phone number must contain only digits.",
-      }),
-    email: z.string().email({
-      message: "Please enter a valid email address.",
-    }),
-    password: z.string().min(8, {
-      message: "Password must be at least 8 characters.",
-    }),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  })
-
 export default function RegisterPage() {
   const router = useRouter()
   const { toast } = useToast()
@@ -62,8 +29,8 @@ export default function RegisterPage() {
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
   const [registrationComplete, setRegistrationComplete] = useState(false)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
       training: "",
@@ -75,7 +42,7 @@ export default function RegisterPage() {
     },
   })
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: RegisterFormData) => {
     setConfirmDialogOpen(true)
   }
 
@@ -87,25 +54,31 @@ export default function RegisterPage() {
     setLoading(true)
 
     try {
-      // In a real app, this would be a fetch call to your API
+      const formValues = form.getValues()
+      // Generate username from email
+      const username = formValues.email.split("@")[0]
+
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(form.getValues()),
+        body: JSON.stringify({
+          username,
+          ...formValues,
+        }),
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.message || "Registration failed")
+        throw new Error(data.error || "Registration failed")
       }
 
       setRegistrationComplete(true)
 
       toast({
-        title: "Registration successful",
-        description: "Your account has been created. You can now log in.",
+        title: "Pendaftaran berhasil",
+        description: "Akun Anda telah dibuat. Anda sekarang dapat masuk.",
       })
 
       // Redirect to login page after a delay
@@ -114,8 +87,8 @@ export default function RegisterPage() {
       }, 3000)
     } catch (error) {
       toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "An error occurred during registration",
+        title: "Pendaftaran gagal",
+        description: error instanceof Error ? error.message : "Terjadi kesalahan saat pendaftaran",
         variant: "destructive",
       })
     } finally {
@@ -124,36 +97,27 @@ export default function RegisterPage() {
   }
 
   const benefits = [
-    "Access to comprehensive digital collections",
-    "Secure document storage and management",
-    "Easy report submission and tracking",
-    "Collaboration with other professionals",
-    "Stay updated with the latest resources",
+    "Akses ke koleksi digital yang komprehensif",
+    "Penyimpanan dan pengelolaan dokumen yang aman",
+    "Pengiriman dan pelacakan laporan yang mudah",
+    "Kolaborasi dengan profesional lainnya",
+    "Tetap diperbarui dengan sumber daya terbaru",
   ]
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
       {/* Left Column - Visual/Benefits */}
       <div className="relative hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/90 to-primary/70 text-white">
-        <div className="absolute inset-0 opacity-10">
-          <Image
-            src="/digital-library.png"
-            alt="Digital Collection Background"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
         <div className="relative z-10 flex flex-col justify-center px-12 py-16 space-y-8">
           <div>
-            <h1 className="text-4xl font-bold mb-4">Join DigiCollect</h1>
+            <h1 className="text-4xl font-bold mb-4">Bergabung dengan DigiCollect</h1>
             <p className="text-xl opacity-90 mb-8">
-              Your gateway to comprehensive digital collection management and professional development.
+              Gerbang Anda untuk pengelolaan koleksi digital yang komprehensif dan pengembangan profesional.
             </p>
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">Why Register?</h2>
+            <h2 className="text-2xl font-semibold">Mengapa Mendaftar?</h2>
             <ul className="space-y-4">
               {benefits.map((benefit, index) => (
                 <li key={index} className="flex items-start">
@@ -166,9 +130,9 @@ export default function RegisterPage() {
 
           <div className="pt-8">
             <p className="text-sm opacity-80">
-              Already have an account?{" "}
+              Sudah memiliki akun?{" "}
               <Link href="/login" className="underline font-medium hover:text-white">
-                Sign in here
+                Masuk di sini
               </Link>
             </p>
           </div>
@@ -179,8 +143,8 @@ export default function RegisterPage() {
       <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-8 bg-background">
         <div className="sm:mx-auto sm:w-full sm:max-w-md lg:max-w-lg">
           <div className="mb-10 text-center lg:text-left">
-            <h2 className="text-3xl font-bold tracking-tight">Create your account</h2>
-            <p className="mt-2 text-muted-foreground">Fill in your details to get started with DigiCollect</p>
+            <h2 className="text-3xl font-bold tracking-tight">Buat akun Anda</h2>
+            <p className="mt-2 text-muted-foreground">Isi detail Anda untuk memulai dengan DigiCollect</p>
           </div>
 
           {registrationComplete ? (
@@ -189,12 +153,12 @@ export default function RegisterPage() {
                 <div className="rounded-full bg-primary/10 p-4 mb-4">
                   <CheckCircle2 className="h-12 w-12 text-primary" />
                 </div>
-                <h3 className="text-2xl font-semibold mb-2">Registration Complete!</h3>
+                <h3 className="text-2xl font-semibold mb-2">Pendaftaran Selesai!</h3>
                 <p className="text-muted-foreground mb-6">
-                  Your account has been created successfully. You will be redirected to the login page shortly.
+                  Akun Anda telah berhasil dibuat. Anda akan dialihkan ke halaman login sebentar lagi.
                 </p>
                 <Button onClick={() => router.push("/login")} className="w-full">
-                  Go to Login <ArrowRight className="ml-2 h-4 w-4" />
+                  Pergi ke Login <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardContent>
             </Card>
@@ -207,7 +171,7 @@ export default function RegisterPage() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Full Name</FormLabel>
+                        <FormLabel>Nama Lengkap</FormLabel>
                         <FormControl>
                           <Input placeholder="John Doe" {...field} />
                         </FormControl>
@@ -223,7 +187,7 @@ export default function RegisterPage() {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="you@example.com" {...field} />
+                          <Input placeholder="anda@contoh.com" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -235,11 +199,11 @@ export default function RegisterPage() {
                     name="training"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Training Attended</FormLabel>
+                        <FormLabel>Pelatihan yang Diikuti</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select training" />
+                              <SelectValue placeholder="Pilih pelatihan" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -259,9 +223,9 @@ export default function RegisterPage() {
                     name="class"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Class</FormLabel>
+                        <FormLabel>Kelas</FormLabel>
                         <FormControl>
-                          <Input placeholder="Your class" {...field} />
+                          <Input placeholder="Kelas Anda" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -273,7 +237,7 @@ export default function RegisterPage() {
                     name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
+                        <FormLabel>Nomor Telepon</FormLabel>
                         <FormControl>
                           <Input placeholder="1234567890" {...field} />
                         </FormControl>
@@ -289,11 +253,11 @@ export default function RegisterPage() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>Kata Sandi</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••••" {...field} />
                         </FormControl>
-                        <FormDescription>At least 8 characters</FormDescription>
+                        <FormDescription>Minimal 8 karakter</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -304,7 +268,7 @@ export default function RegisterPage() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm Password</FormLabel>
+                        <FormLabel>Konfirmasi Kata Sandi</FormLabel>
                         <FormControl>
                           <Input type="password" placeholder="••••••••" {...field} />
                         </FormControl>
@@ -318,18 +282,18 @@ export default function RegisterPage() {
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
+                      Membuat akun...
                     </>
                   ) : (
-                    "Create account"
+                    "Buat akun"
                   )}
                 </Button>
 
                 <div className="text-center mt-6 lg:hidden">
                   <p className="text-sm text-muted-foreground">
-                    Already have an account?{" "}
+                    Sudah memiliki akun?{" "}
                     <Link href="/login" className="text-primary font-medium hover:underline">
-                      Sign in
+                      Masuk
                     </Link>
                   </p>
                 </div>
@@ -343,27 +307,27 @@ export default function RegisterPage() {
       <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Registration</DialogTitle>
+            <DialogTitle>Konfirmasi Pendaftaran</DialogTitle>
             <DialogDescription>
-              Please confirm that you want to register with the provided information.
+              Silakan konfirmasi bahwa Anda ingin mendaftar dengan informasi yang diberikan.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm font-medium">Name:</p>
+                <p className="text-sm font-medium">Nama:</p>
                 <p className="text-sm text-muted-foreground">{form.getValues().name}</p>
               </div>
               <div>
-                <p className="text-sm font-medium">Training:</p>
+                <p className="text-sm font-medium">Pelatihan:</p>
                 <p className="text-sm text-muted-foreground">{form.getValues().training}</p>
               </div>
               <div>
-                <p className="text-sm font-medium">Class:</p>
+                <p className="text-sm font-medium">Kelas:</p>
                 <p className="text-sm text-muted-foreground">{form.getValues().class}</p>
               </div>
               <div>
-                <p className="text-sm font-medium">Phone:</p>
+                <p className="text-sm font-medium">Telepon:</p>
                 <p className="text-sm text-muted-foreground">{form.getValues().phone}</p>
               </div>
               <div>
@@ -374,9 +338,9 @@ export default function RegisterPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => handleConfirmRegistration(false)}>
-              Cancel
+              Batal
             </Button>
-            <Button onClick={() => handleConfirmRegistration(true)}>Confirm</Button>
+            <Button onClick={() => handleConfirmRegistration(true)}>Konfirmasi</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

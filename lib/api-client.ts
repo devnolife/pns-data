@@ -156,53 +156,49 @@ export interface Folder {
 // API client
 export const apiClient = {
   // Auth
-  login: async (email: string, password: string): Promise<{ user: User; token: string }> => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 500))
+  login: async (username: string, password: string): Promise<{ user: User; token: string }> => {
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      })
 
-    if (email === "user@example.com" && password === "password") {
-      return {
-        user: {
-          id: "1",
-          name: "Test User",
-          email: "user@example.com",
-          role: "user",
-          training: "PKP",
-          class: "Class A",
-          phone: "1234567890",
-        },
-        token: "mock-jwt-token",
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Login failed")
       }
-    } else if (email === "admin@example.com" && password === "password") {
-      return {
-        user: {
-          id: "2",
-          name: "Admin User",
-          email: "admin@example.com",
-          role: "admin",
-        },
-        token: "mock-jwt-token-admin",
-      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error("Login error:", error)
+      throw error
     }
-
-    throw new Error("Invalid credentials")
   },
 
   register: async (userData: any): Promise<{ user: User; token: string }> => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      })
 
-    return {
-      user: {
-        id: "3",
-        name: userData.name,
-        email: userData.email,
-        role: "user",
-        training: userData.training,
-        class: userData.class,
-        phone: userData.phone,
-      },
-      token: "mock-jwt-token-new-user",
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Registration failed")
+      }
+
+      const data = await response.json()
+      return data
+    } catch (error) {
+      console.error("Registration error:", error)
+      throw error
     }
   },
 
@@ -213,12 +209,24 @@ export const apiClient = {
   },
 
   getCurrentUser: async (): Promise<User | null> => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 400))
+    try {
+      const token = getAuthToken()
+      if (!token) return null
 
-    // In a real app, this would check for a token and return the user
-    // For now, we'll just return null to simulate no logged-in user
-    return null
+      const response = await fetch("/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      if (!response.ok) return null
+
+      const data = await response.json()
+      return data.user
+    } catch (error) {
+      console.error("Get current user error:", error)
+      return null
+    }
   },
 
   // Guestbook

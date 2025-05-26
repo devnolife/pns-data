@@ -13,13 +13,13 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useToast } from "@/hooks/use-toast"
+import { useToastId } from "@/hooks/use-toast-id"
 import { Mail, Building, Phone, Shield, Loader2 } from "lucide-react"
 
 export default function ProfilePage() {
   const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
-  const { toast } = useToast()
+  const { success, errorToast } = useToastId()
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -35,7 +35,8 @@ export default function ProfilePage() {
     confirmPassword: "",
   })
   const [updating, setUpdating] = useState(false)
-  const [error, setError] = useState("")
+  const [profileError, setProfileError] = useState("")
+  const [passwordError, setPasswordError] = useState("")
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -67,26 +68,24 @@ export default function ProfilePage() {
   const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setUpdating(true)
-    setError("")
+    setProfileError("")
 
     // Simulate API call
     setTimeout(() => {
       setUpdating(false)
-      toast({
-        title: "Profile updated",
-        description: "Your profile information has been updated successfully.",
-      })
+      success("profileUpdate")
     }, 1500)
   }
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setUpdating(true)
-    setError("")
+    setPasswordError("")
 
     // Validate passwords
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setError("New passwords do not match")
+      setPasswordError("New passwords do not match")
+      errorToast("passwordMismatch")
       setUpdating(false)
       return
     }
@@ -94,10 +93,7 @@ export default function ProfilePage() {
     // Simulate API call
     setTimeout(() => {
       setUpdating(false)
-      toast({
-        title: "Password updated",
-        description: "Your password has been changed successfully.",
-      })
+      success("passwordChange")
       setPasswordData({
         currentPassword: "",
         newPassword: "",
@@ -270,9 +266,9 @@ export default function ProfilePage() {
                       <CardDescription>Update your account password</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      {error && (
+                      {passwordError && (
                         <Alert variant="destructive">
-                          <AlertDescription>{error}</AlertDescription>
+                          <AlertDescription>{passwordError}</AlertDescription>
                         </Alert>
                       )}
 
