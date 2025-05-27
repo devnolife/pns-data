@@ -29,21 +29,32 @@ const JWT_SECRET = "your-secret-key-for-jwt-signing"
 
 export async function GET(request: Request) {
   try {
-    // Get the authorization header
-    const authHeader = request.headers.get("authorization")
+    // Get the token from cookies
+    const cookieHeader = request.headers.get("cookie")
+    let authToken = null
+    
+    if (cookieHeader) {
+      const cookies = cookieHeader.split(';').map(c => c.trim())
+      const authCookie = cookies.find(c => c.startsWith('auth-token='))
+      if (authCookie) {
+        authToken = authCookie.split('=')[1]
+      }
+    }
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authToken) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Extract the token
-    const token = authHeader.split(" ")[1]
+    // For mock token, extract user ID
+    const tokenParts = authToken.split('-')
+    if (tokenParts.length < 3 || tokenParts[0] !== 'mock' || tokenParts[1] !== 'token') {
+      return NextResponse.json({ error: "Invalid token" }, { status: 401 })
+    }
 
-    // Verify the token
-    const decoded = verify(token, JWT_SECRET) as { id: string; username: string; role: string }
+    const userId = tokenParts[2]
 
     // Find the user
-    const user = mockUsers.find((u) => u.id === decoded.id)
+    const user = mockUsers.find((u) => u.id === userId)
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })

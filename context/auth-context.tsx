@@ -6,6 +6,7 @@ import { apiClient, type User } from "@/lib/api-client"
 
 interface AuthContextType {
   user: User | null
+  isAuthenticated: boolean
   login: (username: string, password: string) => Promise<void>
   register: (userData: any) => Promise<void>
   logout: () => Promise<void>
@@ -25,19 +26,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if token exists in localStorage
-        const token = typeof window !== "undefined" ? localStorage.getItem("authToken") : null
-        if (token) {
-          // Verify token and get user data
-          const userData = await apiClient.getCurrentUser()
+        // Check if token exists in cookies (via API call)
+        const userData = await apiClient.getCurrentUser()
+        if (userData) {
           setUser(userData)
         }
       } catch (err) {
         console.error("Auth check failed:", err)
-        // Clear invalid token
-        if (typeof window !== "undefined") {
-          localStorage.removeItem("authToken")
-        }
+        // User is not authenticated
+        setUser(null)
       } finally {
         setIsLoading(false)
       }
@@ -52,9 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null)
     try {
       const { user, token } = await apiClient.login(username, password)
-      if (typeof window !== "undefined") {
-        localStorage.setItem("authToken", token)
-      }
+      // No need to store in localStorage, cookies are handled by API
       setUser(user)
 
       // Redirect based on user role
@@ -77,9 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setError(null)
     try {
       const { user, token } = await apiClient.register(userData)
-      if (typeof window !== "undefined") {
-        localStorage.setItem("authToken", token)
-      }
+      // No need to store in localStorage, cookies are handled by API
       setUser(user)
       router.push("/dashboard/user")
     } catch (err: any) {
@@ -95,9 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     try {
       await apiClient.logout()
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("authToken")
-      }
+      // Cookies will be cleared by logout API
       setUser(null)
       router.push("/")
     } catch (err: any) {
@@ -109,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading, error }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, isLoading, error }}>{children}</AuthContext.Provider>
   )
 }
 

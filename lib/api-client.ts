@@ -28,10 +28,10 @@ export const apiRequest = async (
     requiresAuth?: boolean
     formData?: boolean
   } = {
-    simulateDelay: true,
-    requiresAuth: true,
-    formData: false,
-  },
+      simulateDelay: true,
+      requiresAuth: true,
+      formData: false,
+    },
 ) => {
   try {
     // Simulate network delay if enabled
@@ -163,6 +163,7 @@ export const apiClient = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // Include cookies
         body: JSON.stringify({ username, password }),
       })
 
@@ -186,6 +187,7 @@ export const apiClient = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // Include cookies
         body: JSON.stringify(userData),
       })
 
@@ -203,20 +205,25 @@ export const apiClient = {
   },
 
   logout: async (): Promise<void> => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    return
+    try {
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include", // Include cookies
+      })
+
+      if (!response.ok) {
+        throw new Error("Logout failed")
+      }
+    } catch (error) {
+      console.error("Logout error:", error)
+      throw error
+    }
   },
 
   getCurrentUser: async (): Promise<User | null> => {
     try {
-      const token = getAuthToken()
-      if (!token) return null
-
       const response = await fetch("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        credentials: "include", // Include cookies
       })
 
       if (!response.ok) return null

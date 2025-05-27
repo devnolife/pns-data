@@ -1,11 +1,5 @@
 "use client"
 
-import { SidebarMenuSkeleton } from "@/components/ui/sidebar"
-
-import { SidebarMenuBadge } from "@/components/ui/sidebar"
-
-import { SidebarMenuAction } from "@/components/ui/sidebar"
-
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { type VariantProps, cva } from "class-variance-authority"
@@ -126,7 +120,7 @@ const sidebarMenuButtonVariants = cva(
 
 export interface SidebarMenuButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof sidebarMenuButtonVariants> {
+  VariantProps<typeof sidebarMenuButtonVariants> {
   asChild?: boolean
   tooltip?: string
   isActive?: boolean
@@ -134,19 +128,28 @@ export interface SidebarMenuButtonProps
 
 // Sidebar menu button
 export const SidebarMenuButton = React.forwardRef<HTMLButtonElement, SidebarMenuButtonProps>(
-  ({ className, isActive, tooltip, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? React.Fragment : "button"
-    const childProps = asChild ? props.children.props : {}
+  ({ className, isActive, tooltip, asChild = false, children, ...props }, ref) => {
+    if (asChild) {
+      return (
+        <Slot
+          className={cn(sidebarMenuButtonVariants({ isActive }), className)}
+          title={tooltip}
+          {...props}
+        >
+          {children}
+        </Slot>
+      )
+    }
 
     return (
-      <Comp
+      <button
         ref={ref}
         className={cn(sidebarMenuButtonVariants({ isActive }), className)}
         title={tooltip}
-        {...(asChild ? {} : props)}
+        {...props}
       >
-        {asChild ? React.cloneElement(props.children, { ...childProps }) : props.children}
-      </Comp>
+        {children}
+      </button>
     )
   },
 )
@@ -379,6 +382,69 @@ const SidebarMenuSubButton = React.forwardRef<
   )
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
+
+// Missing components - simple implementations
+const SidebarMenuAction = React.forwardRef<HTMLButtonElement, React.ComponentProps<"button"> & { asChild?: boolean }>(
+  ({ className, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        ref={ref}
+        className={cn(
+          "absolute right-1 top-1.5 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-sidebar-foreground outline-none ring-sidebar-ring transition-transform hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+          className,
+        )}
+        {...props}
+      />
+    )
+  },
+)
+SidebarMenuAction.displayName = "SidebarMenuAction"
+
+const SidebarMenuBadge = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "absolute right-1 flex h-5 min-w-5 items-center justify-center rounded-md px-1 text-xs font-medium tabular-nums text-sidebar-foreground select-none pointer-events-none",
+          className,
+        )}
+        {...props}
+      />
+    )
+  },
+)
+SidebarMenuBadge.displayName = "SidebarMenuBadge"
+
+const SidebarMenuSkeleton = React.forwardRef<HTMLDivElement, React.ComponentProps<"div"> & { showIcon?: boolean }>(
+  ({ className, showIcon = false, ...props }, ref) => {
+    const width = React.useMemo(() => {
+      return `${Math.floor(Math.random() * 40) + 50}%`
+    }, [])
+
+    return (
+      <div
+        ref={ref}
+        className={cn("rounded-md h-8 flex gap-2 px-2 items-center", className)}
+        {...props}
+      >
+        {showIcon && (
+          <div className="flex h-4 w-4 rounded-sm bg-sidebar-accent" />
+        )}
+        <div
+          className="h-4 flex-1 max-w-[--skeleton-width] rounded-sm bg-sidebar-accent"
+          style={
+            {
+              "--skeleton-width": width,
+            } as React.CSSProperties
+          }
+        />
+      </div>
+    )
+  },
+)
+SidebarMenuSkeleton.displayName = "SidebarMenuSkeleton"
 
 export {
   Sidebar,

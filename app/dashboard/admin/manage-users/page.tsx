@@ -5,7 +5,6 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
-import AdminDashboardLayout from "@/components/layouts/admin-dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -30,7 +29,7 @@ import {
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
-import { Search, MoreHorizontal, UserPlus, Edit, Trash2, UserCheck, UserX, Filter, Loader2 } from "lucide-react"
+import { Search, MoreHorizontal, UserPlus, Edit, Trash2, UserCheck, UserX, Filter, Loader2, Users } from "lucide-react"
 
 type User = {
   id: string
@@ -45,7 +44,7 @@ type User = {
 }
 
 export default function ManageUsersPage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
 
@@ -71,14 +70,14 @@ export default function ManageUsersPage() {
   })
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/login")
     }
 
     if (isAuthenticated && user?.role !== "admin") {
       router.push("/dashboard/user")
     }
-  }, [isAuthenticated, loading, router, user])
+  }, [isAuthenticated, isLoading, router, user])
 
   useEffect(() => {
     // Mock API call to fetch users
@@ -364,7 +363,7 @@ export default function ManageUsersPage() {
     setEditUserDialogOpen(true)
   }
 
-  if (loading || !isAuthenticated || user?.role !== "admin") {
+  if (isLoading || !isAuthenticated || user?.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -373,32 +372,299 @@ export default function ManageUsersPage() {
   }
 
   return (
-    <AdminDashboardLayout>
+    <div className="space-y-6">
+      {/* Header with gradient background */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-8 text-white">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">👥 Kelola Pengguna</h1>
+            <p className="mt-2 text-white/90">Kelola pengguna sistem dan izin akses mereka</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="rounded-full bg-white/20 p-4 backdrop-blur-sm">
+              <Users className="h-8 w-8 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="p-6">
         <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
-            <p className="text-gray-600 mt-1">Manage system users and their access permissions</p>
+          <div className="flex items-center gap-4">
+            <Dialog open={newUserDialogOpen} onOpenChange={setNewUserDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white border-0 shadow-lg">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Tambah Pengguna
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <form onSubmit={handleCreateUser}>
+                  <DialogHeader>
+                    <DialogTitle>Create New User</DialogTitle>
+                    <DialogDescription>Add a new user to the system</DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Full Name</Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          placeholder="Enter full name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="username">Username</Label>
+                        <Input
+                          id="username"
+                          name="username"
+                          placeholder="Enter username"
+                          value={formData.username}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter email address"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="role">Role</Label>
+                        <Select value={formData.role} onValueChange={(value) => handleSelectChange("role", value)}>
+                          <SelectTrigger id="role">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="admin">Admin</SelectItem>
+                            <SelectItem value="user">User</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="training">Training Program</Label>
+                        <Select
+                          value={formData.training}
+                          onValueChange={(value) => handleSelectChange("training", value)}
+                        >
+                          <SelectTrigger id="training">
+                            <SelectValue placeholder="Select training" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="CPNS Latsar">CPNS Latsar</SelectItem>
+                            <SelectItem value="PKP">PKP</SelectItem>
+                            <SelectItem value="PKA">PKA</SelectItem>
+                            <SelectItem value="PKN">PKN</SelectItem>
+                            <SelectItem value="N/A">N/A</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="class">Class</Label>
+                      <Input
+                        id="class"
+                        name="class"
+                        placeholder="Enter class (optional)"
+                        value={formData.class}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="button" variant="outline" onClick={() => setNewUserDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={formLoading}>
+                      {formLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating...
+                        </>
+                      ) : (
+                        "Create User"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
-          <Dialog open={newUserDialogOpen} onOpenChange={setNewUserDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Add User
-              </Button>
-            </DialogTrigger>
+
+          <div className="mb-6 flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search users by name, username, or email..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="user">User</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[150px]">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>System Users</CardTitle>
+              <CardDescription>
+                Showing {filteredUsers.length} of {users.length} users
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left p-4">Name</th>
+                      <th className="text-left p-4">Username</th>
+                      <th className="text-left p-4">Email</th>
+                      <th className="text-left p-4">Role</th>
+                      <th className="text-left p-4">Training</th>
+                      <th className="text-left p-4">Status</th>
+                      <th className="text-left p-4">Last Login</th>
+                      <th className="text-right p-4">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredUsers.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="p-4 text-center text-gray-500">
+                          No users found matching your criteria.
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <tr key={user.id} className="border-b hover:bg-gray-50">
+                          <td className="p-4 font-medium">{user.name}</td>
+                          <td className="p-4">{user.username}</td>
+                          <td className="p-4">{user.email}</td>
+                          <td className="p-4">
+                            <Badge variant={user.role === "admin" ? "default" : "outline"}>
+                              {user.role === "admin" ? "Admin" : "User"}
+                            </Badge>
+                          </td>
+                          <td className="p-4">{user.training}</td>
+                          <td className="p-4">
+                            <Badge variant={user.status === "active" ? "default" : "secondary"}>
+                              {user.status === "active" ? "Active" : "Inactive"}
+                            </Badge>
+                          </td>
+                          <td className="p-4">
+                            {user.lastLogin === "N/A" ? "Never" : new Date(user.lastLogin).toLocaleString()}
+                          </td>
+                          <td className="p-4 text-right">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => openEditDialog(user)}>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Edit User
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleToggleUserStatus(user)}>
+                                  {user.status === "active" ? (
+                                    <>
+                                      <UserX className="h-4 w-4 mr-2" />
+                                      Deactivate
+                                    </>
+                                  ) : (
+                                    <>
+                                      <UserCheck className="h-4 w-4 mr-2" />
+                                      Activate
+                                    </>
+                                  )}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-red-600"
+                                  onClick={() => {
+                                    setSelectedUser(user)
+                                    setDeleteDialogOpen(true)
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Edit User Dialog */}
+          <Dialog open={editUserDialogOpen} onOpenChange={setEditUserDialogOpen}>
             <DialogContent>
-              <form onSubmit={handleCreateUser}>
+              <form onSubmit={handleEditUser}>
                 <DialogHeader>
-                  <DialogTitle>Create New User</DialogTitle>
-                  <DialogDescription>Add a new user to the system</DialogDescription>
+                  <DialogTitle>Edit User</DialogTitle>
+                  <DialogDescription>Update user information</DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4 py-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
+                      <Label htmlFor="edit-name">Full Name</Label>
                       <Input
-                        id="name"
+                        id="edit-name"
                         name="name"
                         placeholder="Enter full name"
                         value={formData.name}
@@ -407,9 +673,9 @@ export default function ManageUsersPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
+                      <Label htmlFor="edit-username">Username</Label>
                       <Input
-                        id="username"
+                        id="edit-username"
                         name="username"
                         placeholder="Enter username"
                         value={formData.username}
@@ -419,9 +685,9 @@ export default function ManageUsersPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="edit-email">Email</Label>
                     <Input
-                      id="email"
+                      id="edit-email"
                       name="email"
                       type="email"
                       placeholder="Enter email address"
@@ -432,9 +698,9 @@ export default function ManageUsersPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
+                      <Label htmlFor="edit-role">Role</Label>
                       <Select value={formData.role} onValueChange={(value) => handleSelectChange("role", value)}>
-                        <SelectTrigger id="role">
+                        <SelectTrigger id="edit-role">
                           <SelectValue placeholder="Select role" />
                         </SelectTrigger>
                         <SelectContent>
@@ -444,12 +710,9 @@ export default function ManageUsersPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="training">Training Program</Label>
-                      <Select
-                        value={formData.training}
-                        onValueChange={(value) => handleSelectChange("training", value)}
-                      >
-                        <SelectTrigger id="training">
+                      <Label htmlFor="edit-training">Training Program</Label>
+                      <Select value={formData.training} onValueChange={(value) => handleSelectChange("training", value)}>
+                        <SelectTrigger id="edit-training">
                           <SelectValue placeholder="Select training" />
                         </SelectTrigger>
                         <SelectContent>
@@ -463,9 +726,9 @@ export default function ManageUsersPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="class">Class</Label>
+                    <Label htmlFor="edit-class">Class</Label>
                     <Input
-                      id="class"
+                      id="edit-class"
                       name="class"
                       placeholder="Enter class (optional)"
                       value={formData.class}
@@ -473,324 +736,74 @@ export default function ManageUsersPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="edit-password">Password</Label>
                     <Input
-                      id="password"
+                      id="edit-password"
                       name="password"
                       type="password"
-                      placeholder="Enter password"
+                      placeholder="Enter new password (leave blank to keep current)"
                       value={formData.password}
                       onChange={handleInputChange}
-                      required
                     />
+                    <p className="text-xs text-gray-500">Leave blank to keep the current password</p>
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setNewUserDialogOpen(false)}>
+                  <Button type="button" variant="outline" onClick={() => setEditUserDialogOpen(false)}>
                     Cancel
                   </Button>
                   <Button type="submit" disabled={formLoading}>
                     {formLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating...
+                        Updating...
                       </>
                     ) : (
-                      "Create User"
+                      "Save Changes"
                     )}
                   </Button>
                 </DialogFooter>
               </form>
             </DialogContent>
           </Dialog>
-        </div>
 
-        <div className="mb-6 flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search users by name, username, or email..."
-              className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-[150px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="user">User</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>System Users</CardTitle>
-            <CardDescription>
-              Showing {filteredUsers.length} of {users.length} users
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b">
-                    <th className="text-left p-4">Name</th>
-                    <th className="text-left p-4">Username</th>
-                    <th className="text-left p-4">Email</th>
-                    <th className="text-left p-4">Role</th>
-                    <th className="text-left p-4">Training</th>
-                    <th className="text-left p-4">Status</th>
-                    <th className="text-left p-4">Last Login</th>
-                    <th className="text-right p-4">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.length === 0 ? (
-                    <tr>
-                      <td colSpan={8} className="p-4 text-center text-gray-500">
-                        No users found matching your criteria.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredUsers.map((user) => (
-                      <tr key={user.id} className="border-b hover:bg-gray-50">
-                        <td className="p-4 font-medium">{user.name}</td>
-                        <td className="p-4">{user.username}</td>
-                        <td className="p-4">{user.email}</td>
-                        <td className="p-4">
-                          <Badge variant={user.role === "admin" ? "default" : "outline"}>
-                            {user.role === "admin" ? "Admin" : "User"}
-                          </Badge>
-                        </td>
-                        <td className="p-4">{user.training}</td>
-                        <td className="p-4">
-                          <Badge variant={user.status === "active" ? "success" : "secondary"}>
-                            {user.status === "active" ? "Active" : "Inactive"}
-                          </Badge>
-                        </td>
-                        <td className="p-4">
-                          {user.lastLogin === "N/A" ? "Never" : new Date(user.lastLogin).toLocaleString()}
-                        </td>
-                        <td className="p-4 text-right">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => openEditDialog(user)}>
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit User
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleToggleUserStatus(user)}>
-                                {user.status === "active" ? (
-                                  <>
-                                    <UserX className="h-4 w-4 mr-2" />
-                                    Deactivate
-                                  </>
-                                ) : (
-                                  <>
-                                    <UserCheck className="h-4 w-4 mr-2" />
-                                    Activate
-                                  </>
-                                )}
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => {
-                                  setSelectedUser(user)
-                                  setDeleteDialogOpen(true)
-                                }}
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Edit User Dialog */}
-        <Dialog open={editUserDialogOpen} onOpenChange={setEditUserDialogOpen}>
-          <DialogContent>
-            <form onSubmit={handleEditUser}>
+          {/* Delete User Dialog */}
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogContent>
               <DialogHeader>
-                <DialogTitle>Edit User</DialogTitle>
-                <DialogDescription>Update user information</DialogDescription>
+                <DialogTitle>Delete User</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete this user? This action cannot be undone.
+                </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-name">Full Name</Label>
-                    <Input
-                      id="edit-name"
-                      name="name"
-                      placeholder="Enter full name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                    />
+              <div className="py-4">
+                {selectedUser && (
+                  <div className="p-4 border rounded-md bg-gray-50">
+                    <p className="font-medium">{selectedUser.name}</p>
+                    <p className="text-sm text-gray-600">{selectedUser.email}</p>
+                    <div className="flex items-center mt-2">
+                      <Badge variant={selectedUser.role === "admin" ? "default" : "outline"} className="mr-2">
+                        {selectedUser.role === "admin" ? "Admin" : "User"}
+                      </Badge>
+                      <Badge variant={selectedUser.status === "active" ? "default" : "secondary"}>
+                        {selectedUser.status === "active" ? "Active" : "Inactive"}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-username">Username</Label>
-                    <Input
-                      id="edit-username"
-                      name="username"
-                      placeholder="Enter username"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-email">Email</Label>
-                  <Input
-                    id="edit-email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter email address"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-role">Role</Label>
-                    <Select value={formData.role} onValueChange={(value) => handleSelectChange("role", value)}>
-                      <SelectTrigger id="edit-role">
-                        <SelectValue placeholder="Select role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="user">User</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="edit-training">Training Program</Label>
-                    <Select value={formData.training} onValueChange={(value) => handleSelectChange("training", value)}>
-                      <SelectTrigger id="edit-training">
-                        <SelectValue placeholder="Select training" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="CPNS Latsar">CPNS Latsar</SelectItem>
-                        <SelectItem value="PKP">PKP</SelectItem>
-                        <SelectItem value="PKA">PKA</SelectItem>
-                        <SelectItem value="PKN">PKN</SelectItem>
-                        <SelectItem value="N/A">N/A</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-class">Class</Label>
-                  <Input
-                    id="edit-class"
-                    name="class"
-                    placeholder="Enter class (optional)"
-                    value={formData.class}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="edit-password">Password</Label>
-                  <Input
-                    id="edit-password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter new password (leave blank to keep current)"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                  />
-                  <p className="text-xs text-gray-500">Leave blank to keep the current password</p>
-                </div>
+                )}
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setEditUserDialogOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => setDeleteDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={formLoading}>
-                  {formLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Updating...
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
+                <Button type="button" variant="destructive" onClick={handleDeleteUser}>
+                  Delete User
                 </Button>
               </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Delete User Dialog */}
-        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Delete User</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete this user? This action cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-4">
-              {selectedUser && (
-                <div className="p-4 border rounded-md bg-gray-50">
-                  <p className="font-medium">{selectedUser.name}</p>
-                  <p className="text-sm text-gray-600">{selectedUser.email}</p>
-                  <div className="flex items-center mt-2">
-                    <Badge variant={selectedUser.role === "admin" ? "default" : "outline"} className="mr-2">
-                      {selectedUser.role === "admin" ? "Admin" : "User"}
-                    </Badge>
-                    <Badge variant={selectedUser.status === "active" ? "success" : "secondary"}>
-                      {selectedUser.status === "active" ? "Active" : "Inactive"}
-                    </Badge>
-                  </div>
-                </div>
-              )}
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="button" variant="destructive" onClick={handleDeleteUser}>
-                Delete User
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-    </AdminDashboardLayout>
+    </div>
   )
 }

@@ -142,44 +142,36 @@ export function ModernSidebar() {
       icon: LayoutDashboard,
       label: "Dashboard",
       href: "/dashboard/admin",
-      notifications: 0,
     },
     {
       icon: BarChart,
       label: "Statistik Pengunjung",
       href: "/dashboard/admin/number-of-visitors",
-      notifications: 0,
     },
     {
       icon: FileCheck,
       label: "Verifikasi Laporan",
       href: "/dashboard/admin/verify-reports",
-      notifications: 5,
     },
     {
       icon: FolderPlus,
       label: "Kelola Folder",
       href: "/dashboard/admin/manage-folders",
-      notifications: 0,
     },
     {
       icon: Users,
       label: "Kelola Pengguna",
       href: "/dashboard/admin/manage-users",
-      notifications: 0,
     },
     {
       icon: Bell,
       label: "Notifikasi",
       href: "/dashboard/admin/notifications",
-      notifications: 3,
-      isNew: true,
     },
     {
       icon: Settings,
       label: "Pengaturan",
       href: "/dashboard/admin/settings",
-      notifications: 0,
     },
   ]
 
@@ -245,9 +237,7 @@ export function ModernSidebar() {
               label={item.label}
               href={item.href}
               isActive={pathname === item.href}
-              notifications={item.notifications}
               isCollapsed={isCollapsed}
-              isNew={item.isNew}
             />
           ))}
         </div>

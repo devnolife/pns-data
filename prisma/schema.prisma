@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  authoredReports   Report[] @relation("ReportAuthor")
+  assignedReports   Report[] @relation("ReportAssignee")
+  collections       Collection[]
+  limitedCollections LimitedCollection[]
+  guestbookEntries  GuestbookEntry[]
+
+  @@map("users")
+}
+
+model Report {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  content     String
+  status      ReportStatus @default(PENDING)
+  category    String?
+  priority    Priority    @default(MEDIUM)
+  authorId    String
+  assigneeId  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  author    User  @relation("ReportAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  assignee  User? @relation("ReportAssignee", fields: [assigneeId], references: [id])
+
+  @@map("reports")
+}
+
+model Collection {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  content     String
+  imageUrl    String?
+  category    String?
+  tags        String? // JSON string for tags
+  isPublic    Boolean  @default(true)
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("collections")
+}
+
+model LimitedCollection {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  content     String
+  imageUrl    String?
+  category    String?
+  tags        String? // JSON string for tags
+  maxAccess   Int      @default(100)
+  currentAccess Int    @default(0)
+  isActive    Boolean  @default(true)
+  authorId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@map("limited_collections")
+}
+
+model GuestbookEntry {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  message   String
+  isApproved Boolean @default(false)
+  authorId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@map("guestbook_entries")
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum ReportStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}

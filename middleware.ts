@@ -11,6 +11,8 @@ const adminRoutes = [
   "/dashboard/admin/verify-reports",
   "/dashboard/admin/manage-folders",
   "/dashboard/admin/manage-users",
+  "/dashboard/admin/notifications",
+  "/dashboard/admin/settings",
 ]
 
 // Define the routes that require user role

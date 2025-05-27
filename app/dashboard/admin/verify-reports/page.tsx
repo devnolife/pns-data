@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
-import AdminDashboardLayout from "@/components/layouts/admin-dashboard-layout"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -34,10 +33,20 @@ type Report = {
     size: string
     type: string
   }[]
+  priority: string
+  date: string
+  user: {
+    name: string
+    email: string
+    avatar: string
+  }
+  tags: string[]
 }
 
+
+
 export default function VerifyReportsPage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
   const { success } = useToastId()
 
@@ -50,14 +59,14 @@ export default function VerifyReportsPage() {
   const [viewDialogOpen, setViewDialogOpen] = useState(false)
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/login")
     }
 
     if (isAuthenticated && user?.role !== "admin") {
       router.push("/dashboard/user")
     }
-  }, [isAuthenticated, loading, router, user])
+  }, [isAuthenticated, isLoading, router, user])
 
   useEffect(() => {
     // Mock API call to fetch reports
@@ -80,6 +89,14 @@ export default function VerifyReportsPage() {
                 type: "PDF",
               },
             ],
+            priority: "high",
+            date: "Hari ini, 10:25",
+            user: {
+              name: "Agus Setiawan",
+              email: "agus@example.com",
+              avatar: "/avatars/01.png",
+            },
+            tags: ["Keuangan", "Kuartal", "2025"],
           },
           {
             id: "2",
@@ -101,6 +118,14 @@ export default function VerifyReportsPage() {
                 type: "PPTX",
               },
             ],
+            priority: "medium",
+            date: "Kemarin, 15:30",
+            user: {
+              name: "Dewi Lestari",
+              email: "dewi@example.com",
+              avatar: "/avatars/02.png",
+            },
+            tags: ["IT", "Sistem", "Pengembangan"],
           },
           {
             id: "3",
@@ -117,6 +142,14 @@ export default function VerifyReportsPage() {
                 type: "PDF",
               },
             ],
+            priority: "medium",
+            date: "2 hari lalu",
+            user: {
+              name: "Budi Santoso",
+              email: "budi@example.com",
+              avatar: "/avatars/03.png",
+            },
+            tags: ["Marketing", "Evaluasi", "Bulanan"],
           },
           {
             id: "4",
@@ -138,6 +171,14 @@ export default function VerifyReportsPage() {
                 type: "XLSX",
               },
             ],
+            priority: "low",
+            date: "3 hari lalu",
+            user: {
+              name: "Siti Nuraini",
+              email: "siti@example.com",
+              avatar: "/avatars/04.png",
+            },
+            tags: ["Vendor", "Kerjasama", "Teknologi"],
           },
           {
             id: "5",
@@ -154,6 +195,14 @@ export default function VerifyReportsPage() {
                 type: "PDF",
               },
             ],
+            priority: "high",
+            date: "1 minggu lalu",
+            user: {
+              name: "Andi Wijaya",
+              email: "andi@example.com",
+              avatar: "/avatars/05.png",
+            },
+            tags: ["Keuangan", "Tahunan", "2024"],
           },
           {
             id: "6",
@@ -170,6 +219,38 @@ export default function VerifyReportsPage() {
                 type: "DOCX",
               },
             ],
+            priority: "medium",
+            date: "2 minggu lalu",
+            user: {
+              name: "Nina Kusuma",
+              email: "nina@example.com",
+              avatar: "/avatars/06.png",
+            },
+            tags: ["HR", "Organisasi", "Operasional"],
+          },
+          {
+            id: "7",
+            title: "Proposal Implementasi AI",
+            description: "Proposal penggunaan kecerdasan buatan dalam proses bisnis",
+            category: "AI",
+            status: "rejected",
+            submittedBy: "Rudi Hartono",
+            submittedDate: "2024-05-13T12:00:00",
+            files: [
+              {
+                name: "ai-proposal.pdf",
+                size: "1.2 MB",
+                type: "PDF",
+              },
+            ],
+            priority: "medium",
+            date: "3 minggu lalu",
+            user: {
+              name: "Rudi Hartono",
+              email: "rudi@example.com",
+              avatar: "/avatars/07.png",
+            },
+            tags: ["AI", "Teknologi", "Inovasi"],
           },
         ]
 
@@ -227,7 +308,7 @@ export default function VerifyReportsPage() {
       case "pending":
         return <Badge variant="outline">Pending</Badge>
       case "verified":
-        return <Badge variant="success">Verified</Badge>
+        return <Badge variant="secondary">Verified</Badge>
       case "rejected":
         return <Badge variant="destructive">Rejected</Badge>
       default:
@@ -250,7 +331,7 @@ export default function VerifyReportsPage() {
     }
   }
 
-  if (loading || !isAuthenticated || user?.role !== "admin") {
+  if (isLoading || !isAuthenticated || user?.role !== "admin") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -259,13 +340,24 @@ export default function VerifyReportsPage() {
   }
 
   return (
-    <AdminDashboardLayout>
-      <div className="p-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Verify Reports</h1>
-          <p className="text-gray-600 mt-1">Review and verify reports submitted by users</p>
+    <div className="space-y-6">
+      {/* Header with gradient background */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 p-8 text-white">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">✅ Verifikasi Laporan</h1>
+            <p className="mt-2 text-white/90">Kelola dan verifikasi laporan yang masuk ke sistem</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="rounded-full bg-white/20 p-4 backdrop-blur-sm">
+              <FileText className="h-8 w-8 animate-pulse" />
+            </div>
+          </div>
         </div>
+      </div>
 
+      <div className="p-6">
         <div className="mb-6 flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -306,15 +398,23 @@ export default function VerifyReportsPage() {
         </div>
 
         <Tabs defaultValue="pending" className="space-y-6" onValueChange={(value) => setStatusFilter(value)}>
-          <TabsList>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="verified">Verified</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected</TabsTrigger>
-            <TabsTrigger value="all">All Reports</TabsTrigger>
+          <TabsList className="rounded-xl bg-muted/50 p-1">
+            <TabsTrigger value="pending" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white">
+              ⏳ Pending
+            </TabsTrigger>
+            <TabsTrigger value="verified" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-green-500 data-[state=active]:to-emerald-500 data-[state=active]:text-white">
+              ✅ Verified
+            </TabsTrigger>
+            <TabsTrigger value="rejected" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-pink-500 data-[state=active]:text-white">
+              ❌ Rejected
+            </TabsTrigger>
+            <TabsTrigger value="all" className="rounded-lg data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white">
+              📋 All Reports
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value={statusFilter}>
-            <Card>
+            <Card className="border-0 shadow-lg shadow-blue-100/50 dark:shadow-blue-900/20">
               <CardHeader>
                 <CardTitle>
                   {statusFilter === "all"
@@ -466,6 +566,6 @@ export default function VerifyReportsPage() {
           </Dialog>
         )}
       </div>
-    </AdminDashboardLayout>
+    </div>
   )
 }
