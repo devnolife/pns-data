@@ -88,7 +88,7 @@ async function main() {
   // Create sample limited collections
   const limitedCollection = await prisma.limitedCollection.create({
     data: {
-      title: 'Dokumen Rahasia Tingkat I',
+    title: 'Dokumen Rahasia Tingkat I',
       description: 'Dokumen dengan akses terbatas',
       content: 'Konten dokumen rahasia yang hanya dapat diakses oleh personel tertentu.',
       category: 'Rahasia',

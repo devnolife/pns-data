@@ -105,200 +105,325 @@ export default function RegisterPage() {
   ]
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
+    <div className="flex min-h-screen flex-col lg:flex-row bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 relative overflow-hidden">
+      {/* Floating Elements */}
+      <div className="fixed top-20 left-10 w-4 h-4 bg-purple-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0s' }}></div>
+      <div className="fixed top-40 right-20 w-3 h-3 bg-pink-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1s' }}></div>
+      <div className="fixed bottom-40 left-20 w-5 h-5 bg-indigo-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '2s' }}></div>
+      <div className="fixed bottom-20 right-10 w-4 h-4 bg-purple-300 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
+
       {/* Left Column - Visual/Benefits */}
-      <div className="relative hidden lg:flex lg:w-1/2 bg-gradient-to-br from-primary/90 to-primary/70 text-white">
+      <div className="relative hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-pink-600 to-indigo-600 text-white">
+        <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative z-10 flex flex-col justify-center px-12 py-16 space-y-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-4">Bergabung dengan DigiCollect</h1>
+          <div className="text-center">
+            <div className="text-8xl mb-6 animate-float">🎉</div>
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+              Bergabung dengan Relasi CPNS!
+            </h1>
             <p className="text-xl opacity-90 mb-8">
-              Gerbang Anda untuk pengelolaan koleksi digital yang komprehensif dan pengembangan profesional.
+              Gerbang menuju koleksi laporan aktualisasi terlengkap dan komunitas CPNS terbaik! ✨
             </p>
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-2xl font-semibold">Mengapa Mendaftar?</h2>
-            <ul className="space-y-4">
+            <h2 className="text-2xl font-semibold flex items-center gap-2">
+              <span>🌟</span> Mengapa Harus Daftar?
+            </h2>
+            <div className="space-y-4">
               {benefits.map((benefit, index) => (
-                <li key={index} className="flex items-start">
-                  <CheckCircle2 className="h-6 w-6 mr-3 flex-shrink-0 text-white" />
-                  <span>{benefit}</span>
-                </li>
+                <div key={index} className="flex items-start bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                  <CheckCircle2 className="h-6 w-6 mr-3 flex-shrink-0 text-white mt-0.5" />
+                  <span className="text-sm">{benefit}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
 
-          <div className="pt-8">
-            <p className="text-sm opacity-80">
-              Sudah memiliki akun?{" "}
-              <Link href="/login" className="underline font-medium hover:text-white">
-                Masuk di sini
+          <div className="pt-8 text-center">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+              <p className="text-sm opacity-90 mb-2">
+                Sudah punya akun? 🤔
+              </p>
+              <Link href="/login" className="inline-flex items-center gap-2 text-white font-semibold hover:text-purple-200 transition-colors">
+                <span>🚀</span>
+                Masuk di sini!
+                <span>✨</span>
               </Link>
-            </p>
+            </div>
+          </div>
+
+          <div className="flex justify-center gap-4 text-2xl">
+            <span className="animate-bounce" style={{ animationDelay: '0s' }}>💫</span>
+            <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>⭐</span>
+            <span className="animate-bounce" style={{ animationDelay: '0.4s' }}>🎉</span>
+            <span className="animate-bounce" style={{ animationDelay: '0.6s' }}>🔥</span>
           </div>
         </div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute bottom-10 left-10 w-32 h-32 bg-pink-300/20 rounded-full blur-2xl"></div>
+        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-purple-300/20 rounded-full blur-xl"></div>
       </div>
 
       {/* Right Column - Registration Form */}
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-8 bg-background">
+      <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-8 relative z-10">
         <div className="sm:mx-auto sm:w-full sm:max-w-md lg:max-w-lg">
           <div className="mb-10 text-center lg:text-left">
-            <h2 className="text-3xl font-bold tracking-tight">Buat akun Anda</h2>
-            <p className="mt-2 text-muted-foreground">Isi detail Anda untuk memulai dengan DigiCollect</p>
+            <div className="flex items-center gap-2 mb-6 lg:justify-start justify-center">
+              <Link href="/">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:border-purple-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="m12 19-7-7 7-7" />
+                    <path d="M19 12H5" />
+                  </svg>
+                  Kembali ke Beranda
+                </Button>
+              </Link>
+            </div>
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4 animate-bounce">✨</div>
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
+                Buat Akun Baru!
+              </h2>
+              <p className="text-gray-600 text-lg">Bergabung dengan komunitas CPNS terbaik! 🚀</p>
+            </div>
           </div>
 
           {registrationComplete ? (
-            <Card>
-              <CardContent className="pt-6 flex flex-col items-center text-center">
-                <div className="rounded-full bg-primary/10 p-4 mb-4">
-                  <CheckCircle2 className="h-12 w-12 text-primary" />
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+              <div className="flex flex-col items-center text-center">
+                <div className="text-6xl mb-4 animate-bounce">🎉</div>
+                <div className="rounded-full bg-gradient-to-r from-purple-100 to-pink-100 p-4 mb-4">
+                  <CheckCircle2 className="h-12 w-12 text-purple-600" />
                 </div>
-                <h3 className="text-2xl font-semibold mb-2">Pendaftaran Selesai!</h3>
-                <p className="text-muted-foreground mb-6">
-                  Akun Anda telah berhasil dibuat. Anda akan dialihkan ke halaman login sebentar lagi.
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                  Pendaftaran Berhasil! 🎊
+                </h3>
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Akun kamu sudah berhasil dibuat! Sekarang kamu bisa login dan menjelajahi koleksi digital terbaik! ✨
                 </p>
-                <Button onClick={() => router.push("/login")} className="w-full">
-                  Pergi ke Login <ArrowRight className="ml-2 h-4 w-4" />
+                <Button
+                  onClick={() => router.push("/login")}
+                  className="w-full h-12 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                >
+                  <span className="flex items-center gap-2">
+                    <span>🚀</span>
+                    Pergi ke Login
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <span>✨</span>
+                  </span>
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ) : (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nama Lengkap</FormLabel>
-                        <FormControl>
-                          <Input placeholder="John Doe" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="anda@contoh.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="training"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Pelatihan yang Diikuti</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>👤</span> Nama Lengkap
+                          </FormLabel>
                           <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Pilih pelatihan" />
-                            </SelectTrigger>
+                            <Input
+                              placeholder="Siapa nama kamu? ✨"
+                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              {...field}
+                            />
                           </FormControl>
-                          <SelectContent>
-                            <SelectItem value="PKN">PKN</SelectItem>
-                            <SelectItem value="PKP">PKP</SelectItem>
-                            <SelectItem value="PKA">PKA</SelectItem>
-                            <SelectItem value="CPNS">CPNS Latsar</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>📧</span> Email
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="email.kamu@contoh.com 💌"
+                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="training"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>🎓</span> Pelatihan yang Diikuti
+                          </FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 transition-all duration-200 hover:bg-white/70">
+                                <SelectValue placeholder="Pilih pelatihan kamu! 🌟" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="rounded-xl border-purple-200">
+                              <SelectItem value="PKN" className="rounded-lg">🏛️ PKN</SelectItem>
+                              <SelectItem value="PKP" className="rounded-lg">🔍 PKP</SelectItem>
+                              <SelectItem value="PKA" className="rounded-lg">👔 PKA</SelectItem>
+                              <SelectItem value="CPNS" className="rounded-lg">🎓 CPNS Latsar</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="class"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>🏫</span> Kelas
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Kelas berapa nih? 📚"
+                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>📱</span> Nomor Telepon
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Nomor HP kamu! 📞"
+                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="hidden md:block">{/* Spacer for grid alignment */}</div>
+
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>🔒</span> Kata Sandi
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Password super rahasia! 🤫"
+                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
+                            <span>💡</span> Minimal 8 karakter ya!
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="confirmPassword"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            <span>🔐</span> Konfirmasi Kata Sandi
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              type="password"
+                              placeholder="Ulangi password kamu! 🔄"
+                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full h-14 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Membuat akun... ⏳
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-2 text-lg">
+                        <span>🚀</span>
+                        Buat Akun Sekarang!
+                        <span>✨</span>
+                      </span>
                     )}
-                  />
+                  </Button>
 
-                  <FormField
-                    control={form.control}
-                    name="class"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Kelas</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Kelas Anda" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nomor Telepon</FormLabel>
-                        <FormControl>
-                          <Input placeholder="1234567890" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="hidden md:block">{/* Spacer for grid alignment */}</div>
-
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Kata Sandi</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormDescription>Minimal 8 karakter</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="confirmPassword"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Konfirmasi Kata Sandi</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="••••••••" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Membuat akun...
-                    </>
-                  ) : (
-                    "Buat akun"
-                  )}
-                </Button>
-
-                <div className="text-center mt-6 lg:hidden">
-                  <p className="text-sm text-muted-foreground">
-                    Sudah memiliki akun?{" "}
-                    <Link href="/login" className="text-primary font-medium hover:underline">
-                      Masuk
-                    </Link>
-                  </p>
-                </div>
-              </form>
-            </Form>
+                  <div className="text-center mt-6 lg:hidden">
+                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200">
+                      <p className="text-sm text-gray-600 mb-2">
+                        Sudah punya akun? 🤔
+                      </p>
+                      <Link href="/login" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold transition-colors">
+                        <span>🚀</span>
+                        Masuk di sini!
+                        <span>✨</span>
+                      </Link>
+                    </div>
+                  </div>
+                </form>
+              </Form>
+            </div>
           )}
         </div>
       </div>
@@ -344,6 +469,22 @@ export default function RegisterPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Custom Styles */}
+      <style jsx>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+        
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   )
 }
