@@ -43,6 +43,8 @@ export default function GuestbookPage() {
   // Function to refresh entries after new submission
   const handleSubmitSuccess = () => {
     loadEntries()
+    // Redirect to public collections page after successful submission
+    window.location.href = "/public-collections"
   }
 
 
@@ -93,23 +95,6 @@ export default function GuestbookPage() {
               </div>
               <div className="p-6">
                 <GuestbookForm onSubmitSuccess={handleSubmitSuccess} />
-
-                {/* Link to Collections - only show after form submission */}
-                <div className="mt-6 text-center">
-                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200">
-                    <p className="text-sm text-gray-600 mb-3">
-                      ✨ Setelah mengisi buku tamu, Anda dapat mengakses:
-                    </p>
-                    <a
-                      href="/public-collections"
-                      className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                    >
-                      <span>📚</span>
-                      Koleksi Digital
-                      <span>✨</span>
-                    </a>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

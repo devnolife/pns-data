@@ -59,7 +59,8 @@ export async function loginAction(formData: FormData) {
     )
 
     // Set cookie
-    cookies().set('token', token, {
+    const cookieStore = await cookies()
+    cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -126,7 +127,8 @@ export async function registerAction(formData: FormData) {
     )
 
     // Set cookie
-    cookies().set('token', token, {
+    const cookieStore = await cookies()
+    cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -144,13 +146,15 @@ export async function registerAction(formData: FormData) {
 }
 
 export async function logoutAction() {
-  cookies().delete('token')
+  const cookieStore = await cookies()
+  cookieStore.delete('token')
   redirect('/login')
 }
 
 export async function getCurrentUser() {
   try {
-    const token = cookies().get('token')?.value
+    const cookieStore = await cookies()
+    const token = cookieStore.get('token')?.value
 
     if (!token) {
       return null

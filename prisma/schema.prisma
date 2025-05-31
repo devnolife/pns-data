@@ -1,119 +1,95 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  name      String?
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  authoredReports   Report[] @relation("ReportAuthor")
-  assignedReports   Report[] @relation("ReportAssignee")
-  collections       Collection[]
-  limitedCollections LimitedCollection[]
-  guestbookEntries  GuestbookEntry[]
-
-  @@map("users")
-}
-
-model Report {
-  id          String      @id @default(cuid())
+model collections {
+  id          String   @id
   title       String
   description String?
   content     String
-  status      ReportStatus @default(PENDING)
+  image_url   String?
   category    String?
-  priority    Priority    @default(MEDIUM)
-  authorId    String
-  assigneeId  String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  // Relations
-  author    User  @relation("ReportAuthor", fields: [authorId], references: [id], onDelete: Cascade)
-  assignee  User? @relation("ReportAssignee", fields: [assigneeId], references: [id])
-
-  @@map("reports")
+  tags        String?
+  is_public   Boolean  @default(true)
+  author_id   String
+  created_at  DateTime @default(now())
+  updated_at  DateTime
+  users       users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
 }
 
-model Collection {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  content     String
-  imageUrl    String?
-  category    String?
-  tags        String? // JSON string for tags
-  isPublic    Boolean  @default(true)
-  authorId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  @@map("collections")
+model guestbook_entries {
+  id          String   @id
+  name        String
+  email       String?
+  message     String
+  is_approved Boolean  @default(false)
+  author_id   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime
+  users       users?   @relation(fields: [author_id], references: [id])
 }
 
-model LimitedCollection {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  content     String
-  imageUrl    String?
-  category    String?
-  tags        String? // JSON string for tags
-  maxAccess   Int      @default(100)
-  currentAccess Int    @default(0)
-  isActive    Boolean  @default(true)
-  authorId    String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  @@map("limited_collections")
+model limited_collections {
+  id             String   @id
+  title          String
+  description    String?
+  content        String
+  image_url      String?
+  category       String?
+  tags           String?
+  max_access     Int      @default(100)
+  current_access Int      @default(0)
+  is_active      Boolean  @default(true)
+  author_id      String
+  created_at     DateTime @default(now())
+  updated_at     DateTime
+  users          users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
 }
 
-model GuestbookEntry {
-  id        String   @id @default(cuid())
-  name      String
-  email     String?
-  message   String
-  isApproved Boolean @default(false)
-  authorId  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  author User? @relation(fields: [authorId], references: [id], onDelete: SetNull)
-
-  @@map("guestbook_entries")
+model reports {
+  id                               String       @id
+  title                            String
+  description                      String?
+  content                          String
+  status                           ReportStatus @default(PENDING)
+  category                         String?
+  priority                         Priority     @default(MEDIUM)
+  author_id                        String
+  assignee_id                      String?
+  created_at                       DateTime     @default(now())
+  updated_at                       DateTime
+  users_reports_assignee_idTousers users?       @relation("reports_assignee_idTousers", fields: [assignee_id], references: [id])
+  users_reports_author_idTousers   users        @relation("reports_author_idTousers", fields: [author_id], references: [id], onDelete: Cascade)
 }
 
-enum Role {
-  USER
-  ADMIN
-  MODERATOR
+model users {
+  id                                 String                @id
+  username                           String                @unique
+  email                              String                @unique
+  password                           String
+  role                               Role                  @default(USER)
+  name                               String?
+  avatar                             String?
+  created_at                         DateTime              @default(now())
+  updated_at                         DateTime
+  collections                        collections[]
+  guestbook_entries                  guestbook_entries[]
+  limited_collections                limited_collections[]
+  reports_reports_assignee_idTousers reports[]             @relation("reports_assignee_idTousers")
+  reports_reports_author_idTousers   reports[]             @relation("reports_author_idTousers")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
 enum ReportStatus {
@@ -123,9 +99,8 @@ enum ReportStatus {
   REJECTED
 }
 
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-  URGENT
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
 }

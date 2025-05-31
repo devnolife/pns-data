@@ -4,8 +4,9 @@ import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Search, Folder, FileText, ArrowLeft, Download, Eye, Calendar, User } from "lucide-react"
+import { Search, Folder, FileText, ArrowLeft, Download, Eye, Calendar, User, Grid, List, ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { getPublicCollectionsByCategory, getPublicCollectionsByYear, getAvailableYears } from "@/lib/actions/collections"
 
 interface FileItem {
   id: string
@@ -17,6 +18,10 @@ interface FileItem {
   type: string
   size: string
   downloadUrl: string
+  content?: string
+  isLimited?: boolean
+  maxAccess?: number
+  currentAccess?: number
 }
 
 interface FolderData {
@@ -29,169 +34,98 @@ interface FolderData {
   totalFiles: number
 }
 
+type ViewType = 'years' | 'folders' | 'files'
+type DisplayMode = 'grid' | 'list'
+
 export default function PublicCollectionsPage() {
-  const [currentView, setCurrentView] = useState<'folders' | 'files'>('folders')
+  const [currentView, setCurrentView] = useState<ViewType>('years')
   const [selectedFolder, setSelectedFolder] = useState<FolderData | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedFile, setSelectedFile] = useState<FileItem | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [hasAccess, setHasAccess] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [folders, setFolders] = useState<FolderData[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [availableYears, setAvailableYears] = useState<number[]>([])
+  const [selectedYear, setSelectedYear] = useState<number | null>(null)
+  const [displayMode, setDisplayMode] = useState<DisplayMode>('grid')
+  const [totalDocuments, setTotalDocuments] = useState(0)
+
+  // Fetch years data from the database
+  useEffect(() => {
+    const fetchYears = async () => {
+      try {
+        setIsLoading(true)
+        const result = await getAvailableYears()
+
+        if (result.error) {
+          setError(result.error)
+        } else if (result.success && result.years.length > 0) {
+          setAvailableYears(result.years)
+          setSelectedYear(result.years[0]) // Select the first (most recent) year
+        } else {
+          // If no years available, fetch all collections
+          const allCollections = await getPublicCollectionsByCategory()
+          if (allCollections.success) {
+            setFolders(allCollections.categories)
+            setCurrentView('folders')
+          } else if (allCollections.error) {
+            setError(allCollections.error)
+          }
+        }
+      } catch (err) {
+        setError('Failed to load collection years')
+        console.error('Error fetching years:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchYears()
+  }, [])
+
+  // Fetch collections by year when a year is selected
+  useEffect(() => {
+    if (selectedYear && currentView === 'folders') {
+      const fetchCollectionsByYear = async () => {
+        try {
+          setIsLoading(true)
+          const result = await getPublicCollectionsByYear(selectedYear)
+
+          if (result.error) {
+            setError(result.error)
+          } else if (result.success) {
+            setFolders(result.categories)
+            setTotalDocuments(result.totalDocuments)
+          }
+        } catch (err) {
+          setError(`Failed to load collections for year ${selectedYear}`)
+          console.error(`Error fetching collections for year ${selectedYear}:`, err)
+        } finally {
+          setIsLoading(false)
+        }
+      }
+
+      fetchCollectionsByYear()
+    }
+  }, [selectedYear, currentView])
 
   // Check if user has filled guestbook
   useEffect(() => {
     const checkAccess = () => {
       const hasFilledGuestbook = localStorage.getItem('hasFilledGuestbook')
       setHasAccess(hasFilledGuestbook === 'true')
-      setIsLoading(false)
     }
 
     // Add small delay for better UX
     setTimeout(checkAccess, 500)
   }, [])
 
-  // Mock data untuk folder-folder
-  const folders: FolderData[] = [
-    {
-      id: "latsar-cpns",
-      name: "Latsar Aktualisasi CPNS",
-      description: "Laporan Aktualisasi Latsar Calon Pegawai Negeri Sipil",
-      icon: "🎓",
-      color: "from-blue-500 to-cyan-500",
-      totalFiles: 24,
-      files: [
-        {
-          id: "1",
-          title: "Aktualisasi Nilai-Nilai Dasar PNS dalam Pelayanan Publik",
-          author: "Ahmad Rizki Pratama",
-          year: "2024",
-          batch: "Angkatan 1",
-          abstract: "Laporan aktualisasi ini membahas implementasi nilai-nilai dasar PNS dalam meningkatkan kualitas pelayanan publik di lingkungan kerja.",
-          type: "PDF",
-          size: "2.3 MB",
-          downloadUrl: "#"
-        },
-        {
-          id: "2",
-          title: "Optimalisasi Sistem Informasi untuk Efisiensi Kerja",
-          author: "Siti Nurhaliza",
-          year: "2024",
-          batch: "Angkatan 1",
-          abstract: "Penelitian tentang pemanfaatan teknologi informasi untuk meningkatkan efisiensi dan efektivitas dalam pelaksanaan tugas.",
-          type: "PDF",
-          size: "1.8 MB",
-          downloadUrl: "#"
-        },
-        {
-          id: "3",
-          title: "Inovasi Pelayanan Berbasis Digital",
-          author: "Budi Santoso",
-          year: "2024",
-          batch: "Angkatan 2",
-          abstract: "Implementasi inovasi pelayanan digital untuk meningkatkan kepuasan masyarakat dalam mengakses layanan pemerintah.",
-          type: "PDF",
-          size: "3.1 MB",
-          downloadUrl: "#"
-        }
-      ]
-    },
-    {
-      id: "laporan-pka",
-      name: "Laporan PKA",
-      description: "Laporan Pelatihan Kepemimpinan Administrator",
-      icon: "👔",
-      color: "from-purple-500 to-pink-500",
-      totalFiles: 18,
-      files: [
-        {
-          id: "4",
-          title: "Strategi Kepemimpinan dalam Era Digital",
-          author: "Dr. Indira Sari",
-          year: "2024",
-          batch: "Angkatan 3",
-          abstract: "Analisis mendalam tentang gaya kepemimpinan yang efektif dalam menghadapi tantangan transformasi digital.",
-          type: "PDF",
-          size: "4.2 MB",
-          downloadUrl: "#"
-        },
-        {
-          id: "5",
-          title: "Manajemen Perubahan Organisasi",
-          author: "Eko Prasetyo",
-          year: "2023",
-          batch: "Angkatan 2",
-          abstract: "Studi kasus implementasi manajemen perubahan dalam organisasi pemerintahan untuk meningkatkan kinerja.",
-          type: "PDF",
-          size: "2.7 MB",
-          downloadUrl: "#"
-        }
-      ]
-    },
-    {
-      id: "laporan-pkp",
-      name: "Laporan PKP",
-      description: "Laporan Pelatihan Kepemimpinan Pengawas",
-      icon: "🔍",
-      color: "from-green-500 to-emerald-500",
-      totalFiles: 31,
-      files: [
-        {
-          id: "6",
-          title: "Sistem Pengawasan Internal yang Efektif",
-          author: "Maya Kusuma",
-          year: "2024",
-          batch: "Angkatan 1",
-          abstract: "Pengembangan sistem pengawasan internal untuk mencegah korupsi dan meningkatkan akuntabilitas.",
-          type: "PDF",
-          size: "3.5 MB",
-          downloadUrl: "#"
-        },
-        {
-          id: "7",
-          title: "Audit Kinerja Berbasis Risiko",
-          author: "Rudi Hermawan",
-          year: "2023",
-          batch: "Angkatan 4",
-          abstract: "Metodologi audit kinerja dengan pendekatan manajemen risiko untuk optimalisasi hasil audit.",
-          type: "PDF",
-          size: "2.9 MB",
-          downloadUrl: "#"
-        }
-      ]
-    },
-    {
-      id: "laporan-pkn",
-      name: "Laporan PKN",
-      description: "Laporan Kepemimpinan Nasional",
-      icon: "🏛️",
-      color: "from-orange-500 to-red-500",
-      totalFiles: 12,
-      files: [
-        {
-          id: "8",
-          title: "Visi Indonesia 2045: Strategi Kepemimpinan Nasional",
-          author: "Prof. Dr. Bambang Wijaya",
-          year: "2024",
-          batch: "Angkatan 1",
-          abstract: "Analisis strategis tentang kepemimpinan nasional dalam mewujudkan visi Indonesia Emas 2045.",
-          type: "PDF",
-          size: "5.1 MB",
-          downloadUrl: "#"
-        },
-        {
-          id: "9",
-          title: "Diplomasi dan Kepemimpinan Global",
-          author: "Dewi Fortuna Anwar",
-          year: "2023",
-          batch: "Angkatan 2",
-          abstract: "Peran kepemimpinan Indonesia dalam diplomasi global dan pengaruhnya terhadap pembangunan nasional.",
-          type: "PDF",
-          size: "4.7 MB",
-          downloadUrl: "#"
-        }
-      ]
-    }
-  ]
+  const handleYearSelect = (year: number) => {
+    setSelectedYear(year)
+    setCurrentView('folders')
+  }
 
   const handleFolderClick = (folder: FolderData) => {
     setSelectedFolder(folder)
@@ -204,9 +138,19 @@ export default function PublicCollectionsPage() {
     setSearchTerm("")
   }
 
+  const handleBackToYears = () => {
+    setCurrentView('years')
+    setSelectedFolder(null)
+    setSearchTerm("")
+  }
+
   const handleFileClick = (file: FileItem) => {
     setSelectedFile(file)
     setDialogOpen(true)
+  }
+
+  const toggleDisplayMode = () => {
+    setDisplayMode(prev => prev === 'grid' ? 'list' : 'grid')
   }
 
   const filteredFiles = selectedFolder?.files.filter(file =>
@@ -221,6 +165,25 @@ export default function PublicCollectionsPage() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
           <p className="text-purple-600 font-medium">Memuat halaman...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-xl shadow-lg max-w-md">
+          <div className="text-6xl mb-4">😞</div>
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Terjadi Kesalahan</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            Coba Lagi
+          </Button>
         </div>
       </div>
     )
@@ -261,26 +224,16 @@ export default function PublicCollectionsPage() {
               </p>
 
               <div className="grid grid-cols-2 gap-4 mb-8">
-                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-xl border border-blue-200">
-                  <div className="text-2xl mb-2">🎓</div>
-                  <p className="text-sm font-medium text-blue-800">Latsar CPNS</p>
-                  <p className="text-xs text-blue-600">24+ dokumen</p>
-                </div>
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200">
-                  <div className="text-2xl mb-2">👔</div>
-                  <p className="text-sm font-medium text-purple-800">Laporan PKA</p>
-                  <p className="text-xs text-purple-600">18+ dokumen</p>
-                </div>
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
-                  <div className="text-2xl mb-2">🔍</div>
-                  <p className="text-sm font-medium text-green-800">Laporan PKP</p>
-                  <p className="text-xs text-green-600">31+ dokumen</p>
-                </div>
-                <div className="bg-gradient-to-r from-orange-50 to-red-50 p-4 rounded-xl border border-orange-200">
-                  <div className="text-2xl mb-2">🏛️</div>
-                  <p className="text-sm font-medium text-orange-800">Laporan PKN</p>
-                  <p className="text-xs text-orange-600">12+ dokumen</p>
-                </div>
+                {folders.map((folder) => (
+                  <div
+                    key={folder.id}
+                    className={`bg-gradient-to-r ${folder.color.replace('from-', 'from-').replace('to-', 'to-').replace('-500', '-50')} p-4 rounded-xl border ${folder.color.split(' ')[1].replace('from-', 'border-').replace('-500', '-200')}`}
+                  >
+                    <div className="text-2xl mb-2">{folder.icon}</div>
+                    <p className={`text-sm font-medium ${folder.color.split(' ')[1].replace('from-', 'text-').replace('-500', '-800')}`}>{folder.name}</p>
+                    <p className={`text-xs ${folder.color.split(' ')[1].replace('from-', 'text-').replace('-500', '-600')}`}>{folder.totalFiles}+ dokumen</p>
+                  </div>
+                ))}
               </div>
 
               <a
@@ -338,7 +291,93 @@ export default function PublicCollectionsPage() {
 
       <div className="container mx-auto py-12 px-4 md:px-6">
         <AnimatePresence mode="wait">
-          {currentView === 'folders' ? (
+          {currentView === 'years' && (
+            <motion.div
+              key="years"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Years View */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800">Pilih Tahun Arsip</h2>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={displayMode === 'grid' ? 'default' : 'outline'}
+                      size="sm"
+                      className="rounded-lg"
+                      onClick={() => setDisplayMode('grid')}
+                    >
+                      <Grid className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant={displayMode === 'list' ? 'default' : 'outline'}
+                      size="sm"
+                      className="rounded-lg"
+                      onClick={() => setDisplayMode('list')}
+                    >
+                      <List className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {displayMode === 'grid' ? (
+                  // Grid View
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {availableYears.map((year, index) => (
+                      <motion.div
+                        key={year}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="bg-white shadow-lg rounded-2xl overflow-hidden cursor-pointer transition-transform hover:scale-105 group"
+                        onClick={() => handleYearSelect(year)}
+                      >
+                        <div className="h-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center">
+                          <span className="text-4xl font-bold text-white group-hover:scale-110 transition-transform">
+                            {year}
+                          </span>
+                        </div>
+                        <div className="p-4 text-center">
+                          <p className="text-gray-600 font-medium">Arsip Dokumen</p>
+                          <p className="text-sm text-gray-500">Klik untuk melihat</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  // List View
+                  <div className="space-y-3">
+                    {availableYears.map((year, index) => (
+                      <motion.div
+                        key={year}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="bg-white shadow-md rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between"
+                        onClick={() => handleYearSelect(year)}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                            <span className="text-xl font-bold text-white">{year}</span>
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-gray-800">Arsip Tahun {year}</h3>
+                            <p className="text-sm text-gray-500">Koleksi dokumen dan laporan</p>
+                          </div>
+                        </div>
+                        <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+
+          {currentView === 'folders' && (
             <motion.div
               key="folders"
               initial={{ opacity: 0, y: 20 }}
@@ -346,52 +385,128 @@ export default function PublicCollectionsPage() {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Folders Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {folders.map((folder, index) => (
-                  <motion.div
-                    key={folder.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="group cursor-pointer"
-                    onClick={() => handleFolderClick(folder)}
-                  >
-                    <div className={`bg-gradient-to-br ${folder.color} p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-[1.02] border border-white/20`}>
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="text-6xl group-hover:scale-110 transition-transform duration-300">
-                          {folder.icon}
+              {/* Folders View */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <Button
+                      onClick={handleBackToYears}
+                      variant="outline"
+                      className="mb-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:bg-purple-50 rounded-xl"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Kembali ke Tahun
+                    </Button>
+                    <h2 className="text-2xl font-bold text-gray-800 mt-2">
+                      Arsip Tahun {selectedYear}
+                      <span className="ml-2 text-sm font-normal text-gray-500">({totalDocuments} dokumen)</span>
+                    </h2>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={displayMode === 'grid' ? 'default' : 'outline'}
+                      size="sm"
+                      className="rounded-lg"
+                      onClick={() => setDisplayMode('grid')}
+                    >
+                      <Grid className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant={displayMode === 'list' ? 'default' : 'outline'}
+                      size="sm"
+                      className="rounded-lg"
+                      onClick={() => setDisplayMode('list')}
+                    >
+                      <List className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {folders.length === 0 ? (
+                  <div className="text-center py-16 bg-white rounded-2xl shadow-md">
+                    <div className="text-6xl mb-4">📂</div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">Tidak Ada Dokumen</h3>
+                    <p className="text-gray-600">Tidak ada dokumen yang tersedia untuk tahun {selectedYear}</p>
+                  </div>
+                ) : displayMode === 'grid' ? (
+                  // Grid View
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {folders.map((folder, index) => (
+                      <motion.div
+                        key={folder.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        className="group cursor-pointer"
+                        onClick={() => handleFolderClick(folder)}
+                      >
+                        <div className={`bg-gradient-to-br ${folder.color} p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-[1.02] border border-white/20`}>
+                          <div className="flex items-center justify-between mb-6">
+                            <div className="text-6xl group-hover:scale-110 transition-transform duration-300">
+                              {folder.icon}
+                            </div>
+                            <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
+                              <span className="text-white font-semibold text-sm">
+                                {folder.totalFiles} files
+                              </span>
+                            </div>
+                          </div>
+
+                          <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-yellow-200 transition-colors">
+                            {folder.name}
+                          </h3>
+
+                          <p className="text-white/90 text-sm leading-relaxed mb-6">
+                            {folder.description}
+                          </p>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-white/80">
+                              <Folder className="w-4 h-4" />
+                              <span className="text-sm">Klik untuk membuka</span>
+                            </div>
+                            <div className="bg-white/20 rounded-full p-2 group-hover:bg-white/30 transition-colors">
+                              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+                            </div>
+                          </div>
                         </div>
-                        <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-                          <span className="text-white font-semibold text-sm">
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  // List View
+                  <div className="space-y-3 bg-white rounded-2xl shadow-md p-6">
+                    {folders.map((folder, index) => (
+                      <motion.div
+                        key={folder.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between rounded-xl border-l-4 ${folder.color.split(' ')[1].replace('from-', 'border-')}`}
+                        onClick={() => handleFolderClick(folder)}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="text-3xl">{folder.icon}</div>
+                          <div>
+                            <h3 className="font-medium text-gray-800">{folder.name}</h3>
+                            <p className="text-sm text-gray-500">{folder.description}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm bg-gray-100 px-2 py-1 rounded-full text-gray-600">
                             {folder.totalFiles} files
                           </span>
+                          <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
                         </div>
-                      </div>
-
-                      <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-yellow-200 transition-colors">
-                        {folder.name}
-                      </h3>
-
-                      <p className="text-white/90 text-sm leading-relaxed mb-6">
-                        {folder.description}
-                      </p>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-white/80">
-                          <Folder className="w-4 h-4" />
-                          <span className="text-sm">Klik untuk membuka</span>
-                        </div>
-                        <div className="bg-white/20 rounded-full p-2 group-hover:bg-white/30 transition-colors">
-                          <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
-          ) : (
+          )}
+
+          {currentView === 'files' && (
             <motion.div
               key="files"
               initial={{ opacity: 0, y: 20 }}
@@ -401,22 +516,43 @@ export default function PublicCollectionsPage() {
             >
               {/* Files View */}
               <div className="mb-8">
-                <Button
-                  onClick={handleBackToFolders}
-                  variant="outline"
-                  className="mb-6 bg-white/80 backdrop-blur-sm border-purple-200 hover:bg-purple-50 rounded-xl"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Kembali ke Folder
-                </Button>
-
-                <div className={`bg-gradient-to-r ${selectedFolder?.color} p-6 rounded-2xl mb-6`}>
-                  <div className="flex items-center gap-4 text-white">
-                    <span className="text-4xl">{selectedFolder?.icon}</span>
-                    <div>
-                      <h2 className="text-2xl font-bold">{selectedFolder?.name}</h2>
-                      <p className="opacity-90">{selectedFolder?.description}</p>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <Button
+                      onClick={handleBackToFolders}
+                      variant="outline"
+                      className="mb-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:bg-purple-50 rounded-xl"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      Kembali ke Folder
+                    </Button>
+                    <div className={`bg-gradient-to-r ${selectedFolder?.color} p-6 rounded-2xl mt-4`}>
+                      <div className="flex items-center gap-4 text-white">
+                        <span className="text-4xl">{selectedFolder?.icon}</span>
+                        <div>
+                          <h2 className="text-2xl font-bold">{selectedFolder?.name}</h2>
+                          <p className="opacity-90">{selectedFolder?.description}</p>
+                        </div>
+                      </div>
                     </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={displayMode === 'grid' ? 'default' : 'outline'}
+                      size="sm"
+                      className="rounded-lg"
+                      onClick={() => setDisplayMode('grid')}
+                    >
+                      <Grid className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant={displayMode === 'list' ? 'default' : 'outline'}
+                      size="sm"
+                      className="rounded-lg"
+                      onClick={() => setDisplayMode('list')}
+                    >
+                      <List className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
 
@@ -431,27 +567,28 @@ export default function PublicCollectionsPage() {
                   />
                 </div>
 
-                {/* Files Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredFiles.length === 0 ? (
-                    <div className="col-span-full text-center py-12">
-                      <span className="text-6xl mb-4 block">📄</span>
-                      <p className="text-gray-600 font-medium">Tidak ada file yang ditemukan</p>
-                      <p className="text-sm text-gray-500 mt-1">Coba ubah kata kunci pencarian</p>
-                    </div>
-                  ) : (
-                    filteredFiles.map((file, index) => (
+                {/* Files Grid/List */}
+                {filteredFiles.length === 0 ? (
+                  <div className="col-span-full text-center py-12">
+                    <span className="text-6xl mb-4 block">📄</span>
+                    <p className="text-gray-600 font-medium">Tidak ada file yang ditemukan</p>
+                    <p className="text-sm text-gray-500 mt-1">Coba ubah kata kunci pencarian</p>
+                  </div>
+                ) : displayMode === 'grid' ? (
+                  // Grid View
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredFiles.map((file, index) => (
                       <motion.div
                         key={file.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/30 cursor-pointer group"
+                        className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/30 cursor-pointer group ${file.isLimited ? 'border-orange-200' : ''}`}
                         onClick={() => handleFileClick(file)}
                       >
                         <div className="flex items-start justify-between mb-4">
-                          <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-3 rounded-xl">
-                            <FileText className="w-6 h-6 text-purple-600" />
+                          <div className={`bg-gradient-to-r ${file.isLimited ? 'from-orange-100 to-red-100' : 'from-purple-100 to-pink-100'} p-3 rounded-xl`}>
+                            <FileText className={`w-6 h-6 ${file.isLimited ? 'text-orange-600' : 'text-purple-600'}`} />
                           </div>
                           <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
                             {file.type}
@@ -486,10 +623,65 @@ export default function PublicCollectionsPage() {
                             </Button>
                           </div>
                         </div>
+
+                        {file.isLimited && (
+                          <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
+                            <div
+                              className="bg-orange-500 h-1.5 rounded-full"
+                              style={{ width: `${(file.currentAccess! / file.maxAccess!) * 100}%` }}
+                            ></div>
+                          </div>
+                        )}
                       </motion.div>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  // List View
+                  <div className="space-y-3 bg-white rounded-2xl shadow-md p-6">
+                    {filteredFiles.map((file, index) => (
+                      <motion.div
+                        key={file.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between rounded-xl ${file.isLimited ? 'border-l-4 border-orange-500' : 'border-l-4 border-purple-500'}`}
+                        onClick={() => handleFileClick(file)}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`p-3 rounded-lg ${file.isLimited ? 'bg-orange-100' : 'bg-purple-100'}`}>
+                            <FileText className={`w-5 h-5 ${file.isLimited ? 'text-orange-600' : 'text-purple-600'}`} />
+                          </div>
+                          <div className="max-w-2xl">
+                            <h3 className="font-medium text-gray-800 line-clamp-1">{file.title}</h3>
+                            <p className="text-sm text-gray-500 line-clamp-1">{file.abstract}</p>
+                            <div className="flex items-center gap-4 mt-1 text-xs text-gray-600">
+                              <span className="flex items-center gap-1">
+                                <User className="w-3 h-3" /> {file.author}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" /> {file.year}
+                              </span>
+                              <span>{file.batch}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
+                            {file.type} • {file.size}
+                          </span>
+                          {file.isLimited && (
+                            <div className="w-24 bg-gray-200 rounded-full h-1.5">
+                              <div
+                                className="bg-orange-500 h-1.5 rounded-full"
+                                style={{ width: `${(file.currentAccess! / file.maxAccess!) * 100}%` }}
+                              ></div>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -516,8 +708,8 @@ export default function PublicCollectionsPage() {
 
                 <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
                   <div className="flex items-center gap-4">
-                    <div className="bg-purple-100 p-3 rounded-lg">
-                      <FileText className="w-6 h-6 text-purple-600" />
+                    <div className={`${selectedFile.isLimited ? 'bg-orange-100' : 'bg-purple-100'} p-3 rounded-lg`}>
+                      <FileText className={`w-6 h-6 ${selectedFile.isLimited ? 'text-orange-600' : 'text-purple-600'}`} />
                     </div>
                     <div>
                       <p className="font-medium text-gray-800">{selectedFile.type} Document</p>
@@ -536,6 +728,20 @@ export default function PublicCollectionsPage() {
                     </Button>
                   </div>
                 </div>
+
+                {selectedFile.isLimited && (
+                  <div className="text-center p-4 bg-orange-50 rounded-xl border border-orange-200">
+                    <p className="text-sm text-orange-800">
+                      ⚠️ <strong>Perhatian:</strong> Dokumen ini memiliki akses terbatas dan telah diakses {selectedFile.currentAccess} dari {selectedFile.maxAccess} kali.
+                    </p>
+                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-orange-500 h-2 rounded-full"
+                        style={{ width: `${(selectedFile.currentAccess! / selectedFile.maxAccess!) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="text-center p-4 bg-yellow-50 rounded-xl border border-yellow-200">
                   <p className="text-sm text-yellow-800">

@@ -41,27 +41,33 @@ export async function createGuestbookEntryAction(data: {
       fullMessage += `\nTujuan Kunjungan: ${data.visitPurpose}`
     }
 
-    const guestbookEntry = await prisma.guestbookEntry.create({
-      data: {
-        name: validatedData.name,
-        email: validatedData.email,
-        message: fullMessage,
-        authorId: currentUser?.id || null,
-        isApproved: true, // Auto approve untuk sekarang
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
+    // Create the entry with defensive error handling
+    try {
+      const guestbookEntry = await prisma.guestbookEntry.create({
+        data: {
+          name: validatedData.name,
+          email: validatedData.email,
+          message: fullMessage,
+          authorId: currentUser?.id || null,
+          isApproved: true, // Auto approve untuk sekarang
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+            }
           }
         }
-      }
-    })
+      })
 
-    revalidatePath('/guestbook')
-    return { success: true, entry: guestbookEntry }
+      revalidatePath('/guestbook')
+      return { success: true, entry: guestbookEntry }
+    } catch (dbError) {
+      console.error('Database operation error:', dbError)
+      return { error: 'Database error. Please try again later.' }
+    }
   } catch (error) {
     console.error('Create guestbook entry error:', error)
     if (error instanceof z.ZodError) {
