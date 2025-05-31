@@ -76,6 +76,9 @@ model users {
   role                               Role                  @default(USER)
   name                               String?
   avatar                             String?
+  training                           String?
+  angkatan                           String?
+  phone                              String?
   created_at                         DateTime              @default(now())
   updated_at                         DateTime
   collections                        collections[]

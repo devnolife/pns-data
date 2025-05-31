@@ -11,30 +11,23 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2, CheckCircle2, ArrowRight } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
+import { Loader2, CheckCircle2, ArrowRight, Eye, EyeOff } from "lucide-react"
+import { registerUserAction } from "@/lib/actions/auth"
 
 export default function RegisterPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false)
   const [registrationComplete, setRegistrationComplete] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: "",
+      username: "",
       training: "",
-      class: "",
+      angkatan: "",
       phone: "",
       email: "",
       password: "",
@@ -42,36 +35,22 @@ export default function RegisterPage() {
     },
   })
 
-  const onSubmit = (values: RegisterFormData) => {
-    setConfirmDialogOpen(true)
-  }
-
-  const handleConfirmRegistration = async (confirm: boolean) => {
-    setConfirmDialogOpen(false)
-
-    if (!confirm) return
-
+  const onSubmit = async (values: RegisterFormData) => {
     setLoading(true)
 
     try {
-      const formValues = form.getValues()
-      // Generate username from email
-      const username = formValues.email.split("@")[0]
-
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          ...formValues,
-        }),
+      // Call the server action instead of the API
+      const result = await registerUserAction({
+        username: values.username,
+        email: values.email,
+        password: values.password,
+        training: values.training,
+        angkatan: values.angkatan,
+        phone: values.phone,
       })
 
-      if (!response.ok) {
-        const data = await response.json()
-        throw new Error(data.error || "Registration failed")
+      if (result.error) {
+        throw new Error(result.error)
       }
 
       setRegistrationComplete(true)
@@ -105,20 +84,13 @@ export default function RegisterPage() {
   ]
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 relative overflow-hidden">
-      {/* Floating Elements */}
-      <div className="fixed top-20 left-10 w-4 h-4 bg-purple-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0s' }}></div>
-      <div className="fixed top-40 right-20 w-3 h-3 bg-pink-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1s' }}></div>
-      <div className="fixed bottom-40 left-20 w-5 h-5 bg-indigo-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '2s' }}></div>
-      <div className="fixed bottom-20 right-10 w-4 h-4 bg-purple-300 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
-
+    <div className="flex min-h-screen flex-col lg:flex-row bg-gray-50 relative overflow-hidden">
       {/* Left Column - Visual/Benefits */}
-      <div className="relative hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 via-pink-600 to-indigo-600 text-white">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative hidden lg:flex lg:w-1/2 bg-primary text-white">
         <div className="relative z-10 flex flex-col justify-center px-12 py-16 space-y-8">
           <div className="text-center">
             <div className="text-8xl mb-6 animate-float">🎉</div>
-            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-bold mb-4">
               Bergabung dengan Relasi CPNS!
             </h1>
             <p className="text-xl opacity-90 mb-8">
@@ -132,7 +104,7 @@ export default function RegisterPage() {
             </h2>
             <div className="space-y-4">
               {benefits.map((benefit, index) => (
-                <div key={index} className="flex items-start bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                <div key={index} className="flex items-start bg-white/10 rounded-xl p-4 border border-white/20">
                   <CheckCircle2 className="h-6 w-6 mr-3 flex-shrink-0 text-white mt-0.5" />
                   <span className="text-sm">{benefit}</span>
                 </div>
@@ -141,11 +113,11 @@ export default function RegisterPage() {
           </div>
 
           <div className="pt-8 text-center">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <div className="bg-white/10 rounded-xl p-4 border border-white/20">
               <p className="text-sm opacity-90 mb-2">
                 Sudah punya akun? 🤔
               </p>
-              <Link href="/login" className="inline-flex items-center gap-2 text-white font-semibold hover:text-purple-200 transition-colors">
+              <Link href="/login" className="inline-flex items-center gap-2 text-white font-semibold hover:text-white/80 transition-colors">
                 <span>🚀</span>
                 Masuk di sini!
                 <span>✨</span>
@@ -160,11 +132,6 @@ export default function RegisterPage() {
             <span className="animate-bounce" style={{ animationDelay: '0.6s' }}>🔥</span>
           </div>
         </div>
-
-        {/* Decorative elements */}
-        <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-        <div className="absolute bottom-10 left-10 w-32 h-32 bg-pink-300/20 rounded-full blur-2xl"></div>
-        <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-purple-300/20 rounded-full blur-xl"></div>
       </div>
 
       {/* Right Column - Registration Form */}
@@ -176,7 +143,7 @@ export default function RegisterPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:border-purple-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="flex items-center gap-2 bg-white border-primary text-primary hover:bg-primary/5 rounded-xl"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -198,7 +165,7 @@ export default function RegisterPage() {
             </div>
             <div className="text-center mb-8">
               <div className="text-6xl mb-4 animate-bounce">✨</div>
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3">
+              <h2 className="text-4xl font-bold text-primary mb-3">
                 Buat Akun Baru!
               </h2>
               <p className="text-gray-600 text-lg">Bergabung dengan komunitas CPNS terbaik! 🚀</p>
@@ -206,13 +173,13 @@ export default function RegisterPage() {
           </div>
 
           {registrationComplete ? (
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8">
               <div className="flex flex-col items-center text-center">
                 <div className="text-6xl mb-4 animate-bounce">🎉</div>
-                <div className="rounded-full bg-gradient-to-r from-purple-100 to-pink-100 p-4 mb-4">
-                  <CheckCircle2 className="h-12 w-12 text-purple-600" />
+                <div className="rounded-full bg-primary/10 p-4 mb-4">
+                  <CheckCircle2 className="h-12 w-12 text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                <h3 className="text-2xl font-bold text-primary mb-2">
                   Pendaftaran Berhasil! 🎊
                 </h3>
                 <p className="text-gray-600 mb-6 leading-relaxed">
@@ -220,7 +187,7 @@ export default function RegisterPage() {
                 </p>
                 <Button
                   onClick={() => router.push("/login")}
-                  className="w-full h-12 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl"
                 >
                   <span className="flex items-center gap-2">
                     <span>🚀</span>
@@ -232,25 +199,28 @@ export default function RegisterPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
-                      name="name"
+                      name="username"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                            <span>👤</span> Nama Lengkap
+                            <span>👤</span> Username
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Siapa nama kamu? ✨"
-                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              placeholder="Masukkan username kamu! ✨"
+                              className="h-12 rounded-xl border-2 border-gray-200 bg-white focus:border-primary focus:ring-primary transition-all"
                               {...field}
                             />
                           </FormControl>
+                          <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
+                            <span>💡</span> Username minimal 3 karakter
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -267,7 +237,7 @@ export default function RegisterPage() {
                           <FormControl>
                             <Input
                               placeholder="email.kamu@contoh.com 💌"
-                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              className="h-12 rounded-xl border-2 border-gray-200 bg-white focus:border-primary focus:ring-primary transition-all"
                               {...field}
                             />
                           </FormControl>
@@ -286,11 +256,11 @@ export default function RegisterPage() {
                           </FormLabel>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
                             <FormControl>
-                              <SelectTrigger className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 transition-all duration-200 hover:bg-white/70">
+                              <SelectTrigger className="h-12 rounded-xl border-2 border-gray-200 bg-white focus:border-primary transition-all">
                                 <SelectValue placeholder="Pilih pelatihan kamu! 🌟" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent className="rounded-xl border-purple-200">
+                            <SelectContent className="rounded-xl border-gray-200">
                               <SelectItem value="PKN" className="rounded-lg">🏛️ PKN</SelectItem>
                               <SelectItem value="PKP" className="rounded-lg">🔍 PKP</SelectItem>
                               <SelectItem value="PKA" className="rounded-lg">👔 PKA</SelectItem>
@@ -304,16 +274,16 @@ export default function RegisterPage() {
 
                     <FormField
                       control={form.control}
-                      name="class"
+                      name="angkatan"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                            <span>🏫</span> Kelas
+                            <span>🏫</span> Angkatan
                           </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Kelas berapa nih? 📚"
-                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              placeholder="Angkatan berapa nih? 📚"
+                              className="h-12 rounded-xl border-2 border-gray-200 bg-white focus:border-primary focus:ring-primary transition-all"
                               {...field}
                             />
                           </FormControl>
@@ -333,7 +303,7 @@ export default function RegisterPage() {
                           <FormControl>
                             <Input
                               placeholder="Nomor HP kamu! 📞"
-                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                              className="h-12 rounded-xl border-2 border-gray-200 bg-white focus:border-primary focus:ring-primary transition-all"
                               {...field}
                             />
                           </FormControl>
@@ -353,12 +323,23 @@ export default function RegisterPage() {
                             <span>🔒</span> Kata Sandi
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Password super rahasia! 🤫"
-                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Password super rahasia! 🤫"
+                                className="h-12 rounded-xl border-2 border-gray-200 bg-white focus:border-primary focus:ring-primary transition-all pr-10"
+                                {...field}
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-gray-500 hover:text-primary"
+                                onClick={() => setShowPassword(!showPassword)}
+                              >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                              </Button>
+                            </div>
                           </FormControl>
                           <FormDescription className="text-xs text-gray-500 flex items-center gap-1">
                             <span>💡</span> Minimal 8 karakter ya!
@@ -377,12 +358,23 @@ export default function RegisterPage() {
                             <span>🔐</span> Konfirmasi Kata Sandi
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Ulangi password kamu! 🔄"
-                              className="h-12 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Input
+                                type={showConfirmPassword ? "text" : "password"}
+                                placeholder="Ulangi password kamu! 🔄"
+                                className="h-12 rounded-xl border-2 border-gray-200 bg-white focus:border-primary focus:ring-primary transition-all pr-10"
+                                {...field}
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="absolute right-1 top-1/2 -translate-y-1/2 h-9 w-9 text-gray-500 hover:text-primary"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                              >
+                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                              </Button>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -392,7 +384,7 @@ export default function RegisterPage() {
 
                   <Button
                     type="submit"
-                    className="w-full h-14 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    className="w-full h-14 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                   >
                     {loading ? (
@@ -410,11 +402,11 @@ export default function RegisterPage() {
                   </Button>
 
                   <div className="text-center mt-6 lg:hidden">
-                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200">
+                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
                       <p className="text-sm text-gray-600 mb-2">
                         Sudah punya akun? 🤔
                       </p>
-                      <Link href="/login" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold transition-colors">
+                      <Link href="/login" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors">
                         <span>🚀</span>
                         Masuk di sini!
                         <span>✨</span>
@@ -427,48 +419,6 @@ export default function RegisterPage() {
           )}
         </div>
       </div>
-
-      {/* Confirmation Dialog */}
-      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Konfirmasi Pendaftaran</DialogTitle>
-            <DialogDescription>
-              Silakan konfirmasi bahwa Anda ingin mendaftar dengan informasi yang diberikan.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm font-medium">Nama:</p>
-                <p className="text-sm text-muted-foreground">{form.getValues().name}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Pelatihan:</p>
-                <p className="text-sm text-muted-foreground">{form.getValues().training}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Kelas:</p>
-                <p className="text-sm text-muted-foreground">{form.getValues().class}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Telepon:</p>
-                <p className="text-sm text-muted-foreground">{form.getValues().phone}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Email:</p>
-                <p className="text-sm text-muted-foreground">{form.getValues().email}</p>
-              </div>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleConfirmRegistration(false)}>
-              Batal
-            </Button>
-            <Button onClick={() => handleConfirmRegistration(true)}>Konfirmasi</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Custom Styles */}
       <style jsx>{`

@@ -3,25 +3,21 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToastId } from "@/hooks/use-toast-id"
 import { motion } from "framer-motion"
-
-// Import the useAuth hook
-import { useAuth } from "@/context/auth-context"
+import { Eye, EyeOff } from "lucide-react"
+import { loginAction } from "@/lib/actions/auth"
 
 export default function LoginPage() {
   const router = useRouter()
   const { success, error, info } = useToastId()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-
-  // Replace the handleLogin function with this implementation
-  const { login } = useAuth()
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -32,7 +28,7 @@ export default function LoginPage() {
       // Simple validation
       if (!username || !password) {
         error("validationError", {
-          description: "Email dan kata sandi diperlukan untuk masuk",
+          description: "Username dan kata sandi diperlukan untuk masuk",
         })
         setIsLoading(false)
         return
@@ -42,12 +38,32 @@ export default function LoginPage() {
         description: "Sedang memproses permintaan login Anda...",
       })
 
-      // Call login function from auth context
-      await login(username, password)
+      // Create form data for the server action
+      const formData = new FormData()
+      formData.append('username', username)
+      formData.append('password', password)
+
+      // Call the server action directly
+      const result = await loginAction(formData)
+
+      if (result.error) {
+        error("loginFailed", {
+          description: result.error,
+        })
+        setIsLoading(false)
+        return
+      }
 
       success("loginSuccess", {
         description: "Login berhasil!",
       })
+
+      // Redirect based on user role
+      if (result.user?.role === "ADMIN") {
+        router.push("/dashboard/admin")
+      } else {
+        router.push("/dashboard/user")
+      }
     } catch (err) {
       console.error("Login error:", err)
       error("loginFailed", {
@@ -58,9 +74,13 @@ export default function LoginPage() {
     }
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-purple-50 via-pink-50 to-indigo-50 flex items-stretch relative overflow-hidden">
-      {/* Floating Elements */} 
+      {/* Floating Elements */}
       <div className="fixed top-20 left-10 w-4 h-4 bg-purple-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0s' }}></div>
       <div className="fixed top-40 right-20 w-3 h-3 bg-pink-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1s' }}></div>
       <div className="fixed bottom-40 left-20 w-5 h-5 bg-indigo-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '2s' }}></div>
@@ -144,14 +164,23 @@ export default function LoginPage() {
                     Lupa kata sandi? 🤔
                   </Link>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password rahasia kamu! 🤫"
-                  className="h-14 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password rahasia kamu! 🤫"
+                    className="h-14 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70 pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </motion.div>
 
               <motion.div

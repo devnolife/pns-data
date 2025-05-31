@@ -47,7 +47,8 @@ export function UserNav() {
   }
 
   // Get initials for avatar fallback
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | null) => {
+    if (!name) return "U" // Default to "U" for User if no name
     return name
       .split(" ")
       .map((n) => n[0])
@@ -61,7 +62,7 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/diverse-avatars.png" alt={user.name} />
+            <AvatarImage src={user.avatar || "/diverse-avatars.png"} alt={user.name || user.username} />
             <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
           </Avatar>
         </Button>
@@ -69,21 +70,21 @@ export function UserNav() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-sm font-medium leading-none">{user.name || user.username}</p>
             <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href={user.role === "admin" ? "/dashboard/admin" : "/dashboard/user"} className="cursor-pointer">
+            <Link href={user.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/user"} className="cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>Dashboard</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              href={user.role === "admin" ? "/dashboard/admin/profile" : "/dashboard/user/profile"}
+              href={user.role === "ADMIN" ? "/dashboard/admin/profile" : "/dashboard/user/profile"}
               className="cursor-pointer"
             >
               <Settings className="mr-2 h-4 w-4" />

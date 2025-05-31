@@ -7,9 +7,9 @@ import { revalidatePath } from 'next/cache'
 
 // Schemas
 const createCollectionSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
+  title: z.string().min(1, 'Judul diperlukan'),
   description: z.string().optional(),
-  content: z.string().min(1, 'Content is required'),
+  content: z.string().min(1, 'Konten diperlukan'),
   category: z.string().optional(),
   tags: z.string().optional(),
   imageUrl: z.string().optional(),
@@ -18,9 +18,9 @@ const createCollectionSchema = z.object({
 
 const updateCollectionSchema = z.object({
   id: z.string(),
-  title: z.string().min(1, 'Title is required').optional(),
+  title: z.string().min(1, 'Judul diperlukan').optional(),
   description: z.string().optional(),
-  content: z.string().min(1, 'Content is required').optional(),
+  content: z.string().min(1, 'Konten diperlukan').optional(),
   category: z.string().optional(),
   tags: z.string().optional(),
   imageUrl: z.string().optional(),
@@ -31,7 +31,7 @@ export async function createCollectionAction(formData: FormData) {
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser) {
-      return { error: 'Unauthorized' }
+      return { error: 'Tidak memiliki akses' }
     }
 
     const data = {
@@ -69,7 +69,7 @@ export async function createCollectionAction(formData: FormData) {
     if (error instanceof z.ZodError) {
       return { error: error.errors[0].message }
     }
-    return { error: 'Failed to create collection' }
+    return { error: 'Gagal membuat koleksi' }
   }
 }
 
@@ -77,7 +77,7 @@ export async function updateCollectionAction(formData: FormData) {
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser) {
-      return { error: 'Unauthorized' }
+      return { error: 'Tidak memiliki akses' }
     }
 
     const data = {
@@ -99,11 +99,11 @@ export async function updateCollectionAction(formData: FormData) {
     })
 
     if (!existingCollection) {
-      return { error: 'Collection not found' }
+      return { error: 'Koleksi tidak ditemukan' }
     }
 
     if (existingCollection.authorId !== currentUser.id && currentUser.role !== 'ADMIN') {
-      return { error: 'Unauthorized to update this collection' }
+      return { error: 'Tidak memiliki akses untuk mengubah koleksi ini' }
     }
 
     const updateData: any = {}
@@ -137,7 +137,7 @@ export async function updateCollectionAction(formData: FormData) {
     if (error instanceof z.ZodError) {
       return { error: error.errors[0].message }
     }
-    return { error: 'Failed to update collection' }
+    return { error: 'Gagal mengubah koleksi' }
   }
 }
 
@@ -145,7 +145,7 @@ export async function deleteCollectionAction(id: string) {
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser) {
-      return { error: 'Unauthorized' }
+      return { error: 'Tidak memiliki akses' }
     }
 
     const existingCollection = await prisma.collection.findUnique({
@@ -153,11 +153,11 @@ export async function deleteCollectionAction(id: string) {
     })
 
     if (!existingCollection) {
-      return { error: 'Collection not found' }
+      return { error: 'Koleksi tidak ditemukan' }
     }
 
     if (existingCollection.authorId !== currentUser.id && currentUser.role !== 'ADMIN') {
-      return { error: 'Unauthorized to delete this collection' }
+      return { error: 'Tidak memiliki akses untuk menghapus koleksi ini' }
     }
 
     await prisma.collection.delete({
@@ -168,7 +168,7 @@ export async function deleteCollectionAction(id: string) {
     return { success: true }
   } catch (error) {
     console.error('Delete collection error:', error)
-    return { error: 'Failed to delete collection' }
+    return { error: 'Gagal menghapus koleksi' }
   }
 }
 
@@ -223,7 +223,7 @@ export async function getCollectionsAction(page = 1, limit = 10, category?: stri
     }
   } catch (error) {
     console.error('Get collections error:', error)
-    return { error: 'Failed to fetch collections' }
+    return { error: 'Gagal mengambil koleksi' }
   }
 }
 
@@ -245,23 +245,23 @@ export async function getCollectionByIdAction(id: string) {
     })
 
     if (!collection) {
-      return { error: 'Collection not found' }
+      return { error: 'Koleksi tidak ditemukan' }
     }
 
     // Check if user can access this collection
     if (!collection.isPublic) {
       if (!currentUser) {
-        return { error: 'Unauthorized to view this collection' }
+        return { error: 'Tidak memiliki akses untuk melihat koleksi ini' }
       }
       if (currentUser.role !== 'ADMIN' && collection.authorId !== currentUser.id) {
-        return { error: 'Unauthorized to view this collection' }
+        return { error: 'Tidak memiliki akses untuk melihat koleksi ini' }
       }
     }
 
     return { success: true, collection }
   } catch (error) {
     console.error('Get collection error:', error)
-    return { error: 'Failed to fetch collection' }
+    return { error: 'Gagal mengambil koleksi' }
   }
 }
 
@@ -393,7 +393,7 @@ export async function getPublicCollectionsByCategory() {
     };
   } catch (error) {
     console.error('Get public collections by category error:', error);
-    return { error: 'Failed to fetch collections by category' };
+    return { error: 'Gagal mengambil koleksi berdasarkan kategori' };
   }
 }
 
@@ -433,7 +433,7 @@ export async function getAvailableYears() {
     };
   } catch (error) {
     console.error('Get available years error:', error);
-    return { error: 'Failed to fetch available years' };
+    return { error: 'Gagal mengambil tahun yang tersedia' };
   }
 }
 
@@ -585,6 +585,6 @@ export async function getPublicCollectionsByYear(year?: number) {
     };
   } catch (error) {
     console.error('Get public collections by year error:', error);
-    return { error: 'Failed to fetch collections by year' };
+    return { error: 'Gagal mengambil koleksi berdasarkan tahun' };
   }
 } 

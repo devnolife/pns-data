@@ -6,20 +6,30 @@ import jwt from 'jsonwebtoken'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
+import crypto from 'crypto'
 
 const JWT_SECRET = process.env.JWT_SECRET!
 
 // Schemas
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required'),
+  username: z.string().min(1, 'Username diperlukan'),
+  password: z.string().min(1, 'Kata sandi diperlukan'),
 })
 
 const registerSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  username: z.string().min(3, 'Username minimal 3 karakter'),
+  email: z.string().email('Format email tidak valid'),
+  password: z.string().min(6, 'Kata sandi minimal 6 karakter'),
   name: z.string().optional(),
+})
+
+const registerUserSchema = z.object({
+  username: z.string().min(3, 'Username minimal 3 karakter'),
+  email: z.string().email('Format email tidak valid'),
+  password: z.string().min(6, 'Kata sandi minimal 6 karakter'),
+  training: z.string().min(1, 'Pelatihan diperlukan'),
+  angkatan: z.string().min(1, 'Angkatan diperlukan'),
+  phone: z.string().min(10, 'Nomor telepon minimal 10 karakter'),
 })
 
 export async function loginAction(formData: FormData) {
@@ -31,20 +41,20 @@ export async function loginAction(formData: FormData) {
 
     const validatedData = loginSchema.parse(data)
 
-    // Find user
+    // Find user using Prisma client method
     const user = await prisma.user.findUnique({
       where: { username: validatedData.username }
     })
 
     if (!user) {
-      return { error: 'Invalid credentials' }
+      return { error: 'Username atau kata sandi tidak valid' }
     }
 
     // Verify password
     const isValidPassword = await bcrypt.compare(validatedData.password, user.password)
 
     if (!isValidPassword) {
-      return { error: 'Invalid credentials' }
+      return { error: 'Username atau kata sandi tidak valid' }
     }
 
     // Create JWT token
@@ -64,16 +74,77 @@ export async function loginAction(formData: FormData) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24
     })
 
-    return { success: true, user: { id: user.id, username: user.username, role: user.role } }
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    }
   } catch (error) {
     console.error('Login error:', error)
     if (error instanceof z.ZodError) {
       return { error: error.errors[0].message }
     }
-    return { error: 'Login failed' }
+    return { error: 'Login gagal' }
+  }
+}
+
+// Add a new API compatible login function
+export async function loginUserAction(credentials: { username: string; password: string }) {
+  try {
+    // Validate input
+    if (!credentials.username || !credentials.password) {
+      return { error: 'Username dan kata sandi diperlukan' }
+    }
+
+    // Find user using Prisma client method
+    const user = await prisma.user.findUnique({
+      where: { username: credentials.username }
+    })
+
+    if (!user) {
+      return { error: 'Username atau kata sandi tidak valid' }
+    }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(credentials.password, user.password)
+
+    if (!isValidPassword) {
+      return { error: 'Username atau kata sandi tidak valid' }
+    }
+
+    // Create JWT token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        username: user.username,
+        role: user.role
+      },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    )
+
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      },
+      token
+    }
+  } catch (error) {
+    console.error('Login error:', error)
+    return { error: 'Login gagal' }
   }
 }
 
@@ -88,7 +159,7 @@ export async function registerAction(formData: FormData) {
 
     const validatedData = registerSchema.parse(data)
 
-    // Check if user exists
+    // Check if user exists using Prisma client method
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
@@ -99,19 +170,22 @@ export async function registerAction(formData: FormData) {
     })
 
     if (existingUser) {
-      return { error: 'Username or email already exists' }
+      return { error: 'Username atau email sudah terdaftar' }
     }
 
     // Hash password
     const hashedPassword = await bcrypt.hash(validatedData.password, 12)
 
-    // Create user
+    // Create user using Prisma client method
     const user = await prisma.user.create({
       data: {
         username: validatedData.username,
         email: validatedData.email,
         password: hashedPassword,
         name: validatedData.name || null,
+        role: 'USER',
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
     })
 
@@ -141,14 +215,22 @@ export async function registerAction(formData: FormData) {
     if (error instanceof z.ZodError) {
       return { error: error.errors[0].message }
     }
-    return { error: 'Registration failed' }
+    return { error: 'Pendaftaran gagal' }
   }
 }
 
 export async function logoutAction() {
-  const cookieStore = await cookies()
-  cookieStore.delete('token')
-  redirect('/login')
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete('token')
+    return { success: true }
+  } catch (error) {
+    console.error('Logout error:', error)
+    return { error: 'Logout gagal' }
+  } finally {
+    // Always redirect to login page
+    redirect('/login')
+  }
 }
 
 export async function getCurrentUser() {
@@ -162,6 +244,7 @@ export async function getCurrentUser() {
 
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string; username: string; role: string }
 
+    // Use Prisma client method to get user data
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       select: {
@@ -175,9 +258,89 @@ export async function getCurrentUser() {
       }
     })
 
-    return user
+    if (!user) {
+      return null
+    }
+
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      avatar: user.avatar,
+      training: null, // Set default values for now
+      angkatan: null,
+      phone: null,
+      createdAt: user.createdAt
+    }
   } catch (error) {
     console.error('Get current user error:', error)
     return null
+  }
+}
+
+export async function registerUserAction(data: {
+  username: string;
+  email: string;
+  password: string;
+  training: string;
+  angkatan: string;
+  phone: string;
+}) {
+  try {
+    // Validate the data
+    const validatedData = registerUserSchema.parse(data)
+
+    // Check if user exists using Prisma client method
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { username: validatedData.username },
+          { email: validatedData.email }
+        ]
+      }
+    })
+
+    if (existingUser) {
+      return { error: 'Username atau email sudah terdaftar' }
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(validatedData.password, 12)
+
+    // Create user using Prisma client method
+    const user = await prisma.user.create({
+      data: {
+        id: crypto.randomUUID(),
+        username: validatedData.username,
+        email: validatedData.email,
+        password: hashedPassword,
+        name: validatedData.username, // Use username as name
+        role: 'USER',
+        training: validatedData.training,
+        angkatan: validatedData.angkatan,
+        phone: validatedData.phone,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    })
+
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      }
+    }
+  } catch (error) {
+    console.error('Register error:', error)
+    if (error instanceof z.ZodError) {
+      return { error: error.errors[0].message }
+    }
+    return { error: 'Pendaftaran gagal' }
   }
 } 

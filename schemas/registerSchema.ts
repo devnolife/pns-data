@@ -2,14 +2,14 @@ import * as z from "zod"
 
 export const registerSchema = z
   .object({
-    name: z.string().min(2, {
-      message: "Nama harus minimal 2 karakter.",
+    username: z.string().min(3, {
+      message: "Username harus minimal 3 karakter.",
     }),
     training: z.string({
       required_error: "Silakan pilih program pelatihan.",
     }),
-    class: z.string().min(1, {
-      message: "Kelas wajib diisi.",
+    angkatan: z.string().min(1, {
+      message: "Angkatan wajib diisi.",
     }),
     phone: z
       .string()

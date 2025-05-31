@@ -193,7 +193,7 @@ export function ModernSidebar() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="text-sm font-bold">DigiCollect</span>
+            <span className="text-sm font-bold">Relasi CPNS</span>
           </Link>
         )}
         {isCollapsed && (

@@ -10,7 +10,7 @@ export default function AuthLayout({
       <main className="flex-1">{children}</main>
       <footer className="border-t py-4 bg-background">
         <div className="container text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} DigiCollect. All rights reserved.
+          © {new Date().getFullYear()} Relasi CPNS
         </div>
       </footer>
     </div>

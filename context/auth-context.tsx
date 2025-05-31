@@ -2,13 +2,35 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
-import { apiClient, type User } from "@/lib/api-client"
+import { loginAction, registerUserAction, logoutAction, getCurrentUser } from "@/lib/actions/auth"
+
+// User type based on Prisma schema
+interface User {
+  id: string
+  username: string
+  email: string
+  name: string | null
+  role: "USER" | "ADMIN" | "MODERATOR"
+  avatar: string | null
+  training: string | null
+  angkatan: string | null
+  phone: string | null
+  createdAt: Date
+}
 
 interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
   login: (username: string, password: string) => Promise<void>
-  register: (userData: any) => Promise<void>
+  register: (userData: {
+    username: string;
+    email: string;
+    password: string;
+    name: string;
+    training: string;
+    angkatan: string;
+    phone: string;
+  }) => Promise<void>
   logout: () => Promise<void>
   isLoading: boolean
   error: string | null
@@ -26,14 +48,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if token exists in cookies (via API call)
-        const userData = await apiClient.getCurrentUser()
+        setIsLoading(true)
+        const userData = await getCurrentUser()
         if (userData) {
-          setUser(userData)
+          setUser(userData as User)
         }
       } catch (err) {
         console.error("Auth check failed:", err)
-        // User is not authenticated
         setUser(null)
       } finally {
         setIsLoading(false)
@@ -43,20 +64,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth()
   }, [])
 
-  // Login function
+  // Login function using server action
   const login = async (username: string, password: string) => {
     setIsLoading(true)
     setError(null)
     try {
-      const { user, token } = await apiClient.login(username, password)
-      // No need to store in localStorage, cookies are handled by API
-      setUser(user)
+      // Create form data for server action
+      const formData = new FormData()
+      formData.append('username', username)
+      formData.append('password', password)
 
-      // Redirect based on user role
-      if (user.role === "admin") {
-        router.push("/dashboard/admin")
-      } else {
-        router.push("/dashboard/user")
+      const result = await loginAction(formData)
+
+      if (result.error) {
+        setError(result.error)
+        throw new Error(result.error)
+      }
+
+      if (result.success && result.user) {
+        setUser(result.user as User)
+
+        // Redirect based on user role
+        if (result.user.role === "ADMIN") {
+          router.push("/dashboard/admin")
+        } else {
+          router.push("/dashboard/user")
+        }
       }
     } catch (err: any) {
       setError(err.message || "Login failed")
@@ -66,15 +99,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Register function
-  const register = async (userData: any) => {
+  // Register function using server action
+  const register = async (userData: {
+    username: string;
+    email: string;
+    password: string;
+    name: string;
+    training: string;
+    angkatan: string;
+    phone: string;
+  }) => {
     setIsLoading(true)
     setError(null)
     try {
-      const { user, token } = await apiClient.register(userData)
-      // No need to store in localStorage, cookies are handled by API
-      setUser(user)
-      router.push("/dashboard/user")
+      const result = await registerUserAction(userData)
+
+      if (result.error) {
+        setError(result.error)
+        throw new Error(result.error)
+      }
+
+      if (result.success && result.user) {
+        // Don't set user immediately on register, let them login
+        router.push("/login")
+      }
     } catch (err: any) {
       setError(err.message || "Registration failed")
       throw err
@@ -83,14 +131,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  // Logout function
+  // Logout function using server action
   const logout = async () => {
     setIsLoading(true)
     try {
-      await apiClient.logout()
-      // Cookies will be cleared by logout API
+      await logoutAction()
       setUser(null)
-      router.push("/")
+      // logoutAction already handles redirect to /login
     } catch (err: any) {
       setError(err.message || "Logout failed")
       throw err
@@ -100,7 +147,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, register, logout, isLoading, error }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        register,
+        logout,
+        isLoading,
+        error
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   )
 }
 
