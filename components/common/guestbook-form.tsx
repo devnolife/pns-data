@@ -108,13 +108,13 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                    <span>👤</span> Nama
+                  <FormLabel className="text-gray-700 font-medium">
+                    Nama
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Siapa nama Anda? ✨"
-                      className="border-2 border-purple-200 focus:border-purple-400 rounded-xl h-12 bg-white/50 backdrop-blur-sm transition-all duration-200 hover:bg-white/70"
+                      placeholder="Masukkan nama lengkap"
+                      className="border border-gray-300 focus:border-primary rounded-md h-10 bg-white"
                       {...field}
                     />
                   </FormControl>
@@ -127,14 +127,14 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                    <span>📧</span> Email <span className="text-xs text-gray-500">(opsional)</span>
+                  <FormLabel className="text-gray-700 font-medium">
+                    Email <span className="text-xs text-gray-500">(opsional)</span>
                   </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="Masukkan email jika mau! 💌"
-                      className="border-2 border-purple-200 focus:border-purple-400 rounded-xl h-12 bg-white/50 backdrop-blur-sm transition-all duration-200 hover:bg-white/70"
+                      placeholder="Masukkan alamat email"
+                      className="border border-gray-300 focus:border-primary rounded-md h-10 bg-white"
                       {...field}
                     />
                   </FormControl>
@@ -147,13 +147,13 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
               name="institution"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                    <span>🏢</span> Asal Instansi
+                  <FormLabel className="text-gray-700 font-medium">
+                    Asal Instansi
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Dari mana asal Anda? 🌍"
-                      className="border-2 border-purple-200 focus:border-purple-400 rounded-xl h-12 bg-white/50 backdrop-blur-sm transition-all duration-200 hover:bg-white/70"
+                      placeholder="Nama instansi asal"
+                      className="border border-gray-300 focus:border-primary rounded-md h-10 bg-white"
                       {...field}
                     />
                   </FormControl>
@@ -166,22 +166,22 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
               name="membership"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                    <span>🎭</span> Keanggotaan
+                  <FormLabel className="text-gray-700 font-medium">
+                    Keanggotaan
                   </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="border-2 border-purple-200 focus:border-purple-400 rounded-xl h-12 bg-white/50 backdrop-blur-sm transition-all duration-200 hover:bg-white/70">
-                        <SelectValue placeholder="Pilih status Anda 🌈" />
+                      <SelectTrigger className="border border-gray-300 focus:border-primary rounded-md h-10 bg-white">
+                        <SelectValue placeholder="Pilih jenis keanggotaan" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="rounded-xl border-purple-200">
-                      <SelectItem value="Pegawai Pusjar" className="rounded-lg">🏢 Pegawai Pusjar</SelectItem>
-                      <SelectItem value="Peserta PKA" className="rounded-lg">📚 Peserta PKA</SelectItem>
-                      <SelectItem value="Peserta PKP" className="rounded-lg">🎓 Peserta PKP</SelectItem>
-                      <SelectItem value="Peserta PKN" className="rounded-lg">📖 Peserta PKN</SelectItem>
-                      <SelectItem value="Peserta Latsar CPNS" className="rounded-lg">🌟 Peserta Latsar CPNS</SelectItem>
-                      <SelectItem value="Tamu" className="rounded-lg">👋 Tamu</SelectItem>
+                    <SelectContent className="rounded-md border-gray-300">
+                      <SelectItem value="Pegawai Pusjar">Pegawai Pusjar</SelectItem>
+                      <SelectItem value="Peserta PKA">Peserta PKA</SelectItem>
+                      <SelectItem value="Peserta PKP">Peserta PKP</SelectItem>
+                      <SelectItem value="Peserta PKN">Peserta PKN</SelectItem>
+                      <SelectItem value="Peserta Latsar CPNS">Peserta Latsar CPNS</SelectItem>
+                      <SelectItem value="Tamu">Tamu</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -193,19 +193,19 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
               name="visitPurpose"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                    <span>🎯</span> Tujuan Kunjungan
+                  <FormLabel className="text-gray-700 font-medium">
+                    Tujuan Kunjungan
                   </FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="border-2 border-purple-200 focus:border-purple-400 rounded-xl h-12 bg-white/50 backdrop-blur-sm transition-all duration-200 hover:bg-white/70">
-                        <SelectValue placeholder="Apa tujuan kunjungan Anda? 🚀" />
+                      <SelectTrigger className="border border-gray-300 focus:border-primary rounded-md h-10 bg-white">
+                        <SelectValue placeholder="Pilih tujuan kunjungan" />
                       </SelectTrigger>
                     </FormControl>
-                    <SelectContent className="rounded-xl border-purple-200">
-                      <SelectItem value="Mencari referensi laporan" className="rounded-lg">📊 Mencari referensi laporan</SelectItem>
-                      <SelectItem value="Berkunjung" className="rounded-lg">👀 Berkunjung</SelectItem>
-                      <SelectItem value="lainnya" className="rounded-lg">✨ Lainnya</SelectItem>
+                    <SelectContent className="rounded-md border-gray-300">
+                      <SelectItem value="Mencari referensi laporan">Mencari referensi laporan</SelectItem>
+                      <SelectItem value="Berkunjung">Berkunjung</SelectItem>
+                      <SelectItem value="lainnya">Lainnya</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -218,13 +218,13 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
                 name="otherPurpose"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                      <span>💭</span> Tujuan Lainnya
+                    <FormLabel className="text-gray-700 font-medium">
+                      Tujuan Lainnya
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Ceritakan lebih detail! 🌟"
-                        className="border-2 border-purple-200 focus:border-purple-400 rounded-xl h-12 bg-white/50 backdrop-blur-sm transition-all duration-200 hover:bg-white/70"
+                        placeholder="Jelaskan tujuan kunjungan"
+                        className="border border-gray-300 focus:border-primary rounded-md h-10 bg-white"
                         {...field}
                       />
                     </FormControl>
@@ -238,13 +238,13 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700 font-semibold flex items-center gap-2">
-                    <span>💬</span> Pesan
+                  <FormLabel className="text-gray-700 font-medium">
+                    Pesan
                   </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Bagikan pemikiran, perasaan, atau apapun! Biarkan kreativitas Anda mengalir... ✨💫🌈"
-                      className="min-h-[120px] border-2 border-purple-200 focus:border-purple-400 rounded-xl bg-white/50 backdrop-blur-sm transition-all duration-200 hover:bg-white/70 resize-none"
+                      placeholder="Tuliskan pesan atau kesan Anda"
+                      className="min-h-[120px] border border-gray-300 focus:border-primary rounded-md bg-white resize-none"
                       {...field}
                     />
                   </FormControl>
@@ -255,20 +255,16 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
           </div>
           <Button
             type="submit"
-            className="w-full h-14 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full h-12 bg-primary hover:bg-primary/90 text-white font-medium rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                <span className="text-lg">Mengirim pesan... ✨</span>
+                <span>Mengirim pesan...</span>
               </>
             ) : (
-              <span className="text-lg flex items-center gap-2">
-                <span>🚀</span>
-                Kirim Pesan!
-                <span>💫</span>
-              </span>
+              <span>Kirim Pesan</span>
             )}
           </Button>
         </form>

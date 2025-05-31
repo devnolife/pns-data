@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Search, Folder, FileText, ArrowLeft, Download, Eye, Calendar, User, Grid, List, ChevronDown } from "lucide-react"
+import { Search, Folder, FileText, ArrowLeft, Download, Eye, Calendar, User, Grid, List } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { getPublicCollectionsByCategory, getPublicCollectionsByYear, getAvailableYears } from "@/lib/actions/collections"
 
@@ -161,10 +161,10 @@ export default function PublicCollectionsPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
-          <p className="text-purple-600 font-medium">Memuat halaman...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-4"></div>
+          <p className="text-primary font-medium">Memuat halaman...</p>
         </div>
       </div>
     )
@@ -173,14 +173,13 @@ export default function PublicCollectionsPage() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-xl shadow-lg max-w-md">
-          <div className="text-6xl mb-4">😞</div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Terjadi Kesalahan</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <Button
             onClick={() => window.location.reload()}
-            className="bg-purple-600 hover:bg-purple-700"
+            className="bg-primary hover:bg-primary/90"
           >
             Coba Lagi
           </Button>
@@ -192,20 +191,16 @@ export default function PublicCollectionsPage() {
   // No access state
   if (!hasAccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        {/* Hero Section */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-          <div className="absolute inset-0 bg-black/20"></div>
-          <div className="relative container mx-auto py-16 px-4 md:px-6">
+      <div className="min-h-screen bg-gray-50">
+        {/* Header Section */}
+        <div className="bg-primary">
+          <div className="container mx-auto py-16 px-4 md:px-6">
             <div className="text-center text-white">
-              <div className="animate-bounce mb-6">
-                <span className="text-6xl md:text-8xl">🔒</span>
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
                 Akses Terbatas
               </h1>
-              <p className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto mb-8">
-                Untuk mengakses koleksi digital, silakan isi buku tamu terlebih dahulu! 📝✨
+              <p className="text-lg opacity-90 max-w-2xl mx-auto">
+                Untuk mengakses koleksi digital, silakan isi buku tamu terlebih dahulu.
               </p>
             </div>
           </div>
@@ -213,10 +208,9 @@ export default function PublicCollectionsPage() {
 
         <div className="container mx-auto py-12 px-4 md:px-6">
           <div className="max-w-2xl mx-auto text-center">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
-              <div className="text-6xl mb-6">📚</div>
+            <div className="bg-white rounded-lg shadow-md p-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                Koleksi Digital Menanti Anda!
+                Koleksi Digital Menanti Anda
               </h2>
               <p className="text-gray-600 mb-6 leading-relaxed">
                 Dapatkan akses ke ribuan dokumen, laporan, dan materi pembelajaran berkualitas tinggi.
@@ -227,22 +221,19 @@ export default function PublicCollectionsPage() {
                 {folders.map((folder) => (
                   <div
                     key={folder.id}
-                    className={`bg-gradient-to-r ${folder.color.replace('from-', 'from-').replace('to-', 'to-').replace('-500', '-50')} p-4 rounded-xl border ${folder.color.split(' ')[1].replace('from-', 'border-').replace('-500', '-200')}`}
+                    className="bg-gray-50 p-4 rounded-lg border border-gray-200"
                   >
-                    <div className="text-2xl mb-2">{folder.icon}</div>
-                    <p className={`text-sm font-medium ${folder.color.split(' ')[1].replace('from-', 'text-').replace('-500', '-800')}`}>{folder.name}</p>
-                    <p className={`text-xs ${folder.color.split(' ')[1].replace('from-', 'text-').replace('-500', '-600')}`}>{folder.totalFiles}+ dokumen</p>
+                    <p className="text-sm font-medium text-gray-800">{folder.name}</p>
+                    <p className="text-xs text-gray-600">{folder.totalFiles}+ dokumen</p>
                   </div>
                 ))}
               </div>
 
               <a
                 href="/guestbook"
-                className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center bg-primary hover:bg-primary/90 text-white font-bold px-6 py-3 rounded-lg transition-colors"
               >
-                <span>📝</span>
                 Isi Buku Tamu Sekarang
-                <span>✨</span>
               </a>
 
               <p className="text-xs text-gray-500 mt-4">
@@ -251,40 +242,23 @@ export default function PublicCollectionsPage() {
             </div>
           </div>
         </div>
-
-        {/* Floating Elements */}
-        <div className="fixed top-20 left-10 w-4 h-4 bg-purple-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0s' }}></div>
-        <div className="fixed top-40 right-20 w-3 h-3 bg-pink-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1s' }}></div>
-        <div className="fixed bottom-40 left-20 w-5 h-5 bg-indigo-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '2s' }}></div>
-        <div className="fixed bottom-20 right-10 w-4 h-4 bg-purple-300 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
       </div>
     )
   }
 
   // Main content with access
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="relative container mx-auto py-16 px-4 md:px-6">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Section */}
+      <div className="bg-primary">
+        <div className="container mx-auto py-16 px-4 md:px-6">
           <div className="text-center text-white">
-            <div className="animate-bounce mb-6">
-              <span className="text-6xl md:text-8xl">📚</span>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Koleksi Digital
             </h1>
-            <p className="text-lg md:text-xl opacity-90 max-w-2xl mx-auto mb-8">
-              Jelajahi koleksi laporan dan dokumen terbaik dari berbagai program pelatihan! 📖✨
+            <p className="text-lg opacity-90 max-w-2xl mx-auto">
+              Jelajahi koleksi laporan dan dokumen terbaik dari berbagai program pelatihan.
             </p>
-            <div className="flex justify-center gap-4 text-2xl md:text-3xl">
-              <span className="animate-bounce" style={{ animationDelay: '0s' }}>📊</span>
-              <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>📋</span>
-              <span className="animate-bounce" style={{ animationDelay: '0.4s' }}>📈</span>
-              <span className="animate-bounce" style={{ animationDelay: '0.6s' }}>💼</span>
-              <span className="animate-bounce" style={{ animationDelay: '0.8s' }}>🎯</span>
-            </div>
           </div>
         </div>
       </div>
@@ -332,16 +306,16 @@ export default function PublicCollectionsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="bg-white shadow-lg rounded-2xl overflow-hidden cursor-pointer transition-transform hover:scale-105 group"
+                        className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
                         onClick={() => handleYearSelect(year)}
                       >
-                        <div className="h-32 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 flex items-center justify-center">
-                          <span className="text-4xl font-bold text-white group-hover:scale-110 transition-transform">
+                        <div className="h-32 bg-primary flex items-center justify-center">
+                          <span className="text-4xl font-bold text-white">
                             {year}
                           </span>
                         </div>
                         <div className="p-4 text-center">
-                          <p className="text-gray-600 font-medium">Arsip Dokumen</p>
+                          <p className="text-gray-700 font-medium">Arsip Dokumen</p>
                           <p className="text-sm text-gray-500">Klik untuk melihat</p>
                         </div>
                       </motion.div>
@@ -356,11 +330,11 @@ export default function PublicCollectionsPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="bg-white shadow-md rounded-xl p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between"
+                        className="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between"
                         onClick={() => handleYearSelect(year)}
                       >
                         <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
                             <span className="text-xl font-bold text-white">{year}</span>
                           </div>
                           <div>
@@ -392,7 +366,7 @@ export default function PublicCollectionsPage() {
                     <Button
                       onClick={handleBackToYears}
                       variant="outline"
-                      className="mb-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:bg-purple-50 rounded-xl"
+                      className="mb-2 hover:bg-gray-100 rounded-lg"
                     >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Kembali ke Tahun
@@ -423,70 +397,61 @@ export default function PublicCollectionsPage() {
                 </div>
 
                 {folders.length === 0 ? (
-                  <div className="text-center py-16 bg-white rounded-2xl shadow-md">
-                    <div className="text-6xl mb-4">📂</div>
+                  <div className="text-center py-16 bg-white rounded-lg shadow-md">
                     <h3 className="text-xl font-bold text-gray-800 mb-2">Tidak Ada Dokumen</h3>
                     <p className="text-gray-600">Tidak ada dokumen yang tersedia untuk tahun {selectedYear}</p>
                   </div>
                 ) : displayMode === 'grid' ? (
                   // Grid View
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {folders.map((folder, index) => (
                       <motion.div
                         key={folder.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="group cursor-pointer"
+                        className="bg-white shadow-md rounded-lg p-6 cursor-pointer hover:shadow-lg transition-all duration-300"
                         onClick={() => handleFolderClick(folder)}
                       >
-                        <div className={`bg-gradient-to-br ${folder.color} p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-[1.02] border border-white/20`}>
-                          <div className="flex items-center justify-between mb-6">
-                            <div className="text-6xl group-hover:scale-110 transition-transform duration-300">
-                              {folder.icon}
-                            </div>
-                            <div className="bg-white/20 backdrop-blur-sm rounded-full px-4 py-2">
-                              <span className="text-white font-semibold text-sm">
-                                {folder.totalFiles} files
-                              </span>
-                            </div>
-                          </div>
-
-                          <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-yellow-200 transition-colors">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-xl font-bold text-gray-800">
                             {folder.name}
                           </h3>
-
-                          <p className="text-white/90 text-sm leading-relaxed mb-6">
-                            {folder.description}
-                          </p>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-white/80">
-                              <Folder className="w-4 h-4" />
-                              <span className="text-sm">Klik untuk membuka</span>
-                            </div>
-                            <div className="bg-white/20 rounded-full p-2 group-hover:bg-white/30 transition-colors">
-                              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-                            </div>
+                          <div className="bg-gray-100 rounded-full px-3 py-1">
+                            <span className="text-gray-600 font-medium text-sm">
+                              {folder.totalFiles} file
+                            </span>
                           </div>
+                        </div>
+
+                        <p className="text-gray-600 text-sm mb-4">
+                          {folder.description}
+                        </p>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-gray-500">
+                            <Folder className="w-4 h-4" />
+                            <span className="text-sm">Klik untuk membuka</span>
+                          </div>
+                          <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
                         </div>
                       </motion.div>
                     ))}
                   </div>
                 ) : (
                   // List View
-                  <div className="space-y-3 bg-white rounded-2xl shadow-md p-6">
+                  <div className="bg-white rounded-lg shadow-md p-4">
                     {folders.map((folder, index) => (
                       <motion.div
                         key={folder.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between rounded-xl border-l-4 ${folder.color.split(' ')[1].replace('from-', 'border-')}`}
+                        className="p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between border-b last:border-0"
                         onClick={() => handleFolderClick(folder)}
                       >
                         <div className="flex items-center gap-4">
-                          <div className="text-3xl">{folder.icon}</div>
+                          <Folder className="w-5 h-5 text-primary" />
                           <div>
                             <h3 className="font-medium text-gray-800">{folder.name}</h3>
                             <p className="text-sm text-gray-500">{folder.description}</p>
@@ -494,7 +459,7 @@ export default function PublicCollectionsPage() {
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-sm bg-gray-100 px-2 py-1 rounded-full text-gray-600">
-                            {folder.totalFiles} files
+                            {folder.totalFiles} file
                           </span>
                           <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
                         </div>
@@ -521,20 +486,15 @@ export default function PublicCollectionsPage() {
                     <Button
                       onClick={handleBackToFolders}
                       variant="outline"
-                      className="mb-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:bg-purple-50 rounded-xl"
+                      className="mb-2 hover:bg-gray-100 rounded-lg"
                     >
                       <ArrowLeft className="w-4 h-4 mr-2" />
                       Kembali ke Folder
                     </Button>
-                    <div className={`bg-gradient-to-r ${selectedFolder?.color} p-6 rounded-2xl mt-4`}>
-                      <div className="flex items-center gap-4 text-white">
-                        <span className="text-4xl">{selectedFolder?.icon}</span>
-                        <div>
-                          <h2 className="text-2xl font-bold">{selectedFolder?.name}</h2>
-                          <p className="opacity-90">{selectedFolder?.description}</p>
-                        </div>
-                      </div>
-                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800 mt-2">
+                      {selectedFolder?.name}
+                    </h2>
+                    <p className="text-gray-600">{selectedFolder?.description}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -560,8 +520,8 @@ export default function PublicCollectionsPage() {
                 <div className="relative mb-6">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                   <Input
-                    placeholder="Cari berdasarkan judul atau penulis... 🔍"
-                    className="pl-12 h-12 rounded-xl border-2 border-purple-200 focus:border-purple-400 bg-white/80 backdrop-blur-sm"
+                    placeholder="Cari berdasarkan judul atau penulis..."
+                    className="pl-12 h-12 rounded-lg border bg-white"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -569,8 +529,7 @@ export default function PublicCollectionsPage() {
 
                 {/* Files Grid/List */}
                 {filteredFiles.length === 0 ? (
-                  <div className="col-span-full text-center py-12">
-                    <span className="text-6xl mb-4 block">📄</span>
+                  <div className="text-center py-12 bg-white rounded-lg shadow-md">
                     <p className="text-gray-600 font-medium">Tidak ada file yang ditemukan</p>
                     <p className="text-sm text-gray-500 mt-1">Coba ubah kata kunci pencarian</p>
                   </div>
@@ -583,19 +542,17 @@ export default function PublicCollectionsPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className={`bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-white/30 cursor-pointer group ${file.isLimited ? 'border-orange-200' : ''}`}
+                        className={`bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer ${file.isLimited ? 'border-l-4 border-amber-500' : ''}`}
                         onClick={() => handleFileClick(file)}
                       >
                         <div className="flex items-start justify-between mb-4">
-                          <div className={`bg-gradient-to-r ${file.isLimited ? 'from-orange-100 to-red-100' : 'from-purple-100 to-pink-100'} p-3 rounded-xl`}>
-                            <FileText className={`w-6 h-6 ${file.isLimited ? 'text-orange-600' : 'text-purple-600'}`} />
-                          </div>
+                          <FileText className={`w-6 h-6 ${file.isLimited ? 'text-amber-500' : 'text-primary'}`} />
                           <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
                             {file.type}
                           </span>
                         </div>
 
-                        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 group-hover:text-purple-600 transition-colors">
+                        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 hover:text-primary transition-colors">
                           {file.title}
                         </h3>
 
@@ -616,18 +573,16 @@ export default function PublicCollectionsPage() {
 
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-gray-500">{file.size}</span>
-                          <div className="flex gap-2">
-                            <Button size="sm" variant="outline" className="rounded-lg">
-                              <Eye className="w-3 h-3 mr-1" />
-                              Lihat
-                            </Button>
-                          </div>
+                          <Button size="sm" variant="outline" className="rounded-lg">
+                            <Eye className="w-3 h-3 mr-1" />
+                            Lihat
+                          </Button>
                         </div>
 
                         {file.isLimited && (
                           <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
                             <div
-                              className="bg-orange-500 h-1.5 rounded-full"
+                              className="bg-amber-500 h-1.5 rounded-full"
                               style={{ width: `${(file.currentAccess! / file.maxAccess!) * 100}%` }}
                             ></div>
                           </div>
@@ -637,20 +592,18 @@ export default function PublicCollectionsPage() {
                   </div>
                 ) : (
                   // List View
-                  <div className="space-y-3 bg-white rounded-2xl shadow-md p-6">
+                  <div className="bg-white rounded-lg shadow-md p-4">
                     {filteredFiles.map((file, index) => (
                       <motion.div
                         key={file.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between rounded-xl ${file.isLimited ? 'border-l-4 border-orange-500' : 'border-l-4 border-purple-500'}`}
+                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between border-b last:border-0 ${file.isLimited ? 'border-l-4 border-amber-500' : ''}`}
                         onClick={() => handleFileClick(file)}
                       >
                         <div className="flex items-center gap-4">
-                          <div className={`p-3 rounded-lg ${file.isLimited ? 'bg-orange-100' : 'bg-purple-100'}`}>
-                            <FileText className={`w-5 h-5 ${file.isLimited ? 'text-orange-600' : 'text-purple-600'}`} />
-                          </div>
+                          <FileText className={`w-5 h-5 ${file.isLimited ? 'text-amber-500' : 'text-primary'}`} />
                           <div className="max-w-2xl">
                             <h3 className="font-medium text-gray-800 line-clamp-1">{file.title}</h3>
                             <p className="text-sm text-gray-500 line-clamp-1">{file.abstract}</p>
@@ -672,7 +625,7 @@ export default function PublicCollectionsPage() {
                           {file.isLimited && (
                             <div className="w-24 bg-gray-200 rounded-full h-1.5">
                               <div
-                                className="bg-orange-500 h-1.5 rounded-full"
+                                className="bg-amber-500 h-1.5 rounded-full"
                                 style={{ width: `${(file.currentAccess! / file.maxAccess!) * 100}%` }}
                               ></div>
                             </div>
@@ -701,16 +654,14 @@ export default function PublicCollectionsPage() {
               </DialogHeader>
 
               <div className="space-y-6">
-                <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border-l-4 border-purple-400">
+                <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-primary">
                   <h3 className="font-semibold text-gray-800 mb-2">Abstrak</h3>
                   <p className="text-gray-700 leading-relaxed">{selectedFile.abstract}</p>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                   <div className="flex items-center gap-4">
-                    <div className={`${selectedFile.isLimited ? 'bg-orange-100' : 'bg-purple-100'} p-3 rounded-lg`}>
-                      <FileText className={`w-6 h-6 ${selectedFile.isLimited ? 'text-orange-600' : 'text-purple-600'}`} />
-                    </div>
+                    <FileText className={`w-6 h-6 ${selectedFile.isLimited ? 'text-amber-500' : 'text-primary'}`} />
                     <div>
                       <p className="font-medium text-gray-800">{selectedFile.type} Document</p>
                       <p className="text-sm text-gray-600">Ukuran: {selectedFile.size}</p>
@@ -722,7 +673,7 @@ export default function PublicCollectionsPage() {
                       <Eye className="w-4 h-4 mr-2" />
                       Preview
                     </Button>
-                    <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-lg">
+                    <Button className="rounded-lg">
                       <Download className="w-4 h-4 mr-2" />
                       Download
                     </Button>
@@ -730,22 +681,22 @@ export default function PublicCollectionsPage() {
                 </div>
 
                 {selectedFile.isLimited && (
-                  <div className="text-center p-4 bg-orange-50 rounded-xl border border-orange-200">
-                    <p className="text-sm text-orange-800">
-                      ⚠️ <strong>Perhatian:</strong> Dokumen ini memiliki akses terbatas dan telah diakses {selectedFile.currentAccess} dari {selectedFile.maxAccess} kali.
+                  <div className="text-center p-4 bg-amber-50 rounded-lg border border-amber-200">
+                    <p className="text-sm text-amber-800">
+                      <strong>Perhatian:</strong> Dokumen ini memiliki akses terbatas dan telah diakses {selectedFile.currentAccess} dari {selectedFile.maxAccess} kali.
                     </p>
                     <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
                       <div
-                        className="bg-orange-500 h-2 rounded-full"
+                        className="bg-amber-500 h-2 rounded-full"
                         style={{ width: `${(selectedFile.currentAccess! / selectedFile.maxAccess!) * 100}%` }}
                       ></div>
                     </div>
                   </div>
                 )}
 
-                <div className="text-center p-4 bg-yellow-50 rounded-xl border border-yellow-200">
-                  <p className="text-sm text-yellow-800">
-                    💡 <strong>Catatan:</strong> Untuk mengunduh file, silakan login terlebih dahulu atau isi buku tamu.
+                <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-gray-700">
+                    <strong>Catatan:</strong> Untuk mengunduh file, silakan login terlebih dahulu atau isi buku tamu.
                   </p>
                 </div>
               </div>
@@ -753,12 +704,6 @@ export default function PublicCollectionsPage() {
           </Dialog>
         )}
       </div>
-
-      {/* Floating Elements */}
-      <div className="fixed top-20 left-10 w-4 h-4 bg-purple-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0s' }}></div>
-      <div className="fixed top-40 right-20 w-3 h-3 bg-pink-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '1s' }}></div>
-      <div className="fixed bottom-40 left-20 w-5 h-5 bg-indigo-400 rounded-full animate-bounce opacity-60" style={{ animationDelay: '2s' }}></div>
-      <div className="fixed bottom-20 right-10 w-4 h-4 bg-purple-300 rounded-full animate-bounce opacity-60" style={{ animationDelay: '0.5s' }}></div>
     </div>
   )
 }
