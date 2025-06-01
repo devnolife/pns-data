@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { loginAction, registerUserAction, logoutAction, getCurrentUser } from "@/lib/actions/auth"
 
 // User type based on Prisma schema
@@ -85,11 +85,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.success && result.user) {
         setUser(result.user as User)
 
-        // Redirect based on user role
-        if (result.user.role === "ADMIN") {
-          router.push("/dashboard/admin")
+        // Check for callback URL in the current URL
+        const urlParams = new URLSearchParams(window.location.search)
+        const callbackUrl = urlParams.get('callbackUrl')
+
+        if (callbackUrl) {
+          // Decode the callback URL and redirect to it
+          const decodedUrl = decodeURIComponent(callbackUrl)
+          router.push(decodedUrl)
         } else {
-          router.push("/dashboard/user")
+          // Default redirect based on user role
+          if (result.user.role === "ADMIN") {
+            router.push("/dashboard/admin")
+          } else {
+            router.push("/dashboard/user")
+          }
         }
       }
     } catch (err: any) {

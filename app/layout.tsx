@@ -5,10 +5,10 @@ import { ToastProvider } from "@/components/providers/toast-provider"
 import { AuthProviderWrapper } from "@/components/providers/auth-provider"
 
 export const metadata: Metadata = {
-  title: "PNS Data App",
+  title: "Relasi PNS",
   description: "Aplikasi Data PNS",
   generator: "Next.js",
-  applicationName: "PNS Data",
+  applicationName: "Relasi PNS",
   keywords: ["pns", "data", "indonesia", "aplikasi"],
   authors: [{ name: "Developer" }],
   formatDetection: {

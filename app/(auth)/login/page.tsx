@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -14,12 +14,17 @@ import { useAuth } from "@/context/auth-context"
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { login } = useAuth()
   const { success, error, info } = useToastId()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  // Get callback URL if present
+  const callbackUrl = searchParams?.get('callbackUrl')
+  const decodedCallbackUrl = callbackUrl ? decodeURIComponent(callbackUrl) : null
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -109,6 +114,17 @@ export default function LoginPage() {
                 Selamat Datang Kembali!
               </h1>
               <p className="text-gray-600 text-lg">Masuk untuk melanjutkan petualangan Anda ✨</p>
+
+              {/* Show callback URL info if present */}
+              {decodedCallbackUrl && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-xl">
+                  <p className="text-sm text-blue-700">
+                    <span className="font-semibold">🎯 Setelah login, Anda akan diarahkan ke:</span>
+                    <br />
+                    <span className="text-blue-600">{decodedCallbackUrl}</span>
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
