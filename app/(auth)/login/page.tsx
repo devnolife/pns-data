@@ -115,16 +115,6 @@ export default function LoginPage() {
               </h1>
               <p className="text-gray-600 text-lg">Masuk untuk melanjutkan petualangan Anda ✨</p>
 
-              {/* Show callback URL info if present */}
-              {decodedCallbackUrl && (
-                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-xl">
-                  <p className="text-sm text-blue-700">
-                    <span className="font-semibold">🎯 Setelah login, Anda akan diarahkan ke:</span>
-                    <br />
-                    <span className="text-blue-600">{decodedCallbackUrl}</span>
-                  </p>
-                </div>
-              )}
             </div>
           </div>
 
