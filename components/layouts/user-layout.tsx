@@ -1,98 +1,52 @@
 "use client"
 
 import type { ReactNode } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { LayoutDashboard, FileArchive, Upload, User, LogOut } from "lucide-react"
-import { useAuth } from "@/context/auth-context"
-import { Logo } from "@/components/common/logo"
+import { ModernUserSidebar } from "@/components/layouts/modern-user-sidebar"
 import { UserNav } from "@/components/common/user-nav"
 import { Footer } from "@/components/common/footer"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { Bell, Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 interface UserLayoutProps {
   children: ReactNode
 }
 
 export function UserLayout({ children }: UserLayoutProps) {
-  const pathname = usePathname()
-  const { logout } = useAuth()
-
-  const navItems = [
-    {
-      title: "Dashboard",
-      href: "/dashboard/user",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Digital Collection",
-      href: "/dashboard/user/digital-collection",
-      icon: FileArchive,
-    },
-    {
-      title: "Upload Report",
-      href: "/dashboard/user/upload-report",
-      icon: Upload,
-    },
-    {
-      title: "Profile",
-      href: "/dashboard/user/profile",
-      icon: User,
-    },
-  ]
-
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen">
-        <Sidebar>
-          <SidebarHeader className="border-b px-6 py-4">
-            <Logo />
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild isActive={pathname === item.href} tooltip={item.title}>
-                    <Link href={item.href}>
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarContent>
-          <SidebarFooter className="border-t">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => logout()} tooltip="Logout">
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarFooter>
-        </Sidebar>
-        <div className="flex flex-col flex-1">
-          <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-6">
-            <SidebarTrigger />
-            <div className="flex-1" />
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Modern User Sidebar */}
+      <ModernUserSidebar />
+
+      {/* Main content with proper spacing */}
+      <div className="flex flex-1 flex-col ml-4">
+        <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-white/20 bg-white/80 backdrop-blur-sm px-6 shadow-sm rounded-t-xl mt-4 mr-4">
+          {/* Search */}
+          <div className="relative w-full max-w-md">
+            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Cari koleksi, laporan..."
+              className="w-full rounded-lg border-none bg-white/60 pl-9 focus-visible:ring-1 focus-visible:ring-blue-500"
+            />
+          </div>
+
+          <div className="ml-auto flex items-center gap-4">
+            {/* Notifications */}
+            <Button variant="ghost" size="icon" className="relative h-9 w-9 rounded-full hover:bg-blue-50">
+              <Bell className="h-5 w-5 text-gray-600" />
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white">
+                2
+              </span>
+            </Button>
+
+            {/* User Navigation */}
             <UserNav />
-          </header>
-          <main className="flex-1 p-6">{children}</main>
-          <Footer />
-        </div>
+          </div>
+        </header>
+        <main className="flex-1 overflow-auto p-6 mr-4 mb-4 bg-white/30 backdrop-blur-sm rounded-b-xl rounded-tr-xl shadow-sm">{children}</main>
+        <Footer />
       </div>
-    </SidebarProvider>
+    </div>
   )
 }

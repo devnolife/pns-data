@@ -19,17 +19,17 @@ const loginSchema = z.object({
 const registerSchema = z.object({
   username: z.string().min(3, 'Username minimal 3 karakter'),
   email: z.string().email('Format email tidak valid'),
-  password: z.string().min(6, 'Kata sandi minimal 6 karakter'),
+  password: z.string().min(8, 'Kata sandi minimal 8 karakter'),
   name: z.string().optional(),
 })
 
 const registerUserSchema = z.object({
   username: z.string().min(3, 'Username minimal 3 karakter'),
   email: z.string().email('Format email tidak valid'),
-  password: z.string().min(6, 'Kata sandi minimal 6 karakter'),
+  password: z.string().min(8, 'Kata sandi minimal 8 karakter'),
   training: z.string().min(1, 'Pelatihan diperlukan'),
   angkatan: z.string().min(1, 'Angkatan diperlukan'),
-  phone: z.string().min(10, 'Nomor telepon minimal 10 karakter'),
+  phone: z.string().min(10, 'Nomor telepon minimal 10 karakter').regex(/^\d+$/, 'Nomor telepon hanya boleh berisi angka'),
 })
 
 export async function loginAction(formData: FormData) {
@@ -42,7 +42,7 @@ export async function loginAction(formData: FormData) {
     const validatedData = loginSchema.parse(data)
 
     // Find user using Prisma client method
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { username: validatedData.username }
     })
 
@@ -105,7 +105,7 @@ export async function loginUserAction(credentials: { username: string; password:
     }
 
     // Find user using Prisma client method
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { username: credentials.username }
     })
 
@@ -160,7 +160,7 @@ export async function registerAction(formData: FormData) {
     const validatedData = registerSchema.parse(data)
 
     // Check if user exists using Prisma client method
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { username: validatedData.username },
@@ -177,15 +177,16 @@ export async function registerAction(formData: FormData) {
     const hashedPassword = await bcrypt.hash(validatedData.password, 12)
 
     // Create user using Prisma client method
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
+        id: crypto.randomUUID(),
         username: validatedData.username,
         email: validatedData.email,
         password: hashedPassword,
         name: validatedData.name || null,
         role: 'USER',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
       }
     })
 
@@ -245,7 +246,7 @@ export async function getCurrentUser() {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string; username: string; role: string }
 
     // Use Prisma client method to get user data
-    const user = await prisma.user.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id: decoded.id },
       select: {
         id: true,
@@ -254,7 +255,7 @@ export async function getCurrentUser() {
         name: true,
         role: true,
         avatar: true,
-        createdAt: true,
+        created_at: true,
       }
     })
 
@@ -272,7 +273,7 @@ export async function getCurrentUser() {
       training: null, // Set default values for now
       angkatan: null,
       phone: null,
-      createdAt: user.createdAt
+      createdAt: user.created_at
     }
   } catch (error) {
     console.error('Get current user error:', error)
@@ -293,7 +294,7 @@ export async function registerUserAction(data: {
     const validatedData = registerUserSchema.parse(data)
 
     // Check if user exists using Prisma client method
-    const existingUser = await prisma.user.findFirst({
+    const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { username: validatedData.username },
@@ -310,7 +311,7 @@ export async function registerUserAction(data: {
     const hashedPassword = await bcrypt.hash(validatedData.password, 12)
 
     // Create user using Prisma client method
-    const user = await prisma.user.create({
+    const user = await prisma.users.create({
       data: {
         id: crypto.randomUUID(),
         username: validatedData.username,
@@ -321,8 +322,8 @@ export async function registerUserAction(data: {
         training: validatedData.training,
         angkatan: validatedData.angkatan,
         phone: validatedData.phone,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
       }
     })
 
