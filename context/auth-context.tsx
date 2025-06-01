@@ -32,6 +32,7 @@ interface AuthContextType {
     phone: string;
   }) => Promise<void>
   logout: () => Promise<void>
+  refreshUser: () => Promise<void>
   isLoading: boolean
   error: string | null
 }
@@ -146,6 +147,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  // Refresh user data
+  const refreshUser = async () => {
+    try {
+      const userData = await getCurrentUser()
+      if (userData) {
+        setUser(userData as User)
+      } else {
+        setUser(null)
+      }
+    } catch (err) {
+      console.error("Failed to refresh user data:", err)
+      setUser(null)
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -154,6 +170,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         register,
         logout,
+        refreshUser,
         isLoading,
         error
       }}

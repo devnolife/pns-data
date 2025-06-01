@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Sparkles,
   Activity,
+  UserCheck,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useMobile } from "@/hooks/use-mobile"
@@ -81,17 +82,6 @@ const NavItem = ({ icon: Icon, label, href, isActive, notifications, isCollapsed
               </div>
             )}
 
-            {/* New feature indicator */}
-            {isNew && (
-              <div
-                className={cn(
-                  "absolute flex items-center rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm",
-                  isCollapsed ? "-right-1 -top-1" : "right-3 top-1.5",
-                )}
-              >
-                Baru
-              </div>
-            )}
 
             {/* Active indicator line */}
             {isActive && !isCollapsed && (
@@ -143,20 +133,25 @@ export function ModernUserSidebar() {
     },
     {
       icon: FolderOpen,
-      label: "Digital Collection",
+      label: "Koleksi Digital",
       href: "/dashboard/user/digital-collection",
     },
     {
       icon: Upload,
-      label: "Upload Report",
+      label: "Unggah Laporan",
       href: "/dashboard/user/upload-report",
       isNew: true,
     },
     {
       icon: User,
-      label: "Profile",
+      label: "Profil",
       href: "/dashboard/user/profile",
     },
+    {
+      label: "Status Verifikasi",
+      href: "/dashboard/user/verification-status",
+      icon: UserCheck
+    }
   ]
 
   if (!mounted) {
@@ -205,8 +200,8 @@ export function ModernUserSidebar() {
         </Avatar>
         {!isCollapsed && (
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-gray-800">User Account</span>
-            <span className="text-xs text-gray-500">Member</span>
+            <span className="text-sm font-semibold text-gray-800">Akun Pengguna</span>
+            <span className="text-xs text-gray-500">Anggota</span>
           </div>
         )}
       </div>
@@ -216,16 +211,16 @@ export function ModernUserSidebar() {
         <div className="mx-3 mb-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-3">
           <div className="flex items-center gap-2 text-blue-700">
             <Activity className="h-4 w-4" />
-            <span className="text-xs font-medium">Quick Stats</span>
+            <span className="text-xs font-medium">Statistik Cepat</span>
           </div>
           <div className="mt-2 grid grid-cols-2 gap-2 text-xs">
             <div className="text-center">
               <div className="font-bold text-blue-600">12</div>
-              <div className="text-gray-600">Collections</div>
+              <div className="text-gray-600">Koleksi</div>
             </div>
             <div className="text-center">
               <div className="font-bold text-green-600">48</div>
-              <div className="text-gray-600">Reports</div>
+              <div className="text-gray-600">Laporan</div>
             </div>
           </div>
         </div>

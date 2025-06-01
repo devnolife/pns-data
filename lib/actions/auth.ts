@@ -32,6 +32,21 @@ const registerUserSchema = z.object({
   phone: z.string().min(10, 'Nomor telepon minimal 10 karakter').regex(/^\d+$/, 'Nomor telepon hanya boleh berisi angka'),
 })
 
+const updateProfileSchema = z.object({
+  name: z.string().min(1, 'Nama lengkap diperlukan'),
+  email: z.string().email('Format email tidak valid'),
+  phone: z.string().min(10, 'Nomor telepon minimal 10 karakter').regex(/^\d+$/, 'Nomor telepon hanya boleh berisi angka'),
+})
+
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Password saat ini diperlukan'),
+  newPassword: z.string().min(8, 'Password baru minimal 8 karakter'),
+  confirmPassword: z.string().min(1, 'Konfirmasi password diperlukan'),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Password baru tidak cocok",
+  path: ["confirmPassword"],
+})
+
 export async function loginAction(formData: FormData) {
   try {
     const data = {
@@ -74,7 +89,7 @@ export async function loginAction(formData: FormData) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24
+      maxAge: 60 * 60 * 24 * 7 // 7 days to match JWT expiration
     })
 
     return {
@@ -207,7 +222,7 @@ export async function registerAction(formData: FormData) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7 // 7 days to match JWT expiration
     })
 
     return { success: true, user: { id: user.id, username: user.username, role: user.role } }
@@ -255,7 +270,11 @@ export async function getCurrentUser() {
         name: true,
         role: true,
         avatar: true,
+        training: true,
+        angkatan: true,
+        phone: true,
         created_at: true,
+        updated_at: true,
       }
     })
 
@@ -270,10 +289,11 @@ export async function getCurrentUser() {
       name: user.name,
       role: user.role,
       avatar: user.avatar,
-      training: null, // Set default values for now
-      angkatan: null,
-      phone: null,
-      createdAt: user.created_at
+      training: user.training,
+      angkatan: user.angkatan,
+      phone: user.phone,
+      createdAt: user.created_at,
+      updatedAt: user.updated_at,
     }
   } catch (error) {
     console.error('Get current user error:', error)
@@ -343,5 +363,139 @@ export async function registerUserAction(data: {
       return { error: error.errors[0].message }
     }
     return { error: 'Pendaftaran gagal' }
+  }
+}
+
+export async function updateProfileAction(data: {
+  name: string;
+  email: string;
+  phone: string;
+}) {
+  try {
+    // Get current user
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return { error: 'Anda harus login terlebih dahulu' }
+    }
+
+    // Validate the data
+    const validatedData = updateProfileSchema.parse(data)
+
+    // Check if email is already used by another user
+    const existingUser = await prisma.users.findFirst({
+      where: {
+        email: validatedData.email,
+        NOT: {
+          id: currentUser.id
+        }
+      }
+    })
+
+    if (existingUser) {
+      return { error: 'Email sudah digunakan oleh pengguna lain' }
+    }
+
+    // Update user profile
+    const updatedUser = await prisma.users.update({
+      where: { id: currentUser.id },
+      data: {
+        name: validatedData.name,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        updated_at: new Date(),
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        name: true,
+        role: true,
+        avatar: true,
+        training: true,
+        angkatan: true,
+        phone: true,
+        created_at: true,
+        updated_at: true,
+      }
+    })
+
+    return {
+      success: true,
+      user: {
+        id: updatedUser.id,
+        username: updatedUser.username,
+        email: updatedUser.email,
+        name: updatedUser.name,
+        role: updatedUser.role,
+        avatar: updatedUser.avatar,
+        training: updatedUser.training,
+        angkatan: updatedUser.angkatan,
+        phone: updatedUser.phone,
+        createdAt: updatedUser.created_at,
+        updatedAt: updatedUser.updated_at,
+      }
+    }
+  } catch (error) {
+    console.error('Update profile error:', error)
+    if (error instanceof z.ZodError) {
+      return { error: error.errors[0].message }
+    }
+    return { error: 'Gagal memperbarui profil' }
+  }
+}
+
+export async function changePasswordAction(data: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}) {
+  try {
+    // Get current user
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return { error: 'Anda harus login terlebih dahulu' }
+    }
+
+    // Validate the data
+    const validatedData = changePasswordSchema.parse(data)
+
+    // Get user with password for verification
+    const user = await prisma.users.findUnique({
+      where: { id: currentUser.id },
+      select: {
+        id: true,
+        password: true,
+      }
+    })
+
+    if (!user) {
+      return { error: 'Pengguna tidak ditemukan' }
+    }
+
+    // Verify current password
+    const isValidPassword = await bcrypt.compare(validatedData.currentPassword, user.password)
+    if (!isValidPassword) {
+      return { error: 'Password saat ini tidak benar' }
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(validatedData.newPassword, 12)
+
+    // Update password
+    await prisma.users.update({
+      where: { id: currentUser.id },
+      data: {
+        password: hashedNewPassword,
+        updated_at: new Date(),
+      }
+    })
+
+    return { success: true, message: 'Password berhasil diperbarui' }
+  } catch (error) {
+    console.error('Change password error:', error)
+    if (error instanceof z.ZodError) {
+      return { error: error.errors[0].message }
+    }
+    return { error: 'Gagal mengubah password' }
   }
 } 

@@ -10,10 +10,11 @@ import { Label } from "@/components/ui/label"
 import { useToastId } from "@/hooks/use-toast-id"
 import { motion } from "framer-motion"
 import { Eye, EyeOff } from "lucide-react"
-import { loginAction } from "@/lib/actions/auth"
+import { useAuth } from "@/context/auth-context"
 
 export default function LoginPage() {
   const router = useRouter()
+  const { login } = useAuth()
   const { success, error, info } = useToastId()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -38,32 +39,14 @@ export default function LoginPage() {
         description: "Sedang memproses permintaan login Anda...",
       })
 
-      // Create form data for the server action
-      const formData = new FormData()
-      formData.append('username', username)
-      formData.append('password', password)
-
-      // Call the server action directly
-      const result = await loginAction(formData)
-
-      if (result.error) {
-        error("loginFailed", {
-          description: result.error,
-        })
-        setIsLoading(false)
-        return
-      }
+      // Use auth context login function
+      await login(username, password)
 
       success("loginSuccess", {
         description: "Login berhasil!",
       })
 
-      // Redirect based on user role
-      if (result.user?.role === "ADMIN") {
-        router.push("/dashboard/admin")
-      } else {
-        router.push("/dashboard/user")
-      }
+      // The auth context will handle the redirect
     } catch (err) {
       console.error("Login error:", err)
       error("loginFailed", {

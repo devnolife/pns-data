@@ -53,14 +53,14 @@ export default function UserDashboardLayout({ children }: UserDashboardLayoutPro
                 </AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
-                <span className="text-sm font-medium">{user?.name || "User"}</span>
-                <span className="text-xs text-muted-foreground">User Dashboard</span>
+                <span className="text-sm font-medium">{user?.name || "Pengguna"}</span>
+                <span className="text-xs text-muted-foreground">Dashboard Pengguna</span>
               </div>
             </div>
           </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupLabel>Navigasi</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
@@ -75,11 +75,11 @@ export default function UserDashboardLayout({ children }: UserDashboardLayoutPro
                     <SidebarMenuButton
                       asChild
                       isActive={isActive("/dashboard/user/digital-collection")}
-                      tooltip="Digital Collections"
+                      tooltip="Koleksi Digital"
                     >
                       <Link href="/dashboard/user/digital-collection">
                         <FolderOpen className="h-5 w-5" />
-                        <span>Digital Collections</span>
+                        <span>Koleksi Digital</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -87,13 +87,13 @@ export default function UserDashboardLayout({ children }: UserDashboardLayoutPro
                     <SidebarMenuButton
                       asChild
                       isActive={isActive("/dashboard/user/upload-report")}
-                      tooltip="Upload Report"
+                      tooltip="Unggah Laporan"
                     >
                       <Link href="/dashboard/user/upload-report">
                         <Upload className="h-5 w-5" />
-                        <span>Upload Report</span>
+                        <span>Unggah Laporan</span>
                         <Badge variant="secondary" className="ml-auto">
-                          New
+                          Baru
                         </Badge>
                       </Link>
                     </SidebarMenuButton>
@@ -103,22 +103,22 @@ export default function UserDashboardLayout({ children }: UserDashboardLayoutPro
             </SidebarGroup>
             <SidebarSeparator />
             <SidebarGroup>
-              <SidebarGroupLabel>Account</SidebarGroupLabel>
+              <SidebarGroupLabel>Akun</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/user/profile")} tooltip="Profile">
+                    <SidebarMenuButton asChild isActive={isActive("/dashboard/user/profile")} tooltip="Profil">
                       <Link href="/dashboard/user/profile">
                         <User className="h-5 w-5" />
-                        <span>Profile</span>
+                        <span>Profil</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/dashboard/user/settings")} tooltip="Settings">
+                    <SidebarMenuButton asChild isActive={isActive("/dashboard/user/settings")} tooltip="Pengaturan">
                       <Link href="/dashboard/user/settings">
                         <Settings className="h-5 w-5" />
-                        <span>Settings</span>
+                        <span>Pengaturan</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -129,7 +129,7 @@ export default function UserDashboardLayout({ children }: UserDashboardLayoutPro
           <SidebarFooter>
             <Button variant="ghost" className="w-full justify-start gap-2" onClick={logout}>
               <LogOut className="h-5 w-5" />
-              <span>Logout</span>
+              <span>Keluar</span>
             </Button>
           </SidebarFooter>
           <SidebarRail />
@@ -140,13 +140,13 @@ export default function UserDashboardLayout({ children }: UserDashboardLayoutPro
             <SidebarTrigger />
             <div className="relative hidden md:block max-w-md flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input placeholder="Search..." className="pl-10 max-w-md" />
+              <Input placeholder="Cari..." className="pl-10 max-w-md" />
             </div>
             <div className="ml-auto flex items-center gap-4">
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
                 <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-primary"></span>
-                <span className="sr-only">Notifications</span>
+                <span className="sr-only">Notifikasi</span>
               </Button>
               <ModeToggle />
               <Avatar className="h-8 w-8 border border-border">

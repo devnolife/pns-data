@@ -46,13 +46,21 @@ export async function createCollectionAction(formData: FormData) {
 
     const validatedData = createCollectionSchema.parse(data)
 
-    const collection = await prisma.collection.create({
+    const collection = await prisma.collections.create({
       data: {
-        ...validatedData,
-        authorId: currentUser.id,
+        id: crypto.randomUUID(),
+        title: validatedData.title,
+        description: validatedData.description,
+        content: validatedData.content,
+        category: validatedData.category,
+        tags: validatedData.tags,
+        image_url: validatedData.imageUrl,
+        is_public: validatedData.isPublic,
+        author_id: currentUser.id,
+        updated_at: new Date(),
       },
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -94,7 +102,7 @@ export async function updateCollectionAction(formData: FormData) {
     const validatedData = updateCollectionSchema.parse(data)
 
     // Check if user owns the collection or is admin
-    const existingCollection = await prisma.collection.findUnique({
+    const existingCollection = await prisma.collections.findUnique({
       where: { id: validatedData.id }
     })
 
@@ -102,24 +110,24 @@ export async function updateCollectionAction(formData: FormData) {
       return { error: 'Koleksi tidak ditemukan' }
     }
 
-    if (existingCollection.authorId !== currentUser.id && currentUser.role !== 'ADMIN') {
+    if (existingCollection.author_id !== currentUser.id && currentUser.role !== 'ADMIN') {
       return { error: 'Tidak memiliki akses untuk mengubah koleksi ini' }
     }
 
-    const updateData: any = {}
+    const updateData: any = { updated_at: new Date() }
     if (validatedData.title) updateData.title = validatedData.title
     if (validatedData.description !== undefined) updateData.description = validatedData.description
     if (validatedData.content) updateData.content = validatedData.content
     if (validatedData.category !== undefined) updateData.category = validatedData.category
     if (validatedData.tags !== undefined) updateData.tags = validatedData.tags
-    if (validatedData.imageUrl !== undefined) updateData.imageUrl = validatedData.imageUrl
-    if (validatedData.isPublic !== undefined) updateData.isPublic = validatedData.isPublic
+    if (validatedData.imageUrl !== undefined) updateData.image_url = validatedData.imageUrl
+    if (validatedData.isPublic !== undefined) updateData.is_public = validatedData.isPublic
 
-    const collection = await prisma.collection.update({
+    const collection = await prisma.collections.update({
       where: { id: validatedData.id },
       data: updateData,
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -148,7 +156,7 @@ export async function deleteCollectionAction(id: string) {
       return { error: 'Tidak memiliki akses' }
     }
 
-    const existingCollection = await prisma.collection.findUnique({
+    const existingCollection = await prisma.collections.findUnique({
       where: { id }
     })
 
@@ -156,11 +164,11 @@ export async function deleteCollectionAction(id: string) {
       return { error: 'Koleksi tidak ditemukan' }
     }
 
-    if (existingCollection.authorId !== currentUser.id && currentUser.role !== 'ADMIN') {
+    if (existingCollection.author_id !== currentUser.id && currentUser.role !== 'ADMIN') {
       return { error: 'Tidak memiliki akses untuk menghapus koleksi ini' }
     }
 
-    await prisma.collection.delete({
+    await prisma.collections.delete({
       where: { id }
     })
 
@@ -181,22 +189,22 @@ export async function getCollectionsAction(page = 1, limit = 10, category?: stri
 
     // If user is not logged in, only show public collections
     if (!currentUser) {
-      where.isPublic = true
+      where.is_public = true
     } else if (isPublic !== undefined) {
-      where.isPublic = isPublic
+      where.is_public = isPublic
     } else if (currentUser.role !== 'ADMIN') {
       // Non-admin users see public collections and their own collections
       where.OR = [
-        { isPublic: true },
-        { authorId: currentUser.id }
+        { is_public: true },
+        { author_id: currentUser.id }
       ]
     }
 
     const [collections, total] = await Promise.all([
-      prisma.collection.findMany({
+      prisma.collections.findMany({
         where,
         include: {
-          author: {
+          users: {
             select: {
               id: true,
               username: true,
@@ -204,11 +212,11 @@ export async function getCollectionsAction(page = 1, limit = 10, category?: stri
             }
           }
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
-      prisma.collection.count({ where })
+      prisma.collections.count({ where })
     ])
 
     return {
@@ -231,10 +239,10 @@ export async function getCollectionByIdAction(id: string) {
   try {
     const currentUser = await getCurrentUser()
 
-    const collection = await prisma.collection.findUnique({
+    const collection = await prisma.collections.findUnique({
       where: { id },
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -249,11 +257,11 @@ export async function getCollectionByIdAction(id: string) {
     }
 
     // Check if user can access this collection
-    if (!collection.isPublic) {
+    if (!collection.is_public) {
       if (!currentUser) {
         return { error: 'Tidak memiliki akses untuk melihat koleksi ini' }
       }
-      if (currentUser.role !== 'ADMIN' && collection.authorId !== currentUser.id) {
+      if (currentUser.role !== 'ADMIN' && collection.author_id !== currentUser.id) {
         return { error: 'Tidak memiliki akses untuk melihat koleksi ini' }
       }
     }
@@ -268,12 +276,12 @@ export async function getCollectionByIdAction(id: string) {
 export async function getPublicCollectionsByCategory() {
   try {
     // Get all public collections
-    const collections = await prisma.collection.findMany({
+    const collections = await prisma.collections.findMany({
       where: {
-        isPublic: true
+        is_public: true
       },
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -282,17 +290,17 @@ export async function getPublicCollectionsByCategory() {
         }
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       }
     });
 
     // Get all limited collections
-    const limitedCollections = await prisma.limitedCollection.findMany({
+    const limitedCollections = await prisma.limited_collections.findMany({
       where: {
-        isActive: true
+        is_active: true
       },
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -301,7 +309,7 @@ export async function getPublicCollectionsByCategory() {
         }
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       }
     });
 
@@ -341,15 +349,15 @@ export async function getPublicCollectionsByCategory() {
     const categorizedCollections = categories.map(category => {
       // Filter collections by category
       const categoryCollections = collections.filter(
-        collection => collection.category === category.id
+        (collection: any) => collection.category === category.id
       );
 
       // Map the collections to the expected format
-      const files = categoryCollections.map(collection => ({
+      const files = categoryCollections.map((collection: any) => ({
         id: collection.id,
         title: collection.title,
-        author: collection.author?.name || collection.author?.username || "Unknown",
-        year: new Date(collection.createdAt).getFullYear().toString(),
+        author: collection.users?.name || collection.users?.username || "Unknown",
+        year: new Date(collection.created_at).getFullYear().toString(),
         batch: "General",
         abstract: collection.description || "",
         type: "PDF",
@@ -360,21 +368,21 @@ export async function getPublicCollectionsByCategory() {
 
       // Map limited collections with this category
       const limitedFiles = limitedCollections
-        .filter(lc => lc.category === category.id)
-        .map(lc => ({
+        .filter((lc: any) => lc.category === category.id)
+        .map((lc: any) => ({
           id: lc.id,
           title: lc.title,
-          author: lc.author?.name || lc.author?.username || "Unknown",
-          year: new Date(lc.createdAt).getFullYear().toString(),
-          batch: `Limited (${lc.currentAccess}/${lc.maxAccess})`,
+          author: lc.users?.name || lc.users?.username || "Unknown",
+          year: new Date(lc.created_at).getFullYear().toString(),
+          batch: `Limited (${lc.current_access}/${lc.max_access})`,
           abstract: lc.description || "",
           type: "PDF",
           size: "3.2 MB", // Mock size
           downloadUrl: `/limited-collections/${lc.id}`,
           content: lc.content,
           isLimited: true,
-          maxAccess: lc.maxAccess,
-          currentAccess: lc.currentAccess
+          maxAccess: lc.max_access,
+          currentAccess: lc.current_access
         }));
 
       // Combine both types of collections
@@ -400,28 +408,28 @@ export async function getPublicCollectionsByCategory() {
 export async function getAvailableYears() {
   try {
     // Get all public collections
-    const collections = await prisma.collection.findMany({
+    const collections = await prisma.collections.findMany({
       where: {
-        isPublic: true
+        is_public: true
       },
       select: {
-        createdAt: true
+        created_at: true
       }
     });
 
     // Get all limited collections
-    const limitedCollections = await prisma.limitedCollection.findMany({
+    const limitedCollections = await prisma.limited_collections.findMany({
       where: {
-        isActive: true
+        is_active: true
       },
       select: {
-        createdAt: true
+        created_at: true
       }
     });
 
     // Extract years from collections
-    const collectionYears = collections.map(c => new Date(c.createdAt).getFullYear());
-    const limitedCollectionYears = limitedCollections.map(c => new Date(c.createdAt).getFullYear());
+    const collectionYears = collections.map((c: any) => new Date(c.created_at).getFullYear());
+    const limitedCollectionYears = limitedCollections.map((c: any) => new Date(c.created_at).getFullYear());
 
     // Combine and remove duplicates
     const allYears = [...collectionYears, ...limitedCollectionYears];
@@ -447,16 +455,16 @@ export async function getPublicCollectionsByYear(year?: number) {
     const endDate = new Date(targetYear, 11, 31, 23, 59, 59, 999); // December 31st 23:59:59.999
 
     // Get all public collections for the target year
-    const collections = await prisma.collection.findMany({
+    const collections = await prisma.collections.findMany({
       where: {
-        isPublic: true,
-        createdAt: {
+        is_public: true,
+        created_at: {
           gte: startDate,
           lte: endDate
         }
       },
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -465,21 +473,21 @@ export async function getPublicCollectionsByYear(year?: number) {
         }
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       }
     });
 
     // Get all limited collections for the target year
-    const limitedCollections = await prisma.limitedCollection.findMany({
+    const limitedCollections = await prisma.limited_collections.findMany({
       where: {
-        isActive: true,
-        createdAt: {
+        is_active: true,
+        created_at: {
           gte: startDate,
           lte: endDate
         }
       },
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,
@@ -488,7 +496,7 @@ export async function getPublicCollectionsByYear(year?: number) {
         }
       },
       orderBy: {
-        createdAt: 'desc'
+        created_at: 'desc'
       }
     });
 
@@ -528,15 +536,15 @@ export async function getPublicCollectionsByYear(year?: number) {
     const categorizedCollections = categories.map(category => {
       // Filter collections by category
       const categoryCollections = collections.filter(
-        collection => collection.category === category.id
+        (collection: any) => collection.category === category.id
       );
 
       // Map the collections to the expected format
-      const files = categoryCollections.map(collection => ({
+      const files = categoryCollections.map((collection: any) => ({
         id: collection.id,
         title: collection.title,
-        author: collection.author?.name || collection.author?.username || "Unknown",
-        year: new Date(collection.createdAt).getFullYear().toString(),
+        author: collection.users?.name || collection.users?.username || "Unknown",
+        year: new Date(collection.created_at).getFullYear().toString(),
         batch: "General",
         abstract: collection.description || "",
         type: "PDF",
@@ -547,21 +555,21 @@ export async function getPublicCollectionsByYear(year?: number) {
 
       // Map limited collections with this category
       const limitedFiles = limitedCollections
-        .filter(lc => lc.category === category.id)
-        .map(lc => ({
+        .filter((lc: any) => lc.category === category.id)
+        .map((lc: any) => ({
           id: lc.id,
           title: lc.title,
-          author: lc.author?.name || lc.author?.username || "Unknown",
-          year: new Date(lc.createdAt).getFullYear().toString(),
-          batch: `Limited (${lc.currentAccess}/${lc.maxAccess})`,
+          author: lc.users?.name || lc.users?.username || "Unknown",
+          year: new Date(lc.created_at).getFullYear().toString(),
+          batch: `Limited (${lc.current_access}/${lc.max_access})`,
           abstract: lc.description || "",
           type: "PDF",
           size: "3.2 MB", // Mock size
           downloadUrl: `/limited-collections/${lc.id}`,
           content: lc.content,
           isLimited: true,
-          maxAccess: lc.maxAccess,
-          currentAccess: lc.currentAccess
+          maxAccess: lc.max_access,
+          currentAccess: lc.current_access
         }));
 
       // Combine both types of collections

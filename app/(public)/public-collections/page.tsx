@@ -1,10 +1,26 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Search, Folder, FileText, ArrowLeft, Download, Eye, Calendar, User, Grid, List } from "lucide-react"
+import {
+  FolderOpen,
+  FileText,
+  Search,
+  ArrowLeft,
+  Calendar,
+  Users,
+  BookOpen,
+  Eye,
+  Sparkles,
+  Star,
+  Zap,
+  Download,
+  User
+} from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { getPublicCollectionsByCategory, getPublicCollectionsByYear, getAvailableYears } from "@/lib/actions/collections"
 
@@ -32,10 +48,10 @@ interface FolderData {
   color: string
   files: FileItem[]
   totalFiles: number
+  gradient?: string
 }
 
 type ViewType = 'years' | 'folders' | 'files'
-type DisplayMode = 'grid' | 'list'
 
 export default function PublicCollectionsPage() {
   const [currentView, setCurrentView] = useState<ViewType>('years')
@@ -49,8 +65,8 @@ export default function PublicCollectionsPage() {
   const [error, setError] = useState<string | null>(null)
   const [availableYears, setAvailableYears] = useState<number[]>([])
   const [selectedYear, setSelectedYear] = useState<number | null>(null)
-  const [displayMode, setDisplayMode] = useState<DisplayMode>('grid')
   const [totalDocuments, setTotalDocuments] = useState(0)
+  const [breadcrumb, setBreadcrumb] = useState<{ id: string; name: string }[]>([])
 
   // Fetch years data from the database
   useEffect(() => {
@@ -63,13 +79,18 @@ export default function PublicCollectionsPage() {
           setError(result.error)
         } else if (result.success && result.years.length > 0) {
           setAvailableYears(result.years)
-          setSelectedYear(result.years[0]) // Select the first (most recent) year
+          setBreadcrumb([{ id: 'root', name: 'Koleksi Digital Publik' }])
         } else {
           // If no years available, fetch all collections
           const allCollections = await getPublicCollectionsByCategory()
           if (allCollections.success) {
-            setFolders(allCollections.categories)
+            const foldersWithGradients = allCollections.categories.map((folder, index) => ({
+              ...folder,
+              gradient: getGradientByIndex(index)
+            }))
+            setFolders(foldersWithGradients)
             setCurrentView('folders')
+            setBreadcrumb([{ id: 'root', name: 'Koleksi Digital Publik' }])
           } else if (allCollections.error) {
             setError(allCollections.error)
           }
@@ -96,7 +117,11 @@ export default function PublicCollectionsPage() {
           if (result.error) {
             setError(result.error)
           } else if (result.success) {
-            setFolders(result.categories)
+            const foldersWithGradients = result.categories.map((folder, index) => ({
+              ...folder,
+              gradient: getGradientByIndex(index)
+            }))
+            setFolders(foldersWithGradients)
             setTotalDocuments(result.totalDocuments)
           }
         } catch (err) {
@@ -122,26 +147,49 @@ export default function PublicCollectionsPage() {
     setTimeout(checkAccess, 500)
   }, [])
 
+  const getGradientByIndex = (index: number) => {
+    const gradients = [
+      'from-purple-500 via-pink-500 to-red-500',
+      'from-blue-500 via-cyan-500 to-teal-500',
+      'from-green-500 via-emerald-500 to-cyan-500',
+      'from-orange-500 via-yellow-500 to-amber-500',
+      'from-indigo-500 via-purple-500 to-pink-500',
+      'from-rose-500 via-pink-500 to-purple-500'
+    ]
+    return gradients[index % gradients.length]
+  }
+
   const handleYearSelect = (year: number) => {
     setSelectedYear(year)
     setCurrentView('folders')
+    setBreadcrumb([
+      { id: 'root', name: 'Koleksi Digital Publik' },
+      { id: 'year', name: `Arsip ${year}` }
+    ])
   }
 
   const handleFolderClick = (folder: FolderData) => {
     setSelectedFolder(folder)
     setCurrentView('files')
+    setBreadcrumb([
+      ...breadcrumb,
+      { id: folder.id, name: folder.name }
+    ])
   }
 
   const handleBackToFolders = () => {
     setCurrentView('folders')
     setSelectedFolder(null)
     setSearchTerm("")
+    setBreadcrumb(breadcrumb.slice(0, -1))
   }
 
   const handleBackToYears = () => {
     setCurrentView('years')
     setSelectedFolder(null)
     setSearchTerm("")
+    setSelectedYear(null)
+    setBreadcrumb([{ id: 'root', name: 'Koleksi Digital Publik' }])
   }
 
   const handleFileClick = (file: FileItem) => {
@@ -149,8 +197,19 @@ export default function PublicCollectionsPage() {
     setDialogOpen(true)
   }
 
-  const toggleDisplayMode = () => {
-    setDisplayMode(prev => prev === 'grid' ? 'list' : 'grid')
+  const navigateBack = (targetIndex: number) => {
+    if (targetIndex === 0) {
+      // Back to root
+      setCurrentView('years')
+      setSelectedFolder(null)
+      setSelectedYear(null)
+      setBreadcrumb([{ id: 'root', name: 'Koleksi Digital Publik' }])
+    } else if (targetIndex === 1 && breadcrumb.length > 2) {
+      // Back to folders
+      setCurrentView('folders')
+      setSelectedFolder(null)
+      setBreadcrumb(breadcrumb.slice(0, 2))
+    }
   }
 
   const filteredFiles = selectedFolder?.files.filter(file =>
@@ -158,552 +217,467 @@ export default function PublicCollectionsPage() {
     file.author.toLowerCase().includes(searchTerm.toLowerCase())
   ) || []
 
-  // Loading state
+  // Loading state with modern design
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-4"></div>
-          <p className="text-primary font-medium">Memuat halaman...</p>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex items-center justify-center">
+        <div className="relative">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
+          <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 border-4 border-pink-400 opacity-20"></div>
         </div>
       </div>
     )
   }
 
-  // Error state
+  // Error state with modern design
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-lg shadow-md max-w-md">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Terjadi Kesalahan</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
-          <Button
-            onClick={() => window.location.reload()}
-            className="bg-primary hover:bg-primary/90"
-          >
-            Coba Lagi
-          </Button>
-        </div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 flex items-center justify-center p-6">
+        <Card className="max-w-md bg-white/70 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold text-red-600 mb-2">Oops! Something went wrong 😢</CardTitle>
+            <CardDescription className="text-gray-600">{error}</CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button
+              onClick={() => window.location.reload()}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-2xl px-6 py-3 font-bold"
+            >
+              Try Again ✨
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
-  // No access state
+  // No access state with modern design
   if (!hasAccess) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header Section */}
-        <div className="bg-primary">
-          <div className="container mx-auto py-16 px-4 md:px-6">
-            <div className="text-center text-white">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                Akses Terbatas
-              </h1>
-              <p className="text-lg opacity-90 max-w-2xl mx-auto">
-                Untuk mengakses koleksi digital, silakan isi buku tamu terlebih dahulu.
-              </p>
-            </div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+        {/* Floating decorative elements */}
+        <div className="fixed top-20 left-10 h-20 w-20 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full animate-pulse blur-xl" />
+        <div className="fixed top-40 right-20 h-16 w-16 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full animate-pulse blur-xl" />
+
+        {/* Header with Gen Z vibes */}
+        <div className="p-6 text-center">
+          <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+            Akses Terbatas 🔒
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Untuk mengakses koleksi digital yang absolutely amazing, silakan isi buku tamu terlebih dahulu! ✨
+          </p>
         </div>
 
         <div className="container mx-auto py-12 px-4 md:px-6">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                Koleksi Digital Menanti Anda
-              </h2>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Dapatkan akses ke ribuan dokumen, laporan, dan materi pembelajaran berkualitas tinggi.
-                Cukup isi buku tamu untuk membuka akses penuh ke koleksi digital kami.
-              </p>
+          <div className="max-w-2xl mx-auto">
+            <Card className="bg-white/70 backdrop-blur-md border-0 shadow-2xl rounded-3xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 text-white p-8">
+                <CardTitle className="text-3xl font-bold mb-2">Koleksi Digital Menanti Anda 🚀</CardTitle>
+                <CardDescription className="text-blue-100 text-lg">
+                  Dapatkan akses ke ribuan dokumen, laporan, dan materi pembelajaran berkualitas tinggi yang totally epic!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                  {folders.slice(0, 4).map((folder, index) => (
+                    <div
+                      key={folder.id}
+                      className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-2xl border border-gray-200 shadow-lg"
+                    >
+                      <p className="text-sm font-bold text-gray-800">{folder.name}</p>
+                      <p className="text-xs text-gray-600">{folder.totalFiles}+ dokumen yang fire! 🔥</p>
+                    </div>
+                  ))}
+                </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                {folders.map((folder) => (
-                  <div
-                    key={folder.id}
-                    className="bg-gray-50 p-4 rounded-lg border border-gray-200"
+                <div className="text-center">
+                  <a
+                    href="/guestbook"
+                    className="inline-flex items-center bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    <p className="text-sm font-medium text-gray-800">{folder.name}</p>
-                    <p className="text-xs text-gray-600">{folder.totalFiles}+ dokumen</p>
-                  </div>
-                ))}
-              </div>
-
-              <a
-                href="/guestbook"
-                className="inline-flex items-center bg-primary hover:bg-primary/90 text-white font-bold px-6 py-3 rounded-lg transition-colors"
-              >
-                Isi Buku Tamu Sekarang
-              </a>
-
-              <p className="text-xs text-gray-500 mt-4">
-                Gratis dan hanya membutuhkan waktu 2 menit!
-              </p>
-            </div>
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Isi Buku Tamu Sekarang ✨
+                  </a>
+                  <p className="text-xs text-gray-500 mt-4">
+                    Gratis dan hanya membutuhkan waktu 2 menit! No cap! 😎
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
     )
   }
 
-  // Main content with access
+  // Main content with access and modern design
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header Section */}
-      <div className="bg-primary">
-        <div className="container mx-auto py-16 px-4 md:px-6">
-          <div className="text-center text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Koleksi Digital
-            </h1>
-            <p className="text-lg opacity-90 max-w-2xl mx-auto">
-              Jelajahi koleksi laporan dan dokumen terbaik dari berbagai program pelatihan.
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-6">
+      {/* Floating decorative elements */}
+      <div className="fixed top-20 left-10 h-20 w-20 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full animate-pulse blur-xl" />
+      <div className="fixed top-40 right-20 h-16 w-16 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full animate-pulse blur-xl" />
+      <div className="fixed bottom-40 left-20 h-24 w-24 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-full animate-pulse blur-xl" />
+
+      {/* Header with Gen Z vibes */}
+      <div className="mb-12 text-center">
+        <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+          Koleksi Digital Publik ✨
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Jelajahi koleksi laporan dan dokumen terbaik yang absolutely amazing! 🚀
+        </p>
       </div>
 
-      <div className="container mx-auto py-12 px-4 md:px-6">
-        <AnimatePresence mode="wait">
-          {currentView === 'years' && (
-            <motion.div
-              key="years"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Years View */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-800">Pilih Tahun Arsip</h2>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant={displayMode === 'grid' ? 'default' : 'outline'}
-                      size="sm"
-                      className="rounded-lg"
-                      onClick={() => setDisplayMode('grid')}
-                    >
-                      <Grid className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant={displayMode === 'list' ? 'default' : 'outline'}
-                      size="sm"
-                      className="rounded-lg"
-                      onClick={() => setDisplayMode('list')}
-                    >
-                      <List className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-
-                {displayMode === 'grid' ? (
-                  // Grid View
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {availableYears.map((year, index) => (
-                      <motion.div
-                        key={year}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300"
-                        onClick={() => handleYearSelect(year)}
-                      >
-                        <div className="h-32 bg-primary flex items-center justify-center">
-                          <span className="text-4xl font-bold text-white">
-                            {year}
-                          </span>
-                        </div>
-                        <div className="p-4 text-center">
-                          <p className="text-gray-700 font-medium">Arsip Dokumen</p>
-                          <p className="text-sm text-gray-500">Klik untuk melihat</p>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  // List View
-                  <div className="space-y-3">
-                    {availableYears.map((year, index) => (
-                      <motion.div
-                        key={year}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between"
-                        onClick={() => handleYearSelect(year)}
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                            <span className="text-xl font-bold text-white">{year}</span>
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-gray-800">Arsip Tahun {year}</h3>
-                            <p className="text-sm text-gray-500">Koleksi dokumen dan laporan</p>
-                          </div>
-                        </div>
-                        <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
+      {/* Modern Breadcrumb */}
+      <div className="mb-8">
+        <nav className="flex items-center justify-center">
+          <div className="flex items-center space-x-3 bg-white/60 backdrop-blur-md rounded-full px-6 py-3 shadow-lg border border-white/20">
+            {breadcrumb.map((crumb, index) => (
+              <div key={crumb.id} className="flex items-center">
+                {index > 0 && <span className="mx-3 text-purple-400">✨</span>}
+                <button
+                  onClick={() => navigateBack(index)}
+                  className={`px-4 py-2 rounded-full transition-all duration-300 ${index === breadcrumb.length - 1
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold shadow-lg'
+                    : 'text-gray-600 hover:bg-white/50 hover:text-purple-600'
+                    }`}
+                >
+                  {crumb.name}
+                </button>
               </div>
-            </motion.div>
-          )}
+            ))}
+          </div>
+        </nav>
+      </div>
 
-          {currentView === 'folders' && (
-            <motion.div
-              key="folders"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Folders View */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <Button
-                      onClick={handleBackToYears}
-                      variant="outline"
-                      className="mb-2 hover:bg-gray-100 rounded-lg"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Kembali ke Tahun
-                    </Button>
-                    <h2 className="text-2xl font-bold text-gray-800 mt-2">
-                      Arsip Tahun {selectedYear}
-                      <span className="ml-2 text-sm font-normal text-gray-500">({totalDocuments} dokumen)</span>
-                    </h2>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant={displayMode === 'grid' ? 'default' : 'outline'}
-                      size="sm"
-                      className="rounded-lg"
-                      onClick={() => setDisplayMode('grid')}
-                    >
-                      <Grid className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant={displayMode === 'list' ? 'default' : 'outline'}
-                      size="sm"
-                      className="rounded-lg"
-                      onClick={() => setDisplayMode('list')}
-                    >
-                      <List className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+      <AnimatePresence mode="wait">
+        {currentView === 'years' && (
+          <motion.div
+            key="years"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Years View with modern cards */}
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Pilih Tahun Arsip 📅
+              </h2>
 
-                {folders.length === 0 ? (
-                  <div className="text-center py-16 bg-white rounded-lg shadow-md">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">Tidak Ada Dokumen</h3>
-                    <p className="text-gray-600">Tidak ada dokumen yang tersedia untuk tahun {selectedYear}</p>
-                  </div>
-                ) : displayMode === 'grid' ? (
-                  // Grid View
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {folders.map((folder, index) => (
-                      <motion.div
-                        key={folder.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="bg-white shadow-md rounded-lg p-6 cursor-pointer hover:shadow-lg transition-all duration-300"
-                        onClick={() => handleFolderClick(folder)}
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-xl font-bold text-gray-800">
-                            {folder.name}
-                          </h3>
-                          <div className="bg-gray-100 rounded-full px-3 py-1">
-                            <span className="text-gray-600 font-medium text-sm">
-                              {folder.totalFiles} file
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {availableYears.map((year, index) => (
+                  <motion.div
+                    key={year}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card
+                      className="group overflow-hidden bg-white/60 backdrop-blur-md border-0 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer rounded-3xl hover:scale-105 hover:-translate-y-2"
+                      onClick={() => handleYearSelect(year)}
+                    >
+                      <CardHeader className="pb-4 p-6 relative">
+                        <div className="flex items-center gap-4">
+                          <div className={`p-4 rounded-2xl bg-gradient-to-r ${getGradientByIndex(index)} shadow-lg`}>
+                            <Calendar className="h-6 w-6 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <CardTitle className="text-2xl font-bold text-gray-800 group-hover:text-purple-600 transition-colors">
+                              {year}
+                            </CardTitle>
+                            <CardDescription className="text-sm mt-2 text-gray-600">
+                              Arsip dokumen yang epic! 🔥
+                            </CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0 px-6 pb-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <FolderOpen className="h-4 w-4 text-purple-400" />
+                            <span className="text-sm text-gray-600 font-medium">
+                              Klik untuk explore! 🚀
                             </span>
                           </div>
                         </div>
+                      </CardContent>
+                      {/* Hover effect overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 rounded-3xl" />
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
 
-                        <p className="text-gray-600 text-sm mb-4">
-                          {folder.description}
-                        </p>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-gray-500">
-                            <Folder className="w-4 h-4" />
-                            <span className="text-sm">Klik untuk membuka</span>
-                          </div>
-                          <ArrowLeft className="w-4 h-4 text-gray-400 rotate-180" />
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  // List View
-                  <div className="bg-white rounded-lg shadow-md p-4">
-                    {folders.map((folder, index) => (
-                      <motion.div
-                        key={folder.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className="p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between border-b last:border-0"
+        {currentView === 'folders' && (
+          <motion.div
+            key="folders"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Folders View with modern cards */}
+            <div className="mb-8">
+              {folders.length === 0 ? (
+                <Card className="text-center py-16 bg-white/70 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+                  <CardContent className="p-8">
+                    <div className="text-gray-400 mb-6">
+                      <div className="relative inline-block">
+                        <FolderOpen className="h-20 w-20 mx-auto" />
+                        <div className="absolute -top-2 -right-2 text-2xl animate-bounce">😢</div>
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Oops! Tidak ada dokumen</h3>
+                    <p className="text-gray-500 text-lg">Tidak ada dokumen yang tersedia untuk tahun {selectedYear} 📁</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {folders.map((folder, index) => (
+                    <motion.div
+                      key={folder.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card
+                        className="group overflow-hidden bg-white/60 backdrop-blur-md border-0 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer rounded-3xl hover:scale-105 hover:-translate-y-2"
                         onClick={() => handleFolderClick(folder)}
                       >
-                        <div className="flex items-center gap-4">
-                          <Folder className="w-5 h-5 text-primary" />
-                          <div>
-                            <h3 className="font-medium text-gray-800">{folder.name}</h3>
-                            <p className="text-sm text-gray-500">{folder.description}</p>
+                        <CardHeader className="pb-4 p-6 relative">
+                          <div className="flex items-center gap-4">
+                            <div className={`text-3xl p-4 rounded-2xl bg-gradient-to-r ${folder.gradient || getGradientByIndex(index)} shadow-lg`}>
+                              {folder.icon || '📁'}
+                            </div>
+                            <div className="flex-1">
+                              <CardTitle className="text-lg font-bold leading-tight text-gray-800 group-hover:text-purple-600 transition-colors">
+                                {folder.name}
+                              </CardTitle>
+                              <CardDescription className="text-sm mt-2 text-gray-600">
+                                {folder.description}
+                              </CardDescription>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm bg-gray-100 px-2 py-1 rounded-full text-gray-600">
-                            {folder.totalFiles} file
-                          </span>
-                          <ArrowLeft className="w-5 h-5 text-gray-400 rotate-180" />
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-
-          {currentView === 'files' && (
-            <motion.div
-              key="files"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {/* Files View */}
-              <div className="mb-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <Button
-                      onClick={handleBackToFolders}
-                      variant="outline"
-                      className="mb-2 hover:bg-gray-100 rounded-lg"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Kembali ke Folder
-                    </Button>
-                    <h2 className="text-2xl font-bold text-gray-800 mt-2">
-                      {selectedFolder?.name}
-                    </h2>
-                    <p className="text-gray-600">{selectedFolder?.description}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant={displayMode === 'grid' ? 'default' : 'outline'}
-                      size="sm"
-                      className="rounded-lg"
-                      onClick={() => setDisplayMode('grid')}
-                    >
-                      <Grid className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant={displayMode === 'list' ? 'default' : 'outline'}
-                      size="sm"
-                      className="rounded-lg"
-                      onClick={() => setDisplayMode('list')}
-                    >
-                      <List className="w-4 h-4" />
-                    </Button>
-                  </div>
+                        </CardHeader>
+                        <CardContent className="pt-0 px-6 pb-6">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <FolderOpen className="h-4 w-4 text-purple-400" />
+                              <span className="text-sm text-gray-600 font-medium">
+                                {folder.totalFiles} dokumen yang fire! 🔥
+                              </span>
+                            </div>
+                            <Badge className={`bg-gradient-to-r ${folder.gradient || getGradientByIndex(index)} text-white border-0 rounded-full px-3 py-1 text-xs font-bold`}>
+                              {folder.totalFiles}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                        {/* Hover effect overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 rounded-3xl" />
+                      </Card>
+                    </motion.div>
+                  ))}
                 </div>
+              )}
+            </div>
+          </motion.div>
+        )}
 
-                {/* Search */}
-                <div className="relative mb-6">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+        {currentView === 'files' && (
+          <motion.div
+            key="files"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Files View with modern design */}
+            <div className="mb-8">
+              {/* Trendy Search */}
+              <div className="mb-10 flex justify-center">
+                <div className="relative w-full max-w-md">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-purple-400 h-5 w-5" />
                   <Input
-                    placeholder="Cari berdasarkan judul atau penulis..."
-                    className="pl-12 h-12 rounded-lg border bg-white"
+                    placeholder="Cari dokumen yang epic... 🔍"
+                    className="pl-12 pr-6 py-4 text-lg bg-white/70 backdrop-blur-md border-white/20 rounded-2xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-purple-400"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
+              </div>
 
-                {/* Files Grid/List */}
-                {filteredFiles.length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-lg shadow-md">
-                    <p className="text-gray-600 font-medium">Tidak ada file yang ditemukan</p>
-                    <p className="text-sm text-gray-500 mt-1">Coba ubah kata kunci pencarian</p>
-                  </div>
-                ) : displayMode === 'grid' ? (
-                  // Grid View
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredFiles.map((file, index) => (
-                      <motion.div
-                        key={file.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                        className={`bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer ${file.isLimited ? 'border-l-4 border-amber-500' : ''}`}
+              {/* Files Grid */}
+              {filteredFiles.length === 0 ? (
+                <Card className="text-center py-16 bg-white/70 backdrop-blur-md border-0 shadow-2xl rounded-3xl">
+                  <CardContent className="p-8">
+                    <div className="text-gray-400 mb-6">
+                      <div className="relative inline-block">
+                        <FileText className="h-20 w-20 mx-auto" />
+                        <div className="absolute -top-2 -right-2 text-2xl animate-bounce">😢</div>
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">Oops! Tidak ada file ditemukan</h3>
+                    <p className="text-gray-500 text-lg">Coba ubah kata kunci pencarian atau explore folder lain! ✨</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredFiles.map((file, index) => (
+                    <motion.div
+                      key={file.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card
+                        className={`group overflow-hidden bg-white/60 backdrop-blur-md border-0 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer rounded-3xl hover:scale-105 hover:-translate-y-2 ${file.isLimited ? 'border-l-4 border-amber-500' : ''}`}
                         onClick={() => handleFileClick(file)}
                       >
-                        <div className="flex items-start justify-between mb-4">
-                          <FileText className={`w-6 h-6 ${file.isLimited ? 'text-amber-500' : 'text-primary'}`} />
-                          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
-                            {file.type}
-                          </span>
-                        </div>
-
-                        <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 hover:text-primary transition-colors">
-                          {file.title}
-                        </h3>
-
-                        <div className="space-y-2 text-sm text-gray-600 mb-4">
-                          <div className="flex items-center gap-2">
-                            <User className="w-3 h-3" />
-                            <span>{file.author}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-3 h-3" />
-                            <span>{file.year} • {file.batch}</span>
-                          </div>
-                        </div>
-
-                        <p className="text-xs text-gray-500 line-clamp-3 mb-4">
-                          {file.abstract}
-                        </p>
-
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500">{file.size}</span>
-                          <Button size="sm" variant="outline" className="rounded-lg">
-                            <Eye className="w-3 h-3 mr-1" />
-                            Lihat
-                          </Button>
-                        </div>
-
-                        {file.isLimited && (
-                          <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                            <div
-                              className="bg-amber-500 h-1.5 rounded-full"
-                              style={{ width: `${(file.currentAccess! / file.maxAccess!) * 100}%` }}
-                            ></div>
-                          </div>
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
-                ) : (
-                  // List View
-                  <div className="bg-white rounded-lg shadow-md p-4">
-                    {filteredFiles.map((file, index) => (
-                      <motion.div
-                        key={file.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.05 }}
-                        className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between border-b last:border-0 ${file.isLimited ? 'border-l-4 border-amber-500' : ''}`}
-                        onClick={() => handleFileClick(file)}
-                      >
-                        <div className="flex items-center gap-4">
-                          <FileText className={`w-5 h-5 ${file.isLimited ? 'text-amber-500' : 'text-primary'}`} />
-                          <div className="max-w-2xl">
-                            <h3 className="font-medium text-gray-800 line-clamp-1">{file.title}</h3>
-                            <p className="text-sm text-gray-500 line-clamp-1">{file.abstract}</p>
-                            <div className="flex items-center gap-4 mt-1 text-xs text-gray-600">
-                              <span className="flex items-center gap-1">
-                                <User className="w-3 h-3" /> {file.author}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Calendar className="w-3 h-3" /> {file.year}
-                              </span>
-                              <span>{file.batch}</span>
+                        <CardHeader className="pb-4 p-6 relative">
+                          <div className="flex items-center gap-4">
+                            <div className={`p-4 rounded-2xl bg-gradient-to-r from-indigo-400 to-purple-400 shadow-lg`}>
+                              <BookOpen className="h-6 w-6 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <CardTitle className="text-lg font-bold leading-tight text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">
+                                {file.title}
+                              </CardTitle>
+                              <CardDescription className="text-sm mt-2 text-gray-600">
+                                {file.author} • {file.year}
+                              </CardDescription>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col items-end gap-2">
-                          <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
-                            {file.type} • {file.size}
-                          </span>
+                        </CardHeader>
+                        <CardContent className="pt-0 px-6 pb-6">
+                          <p className="text-xs text-gray-500 line-clamp-3 mb-4">
+                            {file.abstract}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <FileText className="h-4 w-4 text-purple-400" />
+                              <span className="text-sm text-gray-600 font-medium">
+                                {file.type} • {file.size}
+                              </span>
+                            </div>
+                            <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 rounded-full px-3 py-1 text-xs font-bold">
+                              View
+                            </Badge>
+                          </div>
                           {file.isLimited && (
-                            <div className="w-24 bg-gray-200 rounded-full h-1.5">
+                            <div className="mt-3 w-full bg-gray-200 rounded-full h-1.5">
                               <div
                                 className="bg-amber-500 h-1.5 rounded-full"
                                 style={{ width: `${(file.currentAccess! / file.maxAccess!) * 100}%` }}
                               ></div>
                             </div>
                           )}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
+                        </CardContent>
+                        {/* Hover effect overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 rounded-3xl" />
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* File Detail Dialog with modern design */}
+      {selectedFile && (
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white/90 backdrop-blur-md border-0 rounded-3xl" onContextMenu={(e) => e.preventDefault()}>
+            <DialogHeader>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl">
+                  <BookOpen className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <DialogTitle className="text-2xl font-bold text-gray-800">
+                    {selectedFile.title}
+                  </DialogTitle>
+                  <DialogDescription className="text-gray-600 text-lg">
+                    {selectedFile.author} • {selectedFile.year} • {selectedFile.batch} ✨
+                  </DialogDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Star className="h-6 w-6 text-yellow-400 animate-pulse" />
+                  <Sparkles className="h-6 w-6 text-pink-400 animate-bounce" />
+                </div>
               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </DialogHeader>
 
-        {/* File Detail Dialog */}
-        {selectedFile && (
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-gray-800">
-                  {selectedFile.title}
-                </DialogTitle>
-                <DialogDescription className="text-gray-600">
-                  {selectedFile.author} • {selectedFile.year} • {selectedFile.batch}
-                </DialogDescription>
-              </DialogHeader>
+            <div className="space-y-6">
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-200">
+                <h3 className="font-bold text-purple-800 mb-3 text-lg flex items-center gap-2">
+                  <BookOpen className="h-5 w-5" />
+                  Abstrak 📖
+                </h3>
+                <p className="text-gray-700 leading-relaxed text-base">{selectedFile.abstract}</p>
+              </div>
 
-              <div className="space-y-6">
-                <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-primary">
-                  <h3 className="font-semibold text-gray-800 mb-2">Abstrak</h3>
-                  <p className="text-gray-700 leading-relaxed">{selectedFile.abstract}</p>
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                  <div className="flex items-center gap-4">
-                    <FileText className={`w-6 h-6 ${selectedFile.isLimited ? 'text-amber-500' : 'text-primary'}`} />
-                    <div>
-                      <p className="font-medium text-gray-800">{selectedFile.type} Document</p>
-                      <p className="text-sm text-gray-600">Ukuran: {selectedFile.size}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button variant="outline" className="rounded-lg">
-                      <Eye className="w-4 h-4 mr-2" />
-                      Preview
-                    </Button>
-                    <Button className="rounded-lg">
-                      <Download className="w-4 h-4 mr-2" />
-                      Download
-                    </Button>
+              <div className="flex items-center justify-between p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
+                <div className="flex items-center gap-4">
+                  <FileText className={`w-8 h-8 ${selectedFile.isLimited ? 'text-amber-500' : 'text-purple-500'}`} />
+                  <div>
+                    <p className="font-bold text-gray-800 text-lg">{selectedFile.type} Document 📄</p>
+                    <p className="text-sm text-gray-600">Ukuran: {selectedFile.size}</p>
                   </div>
                 </div>
 
-                {selectedFile.isLimited && (
-                  <div className="text-center p-4 bg-amber-50 rounded-lg border border-amber-200">
-                    <p className="text-sm text-amber-800">
-                      <strong>Perhatian:</strong> Dokumen ini memiliki akses terbatas dan telah diakses {selectedFile.currentAccess} dari {selectedFile.maxAccess} kali.
+                <div className="flex gap-3">
+                  <Button variant="outline" className="rounded-2xl border-purple-200 hover:bg-purple-50">
+                    <Eye className="w-4 h-4 mr-2" />
+                    Preview ✨
+                  </Button>
+                  <Button className="rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download 🚀
+                  </Button>
+                </div>
+              </div>
+
+              {selectedFile.isLimited && (
+                <div className="text-center p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Zap className="h-5 w-5 text-amber-600" />
+                    <p className="text-sm text-amber-800 font-bold">
+                      Perhatian: Dokumen ini memiliki akses terbatas! ⚠️
                     </p>
-                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-amber-500 h-2 rounded-full"
-                        style={{ width: `${(selectedFile.currentAccess! / selectedFile.maxAccess!) * 100}%` }}
-                      ></div>
-                    </div>
                   </div>
-                )}
+                  <p className="text-sm text-amber-700 mb-3">
+                    Telah diakses {selectedFile.currentAccess} dari {selectedFile.maxAccess} kali.
+                  </p>
+                  <div className="w-full bg-amber-200 rounded-full h-3">
+                    <div
+                      className="bg-gradient-to-r from-amber-500 to-orange-500 h-3 rounded-full transition-all duration-300"
+                      style={{ width: `${(selectedFile.currentAccess! / selectedFile.maxAccess!) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
 
-                <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-                  <p className="text-sm text-gray-700">
-                    <strong>Catatan:</strong> Untuk mengunduh file, silakan login terlebih dahulu atau isi buku tamu.
+              <div className="text-center p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border border-blue-200">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Eye className="h-5 w-5 text-blue-600" />
+                  <p className="text-sm text-blue-800 font-bold">
+                    Mode Baca Saja 👀
                   </p>
                 </div>
+                <p className="text-sm text-blue-700">
+                  Dokumen ini hanya dapat dibaca dan tidak dapat disalin. Stay respectful! 😎
+                </p>
               </div>
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   )
 }

@@ -43,16 +43,18 @@ export async function createGuestbookEntryAction(data: {
 
     // Create the entry with defensive error handling
     try {
-      const guestbookEntry = await prisma.guestbookEntry.create({
+      const guestbookEntry = await prisma.guestbook_entries.create({
         data: {
+          id: crypto.randomUUID(),
           name: validatedData.name,
           email: validatedData.email,
           message: fullMessage,
-          authorId: currentUser?.id || null,
-          isApproved: true, // Auto approve untuk sekarang
+          author_id: currentUser?.id || null,
+          is_approved: true, // Auto approve untuk sekarang
+          updated_at: new Date(),
         },
         include: {
-          author: {
+          users: {
             select: {
               id: true,
               username: true,
@@ -80,12 +82,12 @@ export async function createGuestbookEntryAction(data: {
 export async function getGuestbookEntriesAction(page = 1, limit = 10) {
   try {
     const [entries, total] = await Promise.all([
-      prisma.guestbookEntry.findMany({
+      prisma.guestbook_entries.findMany({
         where: {
-          isApproved: true
+          is_approved: true
         },
         include: {
-          author: {
+          users: {
             select: {
               id: true,
               username: true,
@@ -94,14 +96,14 @@ export async function getGuestbookEntriesAction(page = 1, limit = 10) {
           }
         },
         orderBy: {
-          createdAt: 'desc'
+          created_at: 'desc'
         },
         skip: (page - 1) * limit,
         take: limit,
       }),
-      prisma.guestbookEntry.count({
+      prisma.guestbook_entries.count({
         where: {
-          isApproved: true
+          is_approved: true
         }
       })
     ])
@@ -129,7 +131,7 @@ export async function deleteGuestbookEntryAction(id: string) {
       return { error: 'Unauthorized' }
     }
 
-    await prisma.guestbookEntry.delete({
+    await prisma.guestbook_entries.delete({
       where: { id }
     })
 
@@ -148,11 +150,14 @@ export async function approveGuestbookEntryAction(id: string) {
       return { error: 'Unauthorized' }
     }
 
-    const entry = await prisma.guestbookEntry.update({
+    const entry = await prisma.guestbook_entries.update({
       where: { id },
-      data: { isApproved: true },
+      data: {
+        is_approved: true,
+        updated_at: new Date()
+      },
       include: {
-        author: {
+        users: {
           select: {
             id: true,
             username: true,

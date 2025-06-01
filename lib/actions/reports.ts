@@ -42,13 +42,19 @@ export async function createReportAction(formData: FormData) {
 
     const validatedData = createReportSchema.parse(data)
 
-    const report = await prisma.report.create({
+    const report = await prisma.reports.create({
       data: {
-        ...validatedData,
-        authorId: currentUser.id,
+        id: crypto.randomUUID(),
+        title: validatedData.title,
+        description: validatedData.description,
+        content: validatedData.content,
+        category: validatedData.category,
+        priority: validatedData.priority,
+        author_id: currentUser.id,
+        updated_at: new Date(),
       },
       include: {
-        author: {
+        users_reports_author_idTousers: {
           select: {
             id: true,
             username: true,
@@ -90,7 +96,7 @@ export async function updateReportAction(formData: FormData) {
     const validatedData = updateReportSchema.parse(data)
 
     // Check if user owns the report or is admin
-    const existingReport = await prisma.report.findUnique({
+    const existingReport = await prisma.reports.findUnique({
       where: { id: validatedData.id }
     })
 
@@ -98,31 +104,31 @@ export async function updateReportAction(formData: FormData) {
       return { error: 'Report not found' }
     }
 
-    if (existingReport.authorId !== currentUser.id && currentUser.role !== 'ADMIN') {
+    if (existingReport.author_id !== currentUser.id && currentUser.role !== 'ADMIN') {
       return { error: 'Unauthorized to update this report' }
     }
 
-    const updateData: any = {}
+    const updateData: any = { updated_at: new Date() }
     if (validatedData.title) updateData.title = validatedData.title
     if (validatedData.description !== undefined) updateData.description = validatedData.description
     if (validatedData.content) updateData.content = validatedData.content
     if (validatedData.category !== undefined) updateData.category = validatedData.category
     if (validatedData.priority) updateData.priority = validatedData.priority
     if (validatedData.status) updateData.status = validatedData.status
-    if (validatedData.assigneeId !== undefined) updateData.assigneeId = validatedData.assigneeId
+    if (validatedData.assigneeId !== undefined) updateData.assignee_id = validatedData.assigneeId
 
-    const report = await prisma.report.update({
+    const report = await prisma.reports.update({
       where: { id: validatedData.id },
       data: updateData,
       include: {
-        author: {
+        users_reports_author_idTousers: {
           select: {
             id: true,
             username: true,
             name: true,
           }
         },
-        assignee: {
+        users_reports_assignee_idTousers: {
           select: {
             id: true,
             username: true,
@@ -151,7 +157,7 @@ export async function deleteReportAction(id: string) {
       return { error: 'Unauthorized' }
     }
 
-    const existingReport = await prisma.report.findUnique({
+    const existingReport = await prisma.reports.findUnique({
       where: { id }
     })
 
@@ -159,11 +165,11 @@ export async function deleteReportAction(id: string) {
       return { error: 'Report not found' }
     }
 
-    if (existingReport.authorId !== currentUser.id && currentUser.role !== 'ADMIN') {
+    if (existingReport.author_id !== currentUser.id && currentUser.role !== 'ADMIN') {
       return { error: 'Unauthorized to delete this report' }
     }
 
-    await prisma.report.delete({
+    await prisma.reports.delete({
       where: { id }
     })
 
@@ -188,21 +194,21 @@ export async function getReportsAction(page = 1, limit = 10, status?: string, ca
 
     // Non-admin users can only see their own reports
     if (currentUser.role !== 'ADMIN') {
-      where.authorId = currentUser.id
+      where.author_id = currentUser.id
     }
 
     const [reports, total] = await Promise.all([
-      prisma.report.findMany({
+      prisma.reports.findMany({
         where,
         include: {
-          author: {
+          users_reports_author_idTousers: {
             select: {
               id: true,
               username: true,
               name: true,
             }
           },
-          assignee: {
+          users_reports_assignee_idTousers: {
             select: {
               id: true,
               username: true,
@@ -210,11 +216,11 @@ export async function getReportsAction(page = 1, limit = 10, status?: string, ca
             }
           }
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { created_at: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
-      prisma.report.count({ where })
+      prisma.reports.count({ where })
     ])
 
     return {
@@ -240,17 +246,17 @@ export async function getReportByIdAction(id: string) {
       return { error: 'Unauthorized' }
     }
 
-    const report = await prisma.report.findUnique({
+    const report = await prisma.reports.findUnique({
       where: { id },
       include: {
-        author: {
+        users_reports_author_idTousers: {
           select: {
             id: true,
             username: true,
             name: true,
           }
         },
-        assignee: {
+        users_reports_assignee_idTousers: {
           select: {
             id: true,
             username: true,
@@ -265,7 +271,7 @@ export async function getReportByIdAction(id: string) {
     }
 
     // Non-admin users can only see their own reports
-    if (currentUser.role !== 'ADMIN' && report.authorId !== currentUser.id) {
+    if (currentUser.role !== 'ADMIN' && report.author_id !== currentUser.id) {
       return { error: 'Unauthorized to view this report' }
     }
 
