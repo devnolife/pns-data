@@ -83,13 +83,15 @@ export async function loginAction(formData: FormData) {
       { expiresIn: '7d' }
     )
 
-    // Set cookie
+    // Set cookie with better production settings
     const cookieStore = await cookies()
     cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days to match JWT expiration
+      maxAge: 60 * 60 * 24 * 7, // 7 days to match JWT expiration
+      path: '/', // Ensure cookie is available site-wide
+      domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined
     })
 
     return {
@@ -100,7 +102,8 @@ export async function loginAction(formData: FormData) {
         name: user.name,
         email: user.email,
         role: user.role
-      }
+      },
+      redirectUrl: user.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/user"
     }
   } catch (error) {
     console.error('Login error:', error)
@@ -213,7 +216,7 @@ export async function registerAction(formData: FormData) {
         role: user.role
       },
       JWT_SECRET,
-      { expiresIn: '7d' }
+      { expiresIn: '1d' }
     )
 
     // Set cookie
@@ -222,7 +225,7 @@ export async function registerAction(formData: FormData) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7 // 7 days to match JWT expiration
+      maxAge: 60 * 60 * 24 * 1 // 7 days to match JWT expiration
     })
 
     return { success: true, user: { id: user.id, username: user.username, role: user.role } }

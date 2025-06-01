@@ -85,22 +85,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.success && result.user) {
         setUser(result.user as User)
 
-        // Check for callback URL in the current URL
         const urlParams = new URLSearchParams(window.location.search)
         const callbackUrl = urlParams.get('callbackUrl')
 
-        if (callbackUrl) {
-          // Decode the callback URL and redirect to it
-          const decodedUrl = decodeURIComponent(callbackUrl)
-          router.push(decodedUrl)
-        } else {
-          // Default redirect based on user role
-          if (result.user.role === "ADMIN") {
-            router.push("/dashboard/admin")
-          } else {
-            router.push("/dashboard/user")
-          }
-        }
+        const redirectUrl = callbackUrl
+          ? decodeURIComponent(callbackUrl)
+          : result.redirectUrl || "/dashboard"
+
+        window.location.href = redirectUrl
       }
     } catch (err: any) {
       setError(err.message || "Login failed")
