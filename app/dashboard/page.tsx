@@ -15,15 +15,32 @@ export default function DashboardPage() {
   const router = useRouter()
 
   useEffect(() => {
+    // Only redirect if we're sure the user is not authenticated
     if (!isLoading && !isAuthenticated) {
       router.push("/login")
     }
   }, [isAuthenticated, isLoading, router])
 
-  if (isLoading || !isAuthenticated) {
+  // Show loading state while checking authentication
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto"></div>
+          <p className="text-lg font-medium text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show login redirect message if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-pink-50">
+        <div className="text-center space-y-4">
+          <div className="text-6xl">🔒</div>
+          <p className="text-lg font-medium text-gray-600">Redirecting to login...</p>
+        </div>
       </div>
     )
   }
@@ -34,7 +51,7 @@ export default function DashboardPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800">Welcome, {user?.name || user?.username}</h1>
           <p className="text-gray-600 mt-1">
-            {user?.role === "admin"
+            {user?.role === "ADMIN"
               ? "Manage your digital collections, users, and system statistics"
               : "Access and manage your digital collections and reports"}
           </p>
@@ -45,8 +62,8 @@ export default function DashboardPage() {
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="collections">Collections</TabsTrigger>
             <TabsTrigger value="reports">Reports</TabsTrigger>
-            {user?.role === "admin" && <TabsTrigger value="users">Users</TabsTrigger>}
-            {user?.role === "admin" && <TabsTrigger value="statistics">Statistics</TabsTrigger>}
+            {user?.role === "ADMIN" && <TabsTrigger value="users">Users</TabsTrigger>}
+            {user?.role === "ADMIN" && <TabsTrigger value="statistics">Statistics</TabsTrigger>}
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -58,7 +75,7 @@ export default function DashboardPage() {
                 <CardContent>
                   <div className="flex items-center">
                     <FileText className="h-5 w-5 text-blue-500 mr-2" />
-                    <span className="text-2xl font-bold">{user?.role === "admin" ? 124 : 32}</span>
+                    <span className="text-2xl font-bold">{user?.role === "ADMIN" ? 124 : 32}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -70,12 +87,12 @@ export default function DashboardPage() {
                 <CardContent>
                   <div className="flex items-center">
                     <Upload className="h-5 w-5 text-green-500 mr-2" />
-                    <span className="text-2xl font-bold">{user?.role === "admin" ? 87 : 5}</span>
+                    <span className="text-2xl font-bold">{user?.role === "ADMIN" ? 87 : 5}</span>
                   </div>
                 </CardContent>
               </Card>
 
-              {user?.role === "admin" ? (
+              {user?.role === "ADMIN" ? (
                 <Card>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-gray-500">Total Users</CardTitle>
@@ -94,7 +111,7 @@ export default function DashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{user?.training || "N/A"}</div>
-                    <div className="text-sm text-gray-500">Class: {user?.class || "N/A"}</div>
+                    <div className="text-sm text-gray-500">Angkatan: {user?.angkatan || "N/A"}</div>
                   </CardContent>
                 </Card>
               )}
@@ -155,7 +172,7 @@ export default function DashboardPage() {
                       Upload Report
                     </Link>
                   </Button>
-                  {user?.role === "admin" && (
+                  {user?.role === "ADMIN" && (
                     <Button className="w-full justify-start" variant="outline" asChild>
                       <Link href="/dashboard/users">
                         <Users className="mr-2 h-4 w-4" />
@@ -163,7 +180,7 @@ export default function DashboardPage() {
                       </Link>
                     </Button>
                   )}
-                  {user?.role === "admin" && (
+                  {user?.role === "ADMIN" && (
                     <Button className="w-full justify-start" variant="outline" asChild>
                       <Link href="/dashboard/statistics">
                         <BarChart3 className="mr-2 h-4 w-4" />
@@ -200,7 +217,7 @@ export default function DashboardPage() {
             </Card>
           </TabsContent>
 
-          {user?.role === "admin" && (
+          {user?.role === "ADMIN" && (
             <TabsContent value="users">
               <Card>
                 <CardHeader>
@@ -214,7 +231,7 @@ export default function DashboardPage() {
             </TabsContent>
           )}
 
-          {user?.role === "admin" && (
+          {user?.role === "ADMIN" && (
             <TabsContent value="statistics">
               <Card>
                 <CardHeader>

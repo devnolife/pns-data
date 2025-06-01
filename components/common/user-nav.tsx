@@ -26,7 +26,7 @@ export function UserNav() {
     try {
       setIsLoggingOut(true)
       await logout()
-      router.push("/login")
+      // Don't redirect here, logout action already handles redirect
     } catch (error) {
       console.error("Logout failed:", error)
     } finally {
@@ -84,7 +84,7 @@ export function UserNav() {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              href={user.role === "ADMIN" ? "/dashboard/admin/profile" : "/dashboard/user/profile"}
+              href={user.role === "ADMIN" ? "/dashboard/admin/settings" : "/dashboard/user/profile"}
               className="cursor-pointer"
             >
               <Settings className="mr-2 h-4 w-4" />

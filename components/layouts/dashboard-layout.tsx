@@ -49,7 +49,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const handleLogout = () => {
     logout()
-    router.push("/login")
   }
 
   const isActive = (path: string) => {
@@ -59,14 +58,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navItems = [
     {
       name: "Dashboard",
-      href: "/dashboard",
+      href: user?.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/user",
       icon: LayoutDashboard,
       active:
-        isActive("/dashboard") &&
-        !isActive("/dashboard/collections") &&
-        !isActive("/dashboard/reports") &&
-        !isActive("/dashboard/users") &&
-        !isActive("/dashboard/statistics"),
+        (user?.role === "ADMIN" && isActive("/dashboard/admin") && !isActive("/dashboard/admin/manage-users") && !isActive("/dashboard/admin/verify-reports") && !isActive("/dashboard/admin/manage-folders") && !isActive("/dashboard/admin/number-of-visitors") && !isActive("/dashboard/admin/settings")) ||
+        (user?.role === "USER" && isActive("/dashboard/user") && !isActive("/dashboard/user/digital-collection") && !isActive("/dashboard/user/upload-report") && !isActive("/dashboard/user/verification-status") && !isActive("/dashboard/user/profile")),
     },
     {
       name: "Collections",
@@ -80,21 +76,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       icon: Upload,
       active: isActive("/dashboard/reports"),
     },
-    ...(user?.role === "admin"
+    ...(user?.role === "ADMIN"
       ? [
-          {
-            name: "Users",
-            href: "/dashboard/users",
-            icon: Users,
-            active: isActive("/dashboard/users"),
-          },
-          {
-            name: "Statistics",
-            href: "/dashboard/statistics",
-            icon: BarChart3,
-            active: isActive("/dashboard/statistics"),
-          },
-        ]
+        {
+          name: "Users",
+          href: "/dashboard/users",
+          icon: Users,
+          active: isActive("/dashboard/users"),
+        },
+        {
+          name: "Statistics",
+          href: "/dashboard/statistics",
+          icon: BarChart3,
+          active: isActive("/dashboard/statistics"),
+        },
+      ]
       : []),
   ]
 
@@ -146,7 +142,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 </SheetContent>
               </Sheet>
             )}
-            <Link href="/dashboard" className="text-xl font-bold text-blue-700">
+            <Link href={user?.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/user"} className="text-xl font-bold text-blue-700">
               Digital Collection System
             </Link>
           </div>
@@ -168,7 +164,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       <div className="text-sm font-medium text-left">
                         <div>{user?.name || user?.username}</div>
                         <div className="text-xs text-gray-500">
-                          {user?.role === "admin" ? "Administrator" : user?.training}
+                          {user?.role === "ADMIN" ? "Administrator" : user?.training}
                         </div>
                       </div>
                       <ChevronDown className="h-4 w-4 text-gray-500" />

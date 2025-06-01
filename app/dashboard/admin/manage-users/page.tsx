@@ -74,7 +74,7 @@ export default function ManageUsersPage() {
       router.push("/login")
     }
 
-    if (isAuthenticated && user?.role !== "admin") {
+    if (isAuthenticated && user?.role !== "ADMIN") {
       router.push("/dashboard/user")
     }
   }, [isAuthenticated, isLoading, router, user])
@@ -363,7 +363,7 @@ export default function ManageUsersPage() {
     setEditUserDialogOpen(true)
   }
 
-  if (isLoading || !isAuthenticated || user?.role !== "admin") {
+  if (isLoading || !isAuthenticated || user?.role !== "ADMIN") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -589,8 +589,8 @@ export default function ManageUsersPage() {
                           <td className="p-4">{user.username}</td>
                           <td className="p-4">{user.email}</td>
                           <td className="p-4">
-                            <Badge variant={user.role === "admin" ? "default" : "outline"}>
-                              {user.role === "admin" ? "Admin" : "User"}
+                            <Badge variant={user.role === "ADMIN" ? "default" : "outline"}>
+                              {user.role === "ADMIN" ? "Admin" : "User"}
                             </Badge>
                           </td>
                           <td className="p-4">{user.training}</td>
@@ -782,8 +782,8 @@ export default function ManageUsersPage() {
                     <p className="font-medium">{selectedUser.name}</p>
                     <p className="text-sm text-gray-600">{selectedUser.email}</p>
                     <div className="flex items-center mt-2">
-                      <Badge variant={selectedUser.role === "admin" ? "default" : "outline"} className="mr-2">
-                        {selectedUser.role === "admin" ? "Admin" : "User"}
+                      <Badge variant={selectedUser.role === "ADMIN" ? "default" : "outline"} className="mr-2">
+                        {selectedUser.role === "ADMIN" ? "Admin" : "User"}
                       </Badge>
                       <Badge variant={selectedUser.status === "active" ? "default" : "secondary"}>
                         {selectedUser.status === "active" ? "Active" : "Inactive"}

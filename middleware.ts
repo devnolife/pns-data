@@ -1,20 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import jwt from 'jsonwebtoken'
 
 // Define the routes that don't require authentication
 const publicRoutes = ["/", "/login", "/register", "/guestbook", "/public-collections"]
-
-const JWT_SECRET = process.env.JWT_SECRET!
-
-function verifyToken(token: string): boolean {
-  try {
-    jwt.verify(token, JWT_SECRET)
-    return true
-  } catch (error) {
-    return false
-  }
-}
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -34,8 +22,8 @@ export function middleware(request: NextRequest) {
     // Get the authentication token from the cookies
     const token = request.cookies.get("token")?.value
 
-    // If no token exists or token is invalid, redirect to login
-    if (!token || !verifyToken(token)) {
+    // If no token exists, redirect to login
+    if (!token) {
       const url = new URL("/login", request.url)
       // Use encodeURIComponent instead of encodeURI for better compatibility
       url.searchParams.set("callbackUrl", encodeURIComponent(pathname))

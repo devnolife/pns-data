@@ -91,7 +91,6 @@ export async function loginAction(formData: FormData) {
       sameSite: 'lax',
       maxAge: 60 * 60 * 24 * 7, // 7 days to match JWT expiration
       path: '/', // Ensure cookie is available site-wide
-      domain: process.env.NODE_ENV === 'production' ? process.env.COOKIE_DOMAIN : undefined
     })
 
     return {
@@ -206,26 +205,6 @@ export async function registerAction(formData: FormData) {
         created_at: new Date(),
         updated_at: new Date(),
       }
-    })
-
-    // Create JWT token
-    const token = jwt.sign(
-      {
-        id: user.id,
-        username: user.username,
-        role: user.role
-      },
-      JWT_SECRET,
-      { expiresIn: '1d' }
-    )
-
-    // Set cookie
-    const cookieStore = await cookies()
-    cookieStore.set('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 1 // 7 days to match JWT expiration
     })
 
     return { success: true, user: { id: user.id, username: user.username, role: user.role } }

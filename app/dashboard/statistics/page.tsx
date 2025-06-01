@@ -10,20 +10,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { BarChart, LineChart, PieChart, Users, FileText, Upload, UserCheck } from "lucide-react"
 
 export default function StatisticsPage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, isAuthenticated, isLoading } = useAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!isLoading && !isAuthenticated) {
       router.push("/login")
     }
 
-    if (isAuthenticated && user?.role !== "admin") {
-      router.push("/dashboard")
+    if (isAuthenticated && user?.role !== "ADMIN") {
+      router.push("/dashboard/user")
     }
-  }, [isAuthenticated, loading, router, user])
+  }, [isAuthenticated, isLoading, router, user])
 
-  if (loading || !isAuthenticated || user?.role !== "admin") {
+  if (isLoading || !isAuthenticated || user?.role !== "ADMIN") {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>

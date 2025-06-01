@@ -50,19 +50,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const checkAuth = async () => {
       try {
         setIsLoading(true)
+        setError(null)
+
+        // Add a small delay to prevent hydration issues
+        await new Promise(resolve => setTimeout(resolve, 100))
+
         const userData = await getCurrentUser()
         if (userData) {
           setUser(userData as User)
+        } else {
+          setUser(null)
         }
       } catch (err) {
         console.error("Auth check failed:", err)
         setUser(null)
+        setError("Failed to check authentication status")
       } finally {
         setIsLoading(false)
       }
     }
 
-    checkAuth()
+    // Only run on client side
+    if (typeof window !== 'undefined') {
+      checkAuth()
+    }
   }, [])
 
   // Login function using server action
@@ -85,14 +96,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.success && result.user) {
         setUser(result.user as User)
 
+        // Small delay to ensure state is updated
+        await new Promise(resolve => setTimeout(resolve, 100))
+
+        // Check for callback URL in the current URL
         const urlParams = new URLSearchParams(window.location.search)
         const callbackUrl = urlParams.get('callbackUrl')
 
-        const redirectUrl = callbackUrl
-          ? decodeURIComponent(callbackUrl)
-          : result.redirectUrl || "/dashboard"
-
-        window.location.href = redirectUrl
+        if (callbackUrl) {
+          // Decode the callback URL and redirect to it
+          const decodedUrl = decodeURIComponent(callbackUrl)
+          router.push(decodedUrl)
+        } else {
+          // Default redirect based on user role
+          if (result.user.role === "ADMIN") {
+            router.push("/dashboard/admin")
+          } else {
+            router.push("/dashboard/user")
+          }
+        }
       }
     } catch (err: any) {
       setError(err.message || "Login failed")
@@ -140,6 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await logoutAction()
       setUser(null)
+      setError(null)
       // logoutAction already handles redirect to /login
     } catch (err: any) {
       setError(err.message || "Logout failed")
