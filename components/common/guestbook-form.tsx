@@ -74,8 +74,10 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
         return
       }
 
-      // Set flag bahwa user sudah mengisi guestbook
-      localStorage.setItem('hasFilledGuestbook', 'true')
+      // Set flag bahwa user sudah mengisi guestbook - only on client side
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('hasFilledGuestbook', 'true')
+      }
 
       // Call the onSubmitSuccess callback if provided
       if (onSubmitSuccess) {

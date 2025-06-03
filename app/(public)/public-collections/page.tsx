@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -54,6 +55,7 @@ interface FolderData {
 type ViewType = 'years' | 'folders' | 'files'
 
 export default function PublicCollectionsPage() {
+  const router = useRouter()
   const [currentView, setCurrentView] = useState<ViewType>('years')
   const [selectedFolder, setSelectedFolder] = useState<FolderData | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
@@ -240,7 +242,7 @@ export default function PublicCollectionsPage() {
           </CardHeader>
           <CardContent className="text-center">
             <Button
-              onClick={() => window.location.reload()}
+              onClick={() => router.refresh()}
               className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-2xl px-6 py-3 font-bold"
             >
               Try Again ✨

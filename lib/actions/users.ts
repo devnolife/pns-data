@@ -881,3 +881,246 @@ export async function getOwnProfileAction() {
   }
 }
 
+// DASHBOARD - Mendapatkan statistik dashboard untuk user yang sedang login
+export async function getUserDashboardStatsAction() {
+  try {
+    // Get current user
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    // Get user statistics
+    const [
+      totalCollections,
+      totalReports,
+      totalGuestbookEntries,
+      recentReports,
+      recentCollections,
+      monthlyReports,
+      lastActivity
+    ] = await Promise.all([
+      // Total collections created by user
+      prisma.collections.count({
+        where: { author_id: currentUser.id }
+      }),
+
+      // Total reports created by user
+      prisma.reports.count({
+        where: { author_id: currentUser.id }
+      }),
+
+      // Total guestbook entries by user
+      prisma.guestbook_entries.count({
+        where: { author_id: currentUser.id }
+      }),
+
+      // Recent reports (last 5)
+      prisma.reports.findMany({
+        where: { author_id: currentUser.id },
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          created_at: true,
+          category: true,
+        },
+        orderBy: { created_at: 'desc' },
+        take: 5,
+      }),
+
+      // Recent collections (last 5)
+      prisma.collections.findMany({
+        where: { author_id: currentUser.id },
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          created_at: true,
+          is_public: true,
+        },
+        orderBy: { created_at: 'desc' },
+        take: 5,
+      }),
+
+      // Reports created this month
+      prisma.reports.count({
+        where: {
+          author_id: currentUser.id,
+          created_at: {
+            gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+          }
+        }
+      }),
+
+      // Last activity (most recent report or collection)
+      Promise.all([
+        prisma.reports.findFirst({
+          where: { author_id: currentUser.id },
+          select: { created_at: true },
+          orderBy: { created_at: 'desc' }
+        }),
+        prisma.collections.findFirst({
+          where: { author_id: currentUser.id },
+          select: { created_at: true },
+          orderBy: { created_at: 'desc' }
+        })
+      ]).then(([lastReport, lastCollection]) => {
+        const dates = [
+          lastReport?.created_at,
+          lastCollection?.created_at
+        ].filter(Boolean)
+
+        return dates.length > 0 ? new Date(Math.max(...dates.map(d => d!.getTime()))) : null
+      })
+    ])
+
+    // Calculate days since last activity
+    const daysSinceLastActivity = lastActivity
+      ? Math.floor((new Date().getTime() - lastActivity.getTime()) / (1000 * 60 * 60 * 24))
+      : null
+
+    return {
+      success: true,
+      data: {
+        stats: {
+          totalCollections,
+          totalReports,
+          totalGuestbookEntries,
+          monthlyReports,
+          daysSinceLastActivity,
+        },
+        recentActivity: {
+          reports: recentReports.map(report => ({
+            id: report.id,
+            title: report.title,
+            type: 'report' as const,
+            status: report.status,
+            category: report.category,
+            createdAt: report.created_at,
+          })),
+          collections: recentCollections.map(collection => ({
+            id: collection.id,
+            title: collection.title,
+            type: 'collection' as const,
+            category: collection.category,
+            isPublic: collection.is_public,
+            createdAt: collection.created_at,
+          }))
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Get user dashboard stats error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil statistik dashboard'
+    }
+  }
+}
+
+// DASHBOARD - Mendapatkan aktivitas terbaru user
+export async function getUserRecentActivitiesAction(limit: number = 10) {
+  try {
+    // Get current user
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    // Get recent activities from reports and collections
+    const [recentReports, recentCollections, recentGuestbookEntries] = await Promise.all([
+      prisma.reports.findMany({
+        where: { author_id: currentUser.id },
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          created_at: true,
+          updated_at: true,
+          category: true,
+        },
+        orderBy: { updated_at: 'desc' },
+        take: limit,
+      }),
+
+      prisma.collections.findMany({
+        where: { author_id: currentUser.id },
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          created_at: true,
+          updated_at: true,
+          is_public: true,
+        },
+        orderBy: { updated_at: 'desc' },
+        take: limit,
+      }),
+
+      prisma.guestbook_entries.findMany({
+        where: { author_id: currentUser.id },
+        select: {
+          id: true,
+          message: true,
+          created_at: true,
+          is_approved: true,
+        },
+        orderBy: { created_at: 'desc' },
+        take: 5,
+      })
+    ])
+
+    // Combine and sort all activities
+    const allActivities = [
+      ...recentReports.map(report => ({
+        id: report.id,
+        title: report.title,
+        type: 'report' as const,
+        action: 'uploaded',
+        status: report.status,
+        category: report.category,
+        createdAt: report.created_at,
+        updatedAt: report.updated_at,
+      })),
+      ...recentCollections.map(collection => ({
+        id: collection.id,
+        title: collection.title,
+        type: 'collection' as const,
+        action: 'created',
+        category: collection.category,
+        isPublic: collection.is_public,
+        createdAt: collection.created_at,
+        updatedAt: collection.updated_at,
+      })),
+      ...recentGuestbookEntries.map(entry => ({
+        id: entry.id,
+        title: entry.message.substring(0, 50) + '...',
+        type: 'guestbook' as const,
+        action: 'posted',
+        isApproved: entry.is_approved,
+        createdAt: entry.created_at,
+        updatedAt: entry.created_at,
+      }))
+    ].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, limit)
+
+    return {
+      success: true,
+      data: allActivities
+    }
+  } catch (error) {
+    console.error('Get user recent activities error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil aktivitas terbaru'
+    }
+  }
+}
+

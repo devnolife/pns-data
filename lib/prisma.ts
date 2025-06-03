@@ -12,7 +12,7 @@ const createPrismaClient = () => {
   })
 }
 
-// If we're not in production, try to reuse the client
+// If we're not in X, try to reuse the client
 export const prisma =
   globalForPrisma.prisma ??
   createPrismaClient()

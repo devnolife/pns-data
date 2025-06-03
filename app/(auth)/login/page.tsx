@@ -8,8 +8,8 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToastId } from "@/hooks/use-toast-id"
-import { motion } from "framer-motion"
-import { Eye, EyeOff } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
 
 export default function LoginPage() {
@@ -48,7 +48,7 @@ export default function LoginPage() {
       await login(username, password)
 
       success("loginSuccess", {
-        description: "Login berhasil!",
+        description: "Login berhasil! Mengalihkan ke halaman utama...",
       })
 
       // The auth context will handle the redirect
@@ -88,7 +88,8 @@ export default function LoginPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:border-purple-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  disabled={isLoading}
+                  className="flex items-center gap-2 bg-white/80 backdrop-blur-sm border-purple-200 hover:border-purple-300 text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +119,40 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8 relative">
+            {/* Loading Overlay */}
+            <AnimatePresence>
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-white/90 backdrop-blur-sm rounded-3xl flex items-center justify-center z-50"
+                >
+                  <div className="text-center">
+                    <div className="relative mb-4">
+                      <div className="w-16 h-16 border-4 border-purple-200 rounded-full animate-spin border-t-purple-600 mx-auto"></div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-pulse"></div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-lg font-semibold text-purple-600 flex items-center justify-center gap-2">
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Sedang Memproses Login...
+                      </p>
+                      <p className="text-sm text-gray-500">Mohon tunggu sebentar ⏳</p>
+                      <div className="flex justify-center gap-1 mt-3">
+                        <div className="w-2 h-2 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
+                        <div className="w-2 h-2 bg-pink-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <form onSubmit={handleLogin} className="space-y-6">
               <motion.div
                 className="space-y-3"
@@ -135,7 +169,8 @@ export default function LoginPage() {
                   placeholder="Masukkan username kamu! 🚀"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="h-14 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70"
+                  disabled={isLoading}
+                  className="h-14 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
               </motion.div>
 
@@ -149,7 +184,10 @@ export default function LoginPage() {
                   <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
                     <span>🔒</span> Kata Sandi
                   </Label>
-                  <Link href="/forgot-password" className="text-sm text-purple-600 hover:text-purple-800 transition-colors font-medium">
+                  <Link
+                    href="/forgot-password"
+                    className={`text-sm text-purple-600 hover:text-purple-800 transition-colors font-medium ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
+                  >
                     Lupa kata sandi? 🤔
                   </Link>
                 </div>
@@ -160,12 +198,14 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password rahasia kamu! 🤫"
-                    className="h-14 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70 pr-10"
+                    disabled={isLoading}
+                    className="h-14 rounded-xl border-2 border-purple-200 bg-white/50 backdrop-blur-sm focus:border-purple-400 focus:ring-purple-400 transition-all duration-200 hover:bg-white/70 pr-10 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
                     type="button"
                     onClick={togglePasswordVisibility}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                    disabled={isLoading}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
@@ -183,9 +223,9 @@ export default function LoginPage() {
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Memproses... ⏳
+                    <span className="flex items-center gap-3">
+                      <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent"></div>
+                      <span className="text-lg">Memproses Login... ⏳</span>
                     </span>
                   ) : (
                     <span className="flex items-center gap-2 text-lg">
@@ -205,7 +245,10 @@ export default function LoginPage() {
               >
                 <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200">
                   <p className="text-sm mb-2">Belum punya akun? 🤷‍♀️</p>
-                  <Link href="/register" className="inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold transition-colors">
+                  <Link
+                    href="/register"
+                    className={`inline-flex items-center gap-2 text-purple-600 hover:text-purple-800 font-semibold transition-colors ${isLoading ? 'pointer-events-none opacity-50' : ''}`}
+                  >
                     <span>✨</span>
                     Daftar Yuk!
                     <span>🎉</span>

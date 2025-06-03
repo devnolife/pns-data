@@ -66,6 +66,25 @@ model reports {
   updated_at                       DateTime
   users_reports_assignee_idTousers users?       @relation("reports_assignee_idTousers", fields: [assignee_id], references: [id])
   users_reports_author_idTousers   users        @relation("reports_author_idTousers", fields: [author_id], references: [id], onDelete: Cascade)
+  files                            uploaded_files[]
+}
+
+model uploaded_files {
+  id           String    @id
+  filename     String
+  original_name String
+  file_path    String
+  file_size    Int
+  mime_type    String
+  category     String?
+  year         String?
+  batch        String?
+  report_id    String?
+  author_id    String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime
+  users        users     @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  reports      reports?  @relation(fields: [report_id], references: [id], onDelete: Cascade)
 }
 
 model users {
@@ -86,6 +105,7 @@ model users {
   limited_collections                limited_collections[]
   reports_reports_assignee_idTousers reports[]             @relation("reports_assignee_idTousers")
   reports_reports_author_idTousers   reports[]             @relation("reports_author_idTousers")
+  uploaded_files                     uploaded_files[]
 }
 
 enum Priority {

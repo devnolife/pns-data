@@ -11,7 +11,7 @@ import {
   Filter,
   MoreVertical,
   Trash2,
-  MarkAsUnread,
+  Mail,
   Clock,
   Zap,
 } from "lucide-react"
@@ -256,7 +256,7 @@ export default function NotificationsPage() {
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" className="w-40">
                                     <DropdownMenuItem onClick={() => toggleRead(notification.id)}>
-                                      <MarkAsUnread className="mr-2 h-4 w-4" />
+                                      <Mail className="mr-2 h-4 w-4" />
                                       {notification.isRead ? "Mark Unread" : "Mark Read"}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem

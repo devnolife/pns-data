@@ -1,23 +1,29 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { GuestbookForm } from "@/components/common/guestbook-form"
 import { getGuestbookEntriesAction } from "@/lib/actions/guestbook"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Clock, MapPin, User, Mail } from "lucide-react"
+import { formatDistanceToNow } from "date-fns"
+import { id } from "date-fns/locale"
 
 interface GuestbookEntry {
   id: string
   name: string
-  email?: string | null
+  email?: string
   message: string
+  institution: string
+  membership: string
+  visitPurpose: string
   createdAt: Date
-  author?: {
-    id: string
-    username: string
-    name: string | null
-  } | null
 }
 
 export default function GuestbookPage() {
+  const router = useRouter()
   const [recentEntries, setRecentEntries] = useState<GuestbookEntry[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -44,7 +50,7 @@ export default function GuestbookPage() {
   const handleSubmitSuccess = () => {
     loadEntries()
     // Redirect to public collections page after successful submission
-    window.location.href = "/public-collections"
+    router.push("/public-collections")
   }
 
   return (

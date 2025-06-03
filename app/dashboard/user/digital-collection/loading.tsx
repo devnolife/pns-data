@@ -35,7 +35,7 @@ export default function Loading() {
           >
             <CardHeader className="pb-3 p-6">
               <div className="flex items-center gap-4">
-                {/* Gradient icon skeleton */}
+                {/*  className="max-w-4xl max-h-[85vh] w-[90vw] z-50" icon skeleton */}
                 <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-purple-400 via-pink-400 to-blue-400 animate-pulse shadow-lg" />
                 <div className="flex-1 space-y-3">
                   <div className="h-5 w-full bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl animate-pulse" />

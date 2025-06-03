@@ -23,6 +23,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useAuth } from "@/context/auth-context"
 
 interface NavItemProps {
   icon: React.ElementType
@@ -113,15 +114,14 @@ const NavItem = ({ icon: Icon, label, href, isActive, notifications, isCollapsed
 export function ModernSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const { user, logout } = useAuth()
   const isMobile = useMobile()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   // Handle logout
   const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("authToken")
-    }
+    logout()
     router.push("/")
   }
 
@@ -134,6 +134,36 @@ export function ModernSidebar() {
   // Toggle sidebar collapse
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed)
+  }
+
+  // Effect to handle responsive behavior and communicate width changes
+  useEffect(() => {
+    if (mounted) {
+      const root = document.documentElement
+      const sidebarWidth = isCollapsed ? '80px' : '240px'
+      root.style.setProperty('--sidebar-width', sidebarWidth)
+    }
+  }, [isCollapsed, mounted])
+
+  // Helper function to get user initials
+  const getUserInitials = (name: string | null, username: string) => {
+    if (name) {
+      return name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .substring(0, 2)
+    }
+    return username.substring(0, 2).toUpperCase()
+  }
+
+  // Helper function to get display name
+  const getDisplayName = () => {
+    if (user?.name) {
+      return user.name
+    }
+    return user?.username || "Admin"
   }
 
   // Navigation items
@@ -179,84 +209,162 @@ export function ModernSidebar() {
     return null
   }
 
+  // Show loading state if user data is not available
+  if (!user) {
+    return (
+      <div className={cn(
+        "relative flex h-screen flex-col border-r bg-background shadow-lg transition-all duration-300 ease-in-out",
+        isCollapsed ? "w-[80px]" : "w-[240px]",
+      )}>
+        <div className="flex h-16 items-center justify-center border-b px-4 py-3">
+          <div className="animate-pulse flex items-center gap-2">
+            <div className="h-8 w-8 rounded-lg bg-gray-200"></div>
+            {!isCollapsed && <div className="h-4 w-24 rounded bg-gray-200"></div>}
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-2">
+            <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mx-auto"></div>
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div
       className={cn(
-        "relative flex h-screen flex-col border-r bg-background transition-all duration-300 ease-in-out",
+        "relative flex h-screen flex-col bg-white/90 backdrop-blur-xl border-r border-border/50 shadow-xl transition-all duration-300 ease-in-out",
         isCollapsed ? "w-[80px]" : "w-[240px]",
       )}
     >
-      {/* Sidebar Header */}
-      <div className="flex h-16 items-center justify-between border-b px-4 py-3">
-        {!isCollapsed && (
-          <Link href="/dashboard/admin" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+      {/* Sidebar Header with enhanced styling */}
+      <div className="border-b border-border/30 bg-gradient-to-r from-primary/5 to-primary/10">
+        <div className="flex h-16 items-center justify-between px-4 py-3">
+          {!isCollapsed && (
+            <Link href="/dashboard/admin" className="flex items-center gap-2 group">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm group-hover:shadow-md transition-all duration-200">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-bold text-primary">Relasi CPNS</span>
+            </Link>
+          )}
+          {isCollapsed && (
+            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-sm">
               <Sparkles className="h-4 w-4" />
             </div>
-            <span className="text-sm font-bold">Relasi CPNS</span>
-          </Link>
-        )}
-        {isCollapsed && (
-          <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <Sparkles className="h-4 w-4" />
-          </div>
-        )}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground"
-          onClick={toggleSidebar}
+          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-xl text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-200"
+            onClick={toggleSidebar}
+          >
+            {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </Button>
+        </div>
+        {/* Header bottom separator */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent"></div>
+      </div>
+
+      {/* User Profile with enhanced styling */}
+      <div className="border-b border-border/20 bg-gradient-to-r from-background/50 to-background/80">
+        <div
+          className={cn("my-4 flex items-center gap-3 px-3 py-2", isCollapsed ? "flex-col justify-center" : "flex-row")}
         >
-          {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-        </Button>
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Avatar className="h-10 w-10 border-2 border-primary/30 cursor-pointer hover:border-primary/50 transition-all duration-200 shadow-sm">
+                  <AvatarImage src={(user.avatar || undefined) as string | undefined} alt={getDisplayName()} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+                    {getUserInitials(user.name, user.username)}
+                  </AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              {isCollapsed && (
+                <TooltipContent side="right" className="font-medium bg-white/95 backdrop-blur-sm border border-border/50">
+                  <div className="text-center">
+                    <p className="font-semibold">{getDisplayName()}</p>
+                    <p className="text-xs text-muted-foreground">Administrator</p>
+                  </div>
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
+
+          {!isCollapsed && (
+            <div className="flex flex-col min-w-0 flex-1">
+              <span className="text-sm font-semibold truncate text-primary" title={getDisplayName()}>
+                {getDisplayName()}
+              </span>
+              <span className="text-xs text-muted-foreground">Administrator</span>
+            </div>
+          )}
+        </div>
+        {/* Profile bottom separator */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border/30 to-transparent mb-2"></div>
       </div>
 
-      {/* User Profile */}
-      <div
-        className={cn("my-4 flex items-center gap-3 px-3 py-2", isCollapsed ? "flex-col justify-center" : "flex-row")}
-      >
-        <Avatar className="h-10 w-10 border-2 border-primary">
-          <AvatarImage src="/abstract-profile.png" alt="Admin" />
-          <AvatarFallback>AD</AvatarFallback>
-        </Avatar>
+      {/* Navigation with enhanced styling */}
+      <div className="scrollbar-hide flex-1 overflow-y-auto px-3 py-4 bg-gradient-to-b from-background/30 to-background/50">
         {!isCollapsed && (
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold">Admin User</span>
-            <span className="text-xs text-muted-foreground">Super Admin</span>
+          <div className="mb-3">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">Menu Utama</h3>
+            <div className="h-px bg-gradient-to-r from-border/50 to-transparent mt-2 mb-3"></div>
           </div>
         )}
-      </div>
 
-      {/* Navigation */}
-      <div className="scrollbar-hide flex-1 overflow-y-auto px-3 py-2">
         <div className="space-y-1">
-          {navItems.map((item) => (
-            <NavItem
-              key={item.href}
-              icon={item.icon}
-              label={item.label}
-              href={item.href}
-              isActive={pathname === item.href}
-              isCollapsed={isCollapsed}
-            />
+          {navItems.map((item, index) => (
+            <div key={item.href}>
+              <NavItem
+                icon={item.icon}
+                label={item.label}
+                href={item.href}
+                isActive={pathname === item.href}
+                isCollapsed={isCollapsed}
+              />
+              {/* Add subtle separators between certain items */}
+              {(index === 1 || index === 3) && !isCollapsed && (
+                <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent my-2 mx-2"></div>
+              )}
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Logout Button */}
-      <div className="mt-auto border-t p-3">
-        <button
-          onClick={handleLogout}
-          className={cn(
-            "group flex h-12 w-full items-center rounded-xl px-3 text-sm font-medium text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive",
-            isCollapsed ? "justify-center" : "justify-start",
-          )}
-        >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground group-hover:text-destructive">
-            <LogOut className="h-5 w-5" />
-          </div>
-          {!isCollapsed && <span className="ml-2">Keluar</span>}
-        </button>
+      {/* Logout Button with enhanced styling */}
+      <div className="border-t border-border/30 bg-gradient-to-r from-background/50 to-background/80">
+        {/* Footer top separator */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent mb-3"></div>
+
+        <div className="p-3">
+          <TooltipProvider delayDuration={100}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleLogout}
+                  className={cn(
+                    "group flex h-12 w-full items-center rounded-xl px-3 text-sm font-medium text-muted-foreground transition-all hover:bg-destructive/10 hover:text-destructive shadow-sm hover:shadow-md",
+                    isCollapsed ? "justify-center" : "justify-start",
+                  )}
+                >
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground group-hover:text-destructive transition-all duration-200">
+                    <LogOut className="h-5 w-5" />
+                  </div>
+                  {!isCollapsed && <span className="ml-2">Keluar</span>}
+                </button>
+              </TooltipTrigger>
+              {isCollapsed && (
+                <TooltipContent side="right" className="font-medium bg-white/95 backdrop-blur-sm border border-border/50">
+                  Keluar
+                </TooltipContent>
+              )}
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
     </div>
   )

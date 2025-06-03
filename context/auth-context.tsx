@@ -99,9 +99,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Small delay to ensure state is updated
         await new Promise(resolve => setTimeout(resolve, 100))
 
-        // Check for callback URL in the current URL
-        const urlParams = new URLSearchParams(window.location.search)
-        const callbackUrl = urlParams.get('callbackUrl')
+        // Check for callback URL in the current URL - only on client side
+        let callbackUrl = null
+        if (typeof window !== 'undefined') {
+          const urlParams = new URLSearchParams(window.location.search)
+          callbackUrl = urlParams.get('callbackUrl')
+        }
 
         if (callbackUrl) {
           // Decode the callback URL and redirect to it

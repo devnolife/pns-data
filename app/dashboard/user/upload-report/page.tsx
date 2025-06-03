@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useToast } from "@/hooks/use-toast"
 import { Upload, File, X, Loader2, Sparkles, Star, Zap, CloudUpload, FileText, CheckCircle } from "lucide-react"
+import { createReportWithFilesAction } from "@/lib/actions/reports"
 
 export default function UploadReportPage() {
   const { user, isAuthenticated } = useAuth()
@@ -26,8 +27,10 @@ export default function UploadReportPage() {
   const [year, setYear] = useState("")
   const [batch, setBatch] = useState("")
   const [files, setFiles] = useState<File[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([])
   const [dragging, setDragging] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [uploadingFiles, setUploadingFiles] = useState(false)
   const [error, setError] = useState("")
 
   if (!isAuthenticated) {
@@ -65,6 +68,42 @@ export default function UploadReportPage() {
     setFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
+  const uploadFiles = async () => {
+    if (files.length === 0) return []
+
+    setUploadingFiles(true)
+    try {
+      const formData = new FormData()
+
+      files.forEach((file) => {
+        formData.append('files', file)
+      })
+
+      formData.append('category', category)
+      formData.append('year', year)
+      formData.append('batch', batch)
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const result = await response.json()
+
+      if (!result.success) {
+        throw new Error(result.error || 'Upload failed')
+      }
+
+      setUploadedFiles(result.files)
+      return result.files.map((file: any) => file.id)
+    } catch (error) {
+      console.error('File upload error:', error)
+      throw error
+    } finally {
+      setUploadingFiles(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -96,12 +135,42 @@ export default function UploadReportPage() {
 
     setUploading(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      setUploading(false)
+    try {
+      // First upload files
+      const fileIds = await uploadFiles()
+
+      // Create content based on form data
+      const content = `Laporan ${category} - ${title}
+      
+Kategori: ${category}
+Tahun Pelatihan: ${year}
+Angkatan: ${batch}
+
+${description ? `Deskripsi:
+${description}` : ''}
+
+File yang diunggah: ${files.map(f => f.name).join(', ')}`
+
+      // Then create report with file references
+      const result = await createReportWithFilesAction({
+        title,
+        description,
+        content,
+        category,
+        year,
+        batch,
+        fileIds
+      })
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create report')
+      }
+
+      // Show success toast with better messaging
       toast({
-        title: "Laporan berhasil diunggah! 🎉",
-        description: "Laporan Anda telah diunggah dan sedang menunggu verifikasi. Absolutely amazing! ✨",
+        title: "🎉 Laporan berhasil diunggah!",
+        description: `Laporan "${title}" telah berhasil diunggah dengan ${files.length} file. Laporan sedang menunggu verifikasi admin. ✨`,
+        duration: 5000,
       })
 
       // Reset form
@@ -111,10 +180,26 @@ export default function UploadReportPage() {
       setYear("")
       setBatch("")
       setFiles([])
+      setUploadedFiles([])
 
-      // Redirect to dashboard
-      router.push("/dashboard/user")
-    }, 2000)
+      // Redirect to dashboard after a short delay to let user see the toast
+      setTimeout(() => {
+        router.push("/dashboard/user")
+      }, 2000)
+    } catch (error) {
+      console.error('Submit error:', error)
+      setError(error instanceof Error ? error.message : 'Gagal mengunggah laporan')
+
+      // Show error toast
+      toast({
+        title: "❌ Gagal mengunggah laporan",
+        description: error instanceof Error ? error.message : 'Terjadi kesalahan saat mengunggah laporan. Silakan coba lagi.',
+        variant: "destructive",
+        duration: 5000,
+      })
+    } finally {
+      setUploading(false)
+    }
   }
 
   const getFileIcon = (fileName: string) => {
@@ -137,6 +222,14 @@ export default function UploadReportPage() {
       default:
         return '📁'
     }
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
   }
 
   return (
@@ -326,14 +419,25 @@ export default function UploadReportPage() {
                         type="button"
                         className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                         onClick={() => document.getElementById("file-upload")?.click()}
+                        disabled={uploadingFiles}
                       >
-                        <Upload className="mr-2 h-5 w-5" />
-                        Pilih File Keren! 🚀
+                        {uploadingFiles ? (
+                          <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-2 h-5 w-5" />
+                            Pilih File Keren! 🚀
+                          </>
+                        )}
                       </Button>
                       <input
                         id="file-upload"
                         type="file"
                         multiple
+                        accept=".pdf,.docx,.doc,.xlsx,.xls,.pptx,.ppt,.zip,.rar"
                         className="hidden"
                         onChange={handleFileChange}
                         aria-label="Upload files"
@@ -361,7 +465,7 @@ export default function UploadReportPage() {
                             <div>
                               <p className="font-semibold text-gray-800 text-sm">{file.name}</p>
                               <p className="text-xs text-gray-600">
-                                {(file.size / 1024 / 1024).toFixed(2)} MB • {file.type || 'Unknown type'}
+                                {formatFileSize(file.size)} • {file.type || 'Unknown type'}
                               </p>
                             </div>
                           </div>
@@ -371,9 +475,34 @@ export default function UploadReportPage() {
                             size="icon"
                             onClick={() => removeFile(index)}
                             className="h-8 w-8 rounded-full hover:bg-red-100 hover:text-red-600 transition-all duration-200"
+                            disabled={uploadingFiles}
                           >
                             <X className="h-4 w-4" />
                           </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Uploaded Files Status */}
+                {uploadedFiles.length > 0 && (
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-green-800 flex items-center gap-2">
+                      ✅ File Berhasil Diunggah ({uploadedFiles.length})
+                    </Label>
+                    <div className="bg-green-50/50 backdrop-blur-sm border border-green-200/50 rounded-xl divide-y divide-green-200/50 shadow-md">
+                      {uploadedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-3">
+                          <div className="flex items-center gap-3">
+                            <div className="text-2xl">✅</div>
+                            <div>
+                              <p className="font-semibold text-green-800 text-sm">{file.originalName}</p>
+                              <p className="text-xs text-green-600">
+                                {formatFileSize(file.fileSize)} • Uploaded successfully
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -392,18 +521,24 @@ export default function UploadReportPage() {
                   variant="outline"
                   onClick={() => router.back()}
                   className="px-8 py-3 text-lg font-semibold bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md hover:shadow-lg transition-all duration-300"
+                  disabled={uploading || uploadingFiles}
                 >
                   Batal 😔
                 </Button>
                 <Button
                   type="submit"
-                  disabled={uploading}
+                  disabled={uploading || uploadingFiles}
                   className="px-8 py-3 text-lg font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-50"
                 >
                   {uploading ? (
                     <>
                       <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      Mengunggah... 🚀
+                      Mengunggah Laporan... 🚀
+                    </>
+                  ) : uploadingFiles ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Mengunggah File... 📎
                     </>
                   ) : (
                     <>

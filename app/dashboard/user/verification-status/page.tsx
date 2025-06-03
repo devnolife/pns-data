@@ -482,86 +482,88 @@ export default function VerificationStatusPage() {
         {/* Detail Dialog */}
         {selectedReport && (
           <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white border-0 shadow-2xl">
-              <DialogHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  {getStatusInfo(selectedReport.status).icon}
-                  <DialogTitle className="text-2xl font-bold text-gray-800">
-                    {selectedReport.title}
-                  </DialogTitle>
-                </div>
-                <DialogDescription className="text-gray-600 text-base">
-                  {selectedReport.description}
-                </DialogDescription>
-              </DialogHeader>
+            <DialogContent className="!fixed !left-1/2 !top-1/2 !-translate-x-1/2 !-translate-y-1/2 sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[70vw] xl:max-w-4xl max-h-[90vh] bg-white border-0 shadow-2xl rounded-2xl">
+              <div className="max-h-[80vh] overflow-y-auto">
+                <DialogHeader className="pb-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    {getStatusInfo(selectedReport.status).icon}
+                    <DialogTitle className="text-2xl font-bold text-gray-800">
+                      {selectedReport.title}
+                    </DialogTitle>
+                  </div>
+                  <DialogDescription className="text-gray-600 text-base">
+                    {selectedReport.description}
+                  </DialogDescription>
+                </DialogHeader>
 
-              <div className="space-y-6 mt-6">
-                <div className="flex items-center gap-4">
-                  {getCategoryBadge(selectedReport.category)}
-                  {getStatusInfo(selectedReport.status).badge}
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-semibold text-gray-700 flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      Tanggal Submit
-                    </h4>
-                    <p className="text-gray-600">{new Date(selectedReport.submittedDate).toLocaleString('id-ID')}</p>
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    {getCategoryBadge(selectedReport.category)}
+                    {getStatusInfo(selectedReport.status).badge}
                   </div>
 
-                  {selectedReport.verifiedDate && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <h4 className="font-semibold text-green-700 flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4" />
-                        Tanggal Disetujui
+                      <h4 className="font-semibold text-gray-700 flex items-center gap-2">
+                        <Calendar className="h-4 w-4" />
+                        Tanggal Submit
                       </h4>
-                      <p className="text-green-600">{new Date(selectedReport.verifiedDate).toLocaleString('id-ID')}</p>
+                      <p className="text-gray-600">{new Date(selectedReport.submittedDate).toLocaleString('id-ID')}</p>
                     </div>
-                  )}
 
-                  {selectedReport.rejectedDate && (
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-red-700 flex items-center gap-2">
-                        <XCircle className="h-4 w-4" />
-                        Tanggal Ditolak
-                      </h4>
-                      <p className="text-red-600">{new Date(selectedReport.rejectedDate).toLocaleString('id-ID')}</p>
-                    </div>
-                  )}
-                </div>
+                    {selectedReport.verifiedDate && (
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-green-700 flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4" />
+                          Tanggal Disetujui
+                        </h4>
+                        <p className="text-green-600">{new Date(selectedReport.verifiedDate).toLocaleString('id-ID')}</p>
+                      </div>
+                    )}
 
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    Files ({selectedReport.files.length})
-                  </h4>
-                  <div className="grid gap-3">
-                    {selectedReport.files.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <FileText className="h-5 w-5 text-blue-600" />
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-800">{file.name}</p>
-                            <p className="text-sm text-gray-500">{file.size} • {file.type}</p>
+                    {selectedReport.rejectedDate && (
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-red-700 flex items-center gap-2">
+                          <XCircle className="h-4 w-4" />
+                          Tanggal Ditolak
+                        </h4>
+                        <p className="text-red-600">{new Date(selectedReport.rejectedDate).toLocaleString('id-ID')}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      Files ({selectedReport.files.length})
+                    </h4>
+                    <div className="grid gap-3">
+                      {selectedReport.files.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-100 rounded-lg">
+                              <FileText className="h-5 w-5 text-blue-600" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-800">{file.name}</p>
+                              <p className="text-sm text-gray-500">{file.size} • {file.type}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {selectedReport.feedback && (
-                  <div className="p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl">
-                    <h4 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
-                      <AlertCircle className="h-5 w-5" />
-                      Feedback dari Admin
-                    </h4>
-                    <p className="text-red-700 leading-relaxed">{selectedReport.feedback}</p>
-                  </div>
-                )}
+                  {selectedReport.feedback && (
+                    <div className="p-6 bg-gradient-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl">
+                      <h4 className="font-semibold text-red-800 mb-3 flex items-center gap-2">
+                        <AlertCircle className="h-5 w-5" />
+                        Feedback dari Admin
+                      </h4>
+                      <p className="text-red-700 leading-relaxed">{selectedReport.feedback}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </DialogContent>
           </Dialog>

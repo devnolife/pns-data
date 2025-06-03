@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from './auth'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
+import crypto from 'crypto'
 
 // Schemas
 const createReportSchema = z.object({
@@ -24,6 +25,51 @@ const updateReportSchema = z.object({
   status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'REJECTED']).optional(),
   assigneeId: z.string().optional(),
 })
+
+// Types
+export interface ReportData {
+  id: string
+  title: string
+  description: string | null
+  content: string
+  status: string
+  category: string | null
+  priority: string
+  author_id: string
+  created_at: Date
+  updated_at: Date
+  files: UploadedFileData[]
+  author: {
+    name: string | null
+    username: string
+    training?: string | null
+    angkatan?: string | null
+  }
+}
+
+export interface UploadedFileData {
+  id: string
+  filename: string
+  original_name: string
+  file_path: string
+  file_size: number
+  mime_type: string
+  category: string | null
+  year: string | null
+  batch: string | null
+  created_at: Date
+  downloadUrl: string
+}
+
+export interface CreateReportData {
+  title: string
+  description?: string
+  content: string
+  category: string
+  year: string
+  batch: string
+  fileIds?: string[]
+}
 
 export async function createReportAction(formData: FormData) {
   try {
@@ -279,5 +325,374 @@ export async function getReportByIdAction(id: string) {
   } catch (error) {
     console.error('Get report error:', error)
     return { error: 'Failed to fetch report' }
+  }
+}
+
+// Create report with file uploads
+export async function createReportWithFilesAction(data: CreateReportData) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    // Validate input data
+    const validatedData = createReportSchema.parse(data)
+
+    // Create report
+    const reportId = crypto.randomUUID()
+    const report = await prisma.reports.create({
+      data: {
+        id: reportId,
+        title: validatedData.title,
+        description: validatedData.description || '',
+        content: `Laporan ${validatedData.category} - ${validatedData.title}`,
+        status: 'PENDING',
+        category: validatedData.category,
+        priority: 'MEDIUM',
+        author_id: currentUser.id,
+        updated_at: new Date(),
+      }
+    })
+
+    // Update uploaded files to link them to this report
+    if (data.fileIds && data.fileIds.length > 0) {
+      await prisma.uploaded_files.updateMany({
+        where: {
+          id: { in: data.fileIds },
+          author_id: currentUser.id,
+          report_id: null // Only update files that aren't already linked to a report
+        },
+        data: {
+          report_id: reportId,
+          updated_at: new Date()
+        }
+      })
+    }
+
+    return {
+      success: true,
+      data: {
+        reportId: report.id,
+        message: 'Laporan berhasil dibuat dan file telah diunggah!'
+      }
+    }
+  } catch (error) {
+    console.error('Create report with files error:', error)
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.errors[0].message
+      }
+    }
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal membuat laporan'
+    }
+  }
+}
+
+// Get user's uploaded files
+export async function getUserUploadedFilesAction(params?: {
+  category?: string
+  year?: string
+  batch?: string
+  reportId?: string
+  limit?: number
+}) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    const where: any = {
+      author_id: currentUser.id
+    }
+
+    if (params?.category) {
+      where.category = params.category
+    }
+
+    if (params?.year) {
+      where.year = params.year
+    }
+
+    if (params?.batch) {
+      where.batch = params.batch
+    }
+
+    if (params?.reportId) {
+      where.report_id = params.reportId
+    }
+
+    const files = await prisma.uploaded_files.findMany({
+      where,
+      orderBy: { created_at: 'desc' },
+      take: params?.limit || 50,
+      include: {
+        reports: {
+          select: {
+            id: true,
+            title: true,
+            status: true
+          }
+        }
+      }
+    })
+
+    const formattedFiles = files.map(file => ({
+      id: file.id,
+      filename: file.filename,
+      original_name: file.original_name,
+      file_path: file.file_path,
+      file_size: file.file_size,
+      mime_type: file.mime_type,
+      category: file.category,
+      year: file.year,
+      batch: file.batch,
+      created_at: file.created_at,
+      downloadUrl: `/${file.file_path}`,
+      report: file.reports
+    }))
+
+    return {
+      success: true,
+      data: formattedFiles
+    }
+  } catch (error) {
+    console.error('Get user uploaded files error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil file'
+    }
+  }
+}
+
+// Get report with files
+export async function getReportWithFilesAction(reportId: string) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    const report = await prisma.reports.findFirst({
+      where: {
+        id: reportId,
+        author_id: currentUser.id
+      },
+      include: {
+        users_reports_author_idTousers: {
+          select: {
+            name: true,
+            username: true,
+            training: true,
+            angkatan: true
+          }
+        },
+        files: {
+          orderBy: { created_at: 'desc' }
+        }
+      }
+    })
+
+    if (!report) {
+      return {
+        success: false,
+        error: 'Laporan tidak ditemukan'
+      }
+    }
+
+    const formattedFiles = report.files.map(file => ({
+      id: file.id,
+      filename: file.filename,
+      original_name: file.original_name,
+      file_path: file.file_path,
+      file_size: file.file_size,
+      mime_type: file.mime_type,
+      category: file.category,
+      year: file.year,
+      batch: file.batch,
+      created_at: file.created_at,
+      downloadUrl: `/${file.file_path}`
+    }))
+
+    return {
+      success: true,
+      data: {
+        id: report.id,
+        title: report.title,
+        description: report.description,
+        content: report.content,
+        status: report.status,
+        category: report.category,
+        priority: report.priority,
+        author_id: report.author_id,
+        created_at: report.created_at,
+        updated_at: report.updated_at,
+        files: formattedFiles,
+        author: report.users_reports_author_idTousers
+      }
+    }
+  } catch (error) {
+    console.error('Get report with files error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil laporan'
+    }
+  }
+}
+
+// Delete uploaded file
+export async function deleteUploadedFileAction(fileId: string) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    // Check if user owns the file
+    const file = await prisma.uploaded_files.findFirst({
+      where: {
+        id: fileId,
+        author_id: currentUser.id
+      }
+    })
+
+    if (!file) {
+      return {
+        success: false,
+        error: 'File tidak ditemukan'
+      }
+    }
+
+    // Delete file from database
+    await prisma.uploaded_files.delete({
+      where: { id: fileId }
+    })
+
+    // TODO: Also delete physical file from filesystem
+    // This would require additional file system operations
+
+    return {
+      success: true,
+      message: 'File berhasil dihapus'
+    }
+  } catch (error) {
+    console.error('Delete uploaded file error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal menghapus file'
+    }
+  }
+}
+
+// Get file statistics for user
+export async function getUserFileStatsAction() {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    const [
+      totalFiles,
+      totalSize,
+      filesByCategory,
+      filesByYear,
+      recentFiles
+    ] = await Promise.all([
+      // Total files count
+      prisma.uploaded_files.count({
+        where: { author_id: currentUser.id }
+      }),
+
+      // Total size of all files
+      prisma.uploaded_files.aggregate({
+        where: { author_id: currentUser.id },
+        _sum: { file_size: true }
+      }),
+
+      // Files grouped by category
+      prisma.uploaded_files.groupBy({
+        by: ['category'],
+        where: {
+          author_id: currentUser.id,
+          category: { not: null }
+        },
+        _count: { category: true }
+      }),
+
+      // Files grouped by year
+      prisma.uploaded_files.groupBy({
+        by: ['year'],
+        where: {
+          author_id: currentUser.id,
+          year: { not: null }
+        },
+        _count: { year: true }
+      }),
+
+      // Recent files (last 5)
+      prisma.uploaded_files.findMany({
+        where: { author_id: currentUser.id },
+        select: {
+          id: true,
+          original_name: true,
+          file_size: true,
+          mime_type: true,
+          created_at: true,
+          file_path: true
+        },
+        orderBy: { created_at: 'desc' },
+        take: 5
+      })
+    ])
+
+    return {
+      success: true,
+      data: {
+        totalFiles,
+        totalSize: totalSize._sum.file_size || 0,
+        filesByCategory: filesByCategory.map(item => ({
+          category: item.category,
+          count: item._count.category
+        })),
+        filesByYear: filesByYear.map(item => ({
+          year: item.year,
+          count: item._count.year
+        })),
+        recentFiles: recentFiles.map(file => ({
+          id: file.id,
+          name: file.original_name,
+          size: file.file_size,
+          type: file.mime_type,
+          createdAt: file.created_at,
+          downloadUrl: `/${file.file_path}`
+        }))
+      }
+    }
+  } catch (error) {
+    console.error('Get user file stats error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil statistik file'
+    }
   }
 } 
