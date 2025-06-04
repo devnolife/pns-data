@@ -6,10 +6,7 @@ const globalForPrisma = globalThis as unknown as {
 
 // Create a new client with error handling
 const createPrismaClient = () => {
-  return new PrismaClient({
-    log: ['query'],
-    errorFormat: 'pretty',
-  })
+  return new PrismaClient()
 }
 
 // If we're not in X, try to reuse the client

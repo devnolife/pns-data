@@ -1,5 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { updateUser, deleteUser } from '@/lib/actions/admin'
+import { updateUser, deleteUser, getUserById } from '@/lib/actions/admin'
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const userId = params.id
+
+    const result = await getUserById(userId)
+
+    if (result.success) {
+      return NextResponse.json(result)
+    } else {
+      return NextResponse.json(result, { status: 404 })
+    }
+  } catch (error) {
+    console.error('Error in GET /api/admin/users/[id]:', error)
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Internal server error',
+        message: 'Gagal mengambil data pengguna'
+      },
+      { status: 500 }
+    )
+  }
+}
 
 export async function PUT(
   request: NextRequest,

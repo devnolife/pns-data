@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { ReportStatus, Role } from "@/lib/generated/prisma"
+import bcrypt from 'bcryptjs'
 
 export interface DashboardStats {
   totalUsers: number
@@ -1110,6 +1111,7 @@ export interface UserData {
   status: "active" | "inactive"
   created_at: Date
   updated_at: Date
+  disabled_at?: Date | null
 }
 
 export interface CreateUserData {
@@ -1146,18 +1148,6 @@ export async function getUsers(page = 1, limit = 10, roleFilter?: string, status
       where.role = roleFilter.toUpperCase()
     }
 
-    // Status filter (we'll determine status based on created_at - users created in last 30 days are considered active)
-    if (statusFilter && statusFilter !== 'all') {
-      const thirtyDaysAgo = new Date()
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-
-      if (statusFilter === 'active') {
-        where.created_at = { gte: thirtyDaysAgo }
-      } else if (statusFilter === 'inactive') {
-        where.created_at = { lt: thirtyDaysAgo }
-      }
-    }
-
     // Search filter
     if (search && search.trim()) {
       where.OR = [
@@ -1190,13 +1180,22 @@ export async function getUsers(page = 1, limit = 10, roleFilter?: string, status
       prisma.users.count({ where })
     ])
 
-    // Transform users to include status
+    // Transform users to include status based on a more sophisticated approach
     const transformedUsers: UserData[] = users.map(user => {
-      const thirtyDaysAgo = new Date()
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+      // Check if user has been "disabled" by looking at a pattern in updated_at
+      // We'll consider a user inactive if they were "disabled" (updated_at set to a specific pattern)
+      // or if they haven't been active for a very long time (6 months)
+      const sixMonthsAgo = new Date()
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
-      // Consider users created in the last 30 days as active
-      const status: "active" | "inactive" = user.created_at >= thirtyDaysAgo ? "active" : "inactive"
+      // Strategy 1: Check if updated_at is exactly the same as created_at (never updated = potentially inactive)
+      // Strategy 2: Check if last update was more than 6 months ago
+      const neverUpdated = user.updated_at.getTime() === user.created_at.getTime()
+      const veryOld = user.updated_at < sixMonthsAgo
+
+      // For demo purposes, we'll use a simpler approach:
+      // Users are considered active unless they are very old or admin has "disabled" them
+      const status: "active" | "inactive" = (veryOld || neverUpdated) ? "inactive" : "active"
 
       return {
         id: user.id,
@@ -1212,16 +1211,22 @@ export async function getUsers(page = 1, limit = 10, roleFilter?: string, status
       }
     })
 
-    console.log(`Successfully fetched ${transformedUsers.length} users out of ${total} total`)
+    // Apply status filter after transformation
+    let filteredUsers = transformedUsers
+    if (statusFilter && statusFilter !== 'all') {
+      filteredUsers = transformedUsers.filter(user => user.status === statusFilter)
+    }
+
+    console.log(`Successfully fetched ${filteredUsers.length} users out of ${total} total`)
 
     return {
       success: true,
-      users: transformedUsers,
+      users: filteredUsers,
       pagination: {
         page,
         limit,
-        total,
-        totalPages: Math.ceil(total / limit)
+        total: filteredUsers.length, // Use filtered count
+        totalPages: Math.ceil(filteredUsers.length / limit)
       }
     }
   } catch (error) {
@@ -1252,6 +1257,25 @@ export async function createUser(userData: CreateUserData) {
       }
     }
 
+    // Validate password length
+    if (userData.password.length < 8) {
+      return {
+        success: false,
+        error: 'Password too short',
+        message: 'Password minimal 8 karakter'
+      }
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(userData.email)) {
+      return {
+        success: false,
+        error: 'Invalid email format',
+        message: 'Format email tidak valid'
+      }
+    }
+
     // Check if username or email already exists
     const existingUser = await prisma.users.findFirst({
       where: {
@@ -1270,13 +1294,16 @@ export async function createUser(userData: CreateUserData) {
       }
     }
 
-    // Hash password (you should implement proper password hashing)
-    // For now, we'll store it as plain text (NOT RECOMMENDED for production)
-    const hashedPassword = userData.password // TODO: Implement proper hashing
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(userData.password, 12)
+
+    // Generate unique ID
+    const crypto = require('crypto')
+    const userId = crypto.randomUUID()
 
     const user = await prisma.users.create({
       data: {
-        id: `user_${Date.now()}_${Math.random().toString(36).substring(2)}`,
+        id: userId,
         name: userData.name,
         username: userData.username,
         email: userData.email,
@@ -1338,6 +1365,27 @@ export async function updateUser(userId: string, userData: UpdateUserData) {
       }
     }
 
+    // Validate email format if provided
+    if (userData.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(userData.email)) {
+        return {
+          success: false,
+          error: 'Invalid email format',
+          message: 'Format email tidak valid'
+        }
+      }
+    }
+
+    // Validate password length if provided
+    if (userData.password && userData.password.trim() && userData.password.length < 8) {
+      return {
+        success: false,
+        error: 'Password too short',
+        message: 'Password minimal 8 karakter'
+      }
+    }
+
     // Check if username or email already exists (excluding current user)
     if (userData.username || userData.email) {
       const duplicateUser = await prisma.users.findFirst({
@@ -1375,9 +1423,9 @@ export async function updateUser(userId: string, userData: UpdateUserData) {
     if (userData.training !== undefined) updateData.training = userData.training || null
     if (userData.angkatan !== undefined) updateData.angkatan = userData.angkatan || null
 
-    // Hash password if provided (you should implement proper password hashing)
+    // Hash password if provided
     if (userData.password && userData.password.trim()) {
-      updateData.password = userData.password // TODO: Implement proper hashing
+      updateData.password = await bcrypt.hash(userData.password, 12)
     }
 
     const user = await prisma.users.update({
@@ -1490,17 +1538,32 @@ export async function toggleUserStatus(userId: string) {
       }
     }
 
-    // Determine current status based on created_at
-    const thirtyDaysAgo = new Date()
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-    const isCurrentlyActive = existingUser.created_at >= thirtyDaysAgo
+    // Determine current status
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
 
-    // For demonstration, we'll just update the updated_at field
-    // In a real application, you might want to add a separate 'active' boolean field
+    const neverUpdated = existingUser.updated_at.getTime() === existingUser.created_at.getTime()
+    const veryOld = existingUser.updated_at < sixMonthsAgo
+    const isCurrentlyActive = !(veryOld || neverUpdated)
+
+    // Toggle status by updating the updated_at field strategically
+    let newUpdatedAt: Date
+    let newStatus: string
+
+    if (isCurrentlyActive) {
+      // Deactivate user by setting updated_at to a very old date (6 months ago)
+      newUpdatedAt = sixMonthsAgo
+      newStatus = 'inactive'
+    } else {
+      // Activate user by setting updated_at to current time
+      newUpdatedAt = new Date()
+      newStatus = 'active'
+    }
+
     const user = await prisma.users.update({
       where: { id: userId },
       data: {
-        updated_at: new Date()
+        updated_at: newUpdatedAt
       },
       select: {
         id: true,
@@ -1514,8 +1577,6 @@ export async function toggleUserStatus(userId: string) {
         updated_at: true
       }
     })
-
-    const newStatus = isCurrentlyActive ? 'inactive' : 'active'
 
     return {
       success: true,
@@ -1770,6 +1831,404 @@ export async function exportVisitorStatsAction(period: string = "30") {
       success: false,
       error: 'Failed to export visitor statistics',
       message: 'Gagal mengekspor statistik pengunjung'
+    }
+  }
+}
+
+// Get user by ID
+export async function getUserById(userId: string) {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      return {
+        success: false,
+        error: 'Invalid user ID',
+        message: 'ID user tidak valid'
+      }
+    }
+
+    const user = await prisma.users.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        role: true,
+        training: true,
+        angkatan: true,
+        phone: true,
+        avatar: true,
+        created_at: true,
+        updated_at: true
+      }
+    })
+
+    if (!user) {
+      return {
+        success: false,
+        error: 'User not found',
+        message: 'User tidak ditemukan'
+      }
+    }
+
+    // Determine status
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+    const neverUpdated = user.updated_at.getTime() === user.created_at.getTime()
+    const veryOld = user.updated_at < sixMonthsAgo
+    const status: "active" | "inactive" = (veryOld || neverUpdated) ? "inactive" : "active"
+
+    return {
+      success: true,
+      user: {
+        ...user,
+        status
+      }
+    }
+  } catch (error) {
+    console.error('Error getting user by ID:', error)
+    return {
+      success: false,
+      error: 'Failed to get user',
+      message: 'Gagal mengambil data user'
+    }
+  }
+}
+
+// Get user statistics
+export async function getUserStats() {
+  try {
+    const [totalUsers, adminCount, userCount, moderatorCount] = await Promise.all([
+      prisma.users.count(),
+      prisma.users.count({ where: { role: 'ADMIN' } }),
+      prisma.users.count({ where: { role: 'USER' } }),
+      prisma.users.count({ where: { role: 'MODERATOR' } })
+    ])
+
+    // Get users with training programs
+    const trainingStats = await prisma.users.groupBy({
+      by: ['training'],
+      _count: { training: true },
+      where: { training: { not: null } }
+    })
+
+    // Get users created in last 30 days
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    const recentUsers = await prisma.users.count({
+      where: { created_at: { gte: thirtyDaysAgo } }
+    })
+
+    // Calculate active/inactive users
+    const allUsers = await prisma.users.findMany({
+      select: {
+        created_at: true,
+        updated_at: true
+      }
+    })
+
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+
+    let activeUsers = 0
+    let inactiveUsers = 0
+
+    allUsers.forEach(user => {
+      const neverUpdated = user.updated_at.getTime() === user.created_at.getTime()
+      const veryOld = user.updated_at < sixMonthsAgo
+      
+      if (veryOld || neverUpdated) {
+        inactiveUsers++
+      } else {
+        activeUsers++
+      }
+    })
+
+    return {
+      success: true,
+      stats: {
+        totalUsers,
+        activeUsers,
+        inactiveUsers,
+        recentUsers,
+        roleDistribution: {
+          admin: adminCount,
+          user: userCount,
+          moderator: moderatorCount
+        },
+        trainingPrograms: trainingStats.map(stat => ({
+          training: stat.training || 'Tidak Ada',
+          count: stat._count.training
+        }))
+      }
+    }
+  } catch (error) {
+    console.error('Error getting user stats:', error)
+    return {
+      success: false,
+      error: 'Failed to get user statistics',
+      message: 'Gagal mengambil statistik user'
+    }
+  }
+}
+
+// Batch activate users
+export async function batchActivateUsers(userIds: string[]) {
+  try {
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return {
+        success: false,
+        error: 'Invalid user IDs',
+        message: 'Daftar ID user tidak valid'
+      }
+    }
+
+    // Validate that all IDs are strings
+    const validIds = userIds.filter(id => typeof id === 'string' && id.trim())
+    if (validIds.length === 0) {
+      return {
+        success: false,
+        error: 'No valid user IDs',
+        message: 'Tidak ada ID user yang valid'
+      }
+    }
+
+    // Check if users exist
+    const existingUsers = await prisma.users.findMany({
+      where: { id: { in: validIds } },
+      select: { id: true, username: true }
+    })
+
+    if (existingUsers.length !== validIds.length) {
+      return {
+        success: false,
+        error: 'Some users not found',
+        message: 'Beberapa user tidak ditemukan'
+      }
+    }
+
+    // Activate users by setting updated_at to current time
+    await prisma.users.updateMany({
+      where: { id: { in: validIds } },
+      data: { updated_at: new Date() }
+    })
+
+    return {
+      success: true,
+      message: `${validIds.length} user berhasil diaktifkan`,
+      count: validIds.length
+    }
+  } catch (error) {
+    console.error('Error batch activating users:', error)
+    return {
+      success: false,
+      error: 'Failed to activate users',
+      message: 'Gagal mengaktifkan user secara batch'
+    }
+  }
+}
+
+// Batch deactivate users
+export async function batchDeactivateUsers(userIds: string[]) {
+  try {
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return {
+        success: false,
+        error: 'Invalid user IDs',
+        message: 'Daftar ID user tidak valid'
+      }
+    }
+
+    // Validate that all IDs are strings
+    const validIds = userIds.filter(id => typeof id === 'string' && id.trim())
+    if (validIds.length === 0) {
+      return {
+        success: false,
+        error: 'No valid user IDs',
+        message: 'Tidak ada ID user yang valid'
+      }
+    }
+
+    // Check if users exist and none of them are admin (safety check)
+    const existingUsers = await prisma.users.findMany({
+      where: { id: { in: validIds } },
+      select: { id: true, username: true, role: true }
+    })
+
+    if (existingUsers.length !== validIds.length) {
+      return {
+        success: false,
+        error: 'Some users not found',
+        message: 'Beberapa user tidak ditemukan'
+      }
+    }
+
+    // Check if any user is admin
+    const adminUsers = existingUsers.filter(user => user.role === 'ADMIN')
+    if (adminUsers.length > 0) {
+      return {
+        success: false,
+        error: 'Cannot deactivate admin users',
+        message: 'Tidak dapat menonaktifkan user admin'
+      }
+    }
+
+    // Deactivate users by setting updated_at to 6 months ago
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+
+    await prisma.users.updateMany({
+      where: { id: { in: validIds } },
+      data: { updated_at: sixMonthsAgo }
+    })
+
+    return {
+      success: true,
+      message: `${validIds.length} user berhasil dinonaktifkan`,
+      count: validIds.length
+    }
+  } catch (error) {
+    console.error('Error batch deactivating users:', error)
+    return {
+      success: false,
+      error: 'Failed to deactivate users',
+      message: 'Gagal menonaktifkan user secara batch'
+    }
+  }
+}
+
+// Batch delete users
+export async function batchDeleteUsers(userIds: string[]) {
+  try {
+    if (!Array.isArray(userIds) || userIds.length === 0) {
+      return {
+        success: false,
+        error: 'Invalid user IDs',
+        message: 'Daftar ID user tidak valid'
+      }
+    }
+
+    // Validate that all IDs are strings
+    const validIds = userIds.filter(id => typeof id === 'string' && id.trim())
+    if (validIds.length === 0) {
+      return {
+        success: false,
+        error: 'No valid user IDs',
+        message: 'Tidak ada ID user yang valid'
+      }
+    }
+
+    // Check if users exist and get their data
+    const existingUsers = await prisma.users.findMany({
+      where: { id: { in: validIds } },
+      select: { id: true, username: true, role: true }
+    })
+
+    if (existingUsers.length !== validIds.length) {
+      return {
+        success: false,
+        error: 'Some users not found',
+        message: 'Beberapa user tidak ditemukan'
+      }
+    }
+
+    // Check if any user is admin
+    const adminUsers = existingUsers.filter(user => user.role === 'ADMIN')
+    if (adminUsers.length > 0) {
+      return {
+        success: false,
+        error: 'Cannot delete admin users',
+        message: 'Tidak dapat menghapus user admin'
+      }
+    }
+
+    // Check if users have reports or other related data
+    const userReports = await prisma.reports.count({
+      where: { author_id: { in: validIds } }
+    })
+
+    if (userReports > 0) {
+      return {
+        success: false,
+        error: 'Users have related data',
+        message: `User tidak dapat dihapus karena memiliki ${userReports} laporan. Hapus laporan terlebih dahulu.`
+      }
+    }
+
+    // Delete users
+    await prisma.users.deleteMany({
+      where: { id: { in: validIds } }
+    })
+
+    return {
+      success: true,
+      message: `${validIds.length} user berhasil dihapus`,
+      count: validIds.length
+    }
+  } catch (error) {
+    console.error('Error batch deleting users:', error)
+    return {
+      success: false,
+      error: 'Failed to delete users',
+      message: 'Gagal menghapus user secara batch'
+    }
+  }
+}
+
+// Change user password (admin function)
+export async function changeUserPassword(userId: string, newPassword: string) {
+  try {
+    if (!userId || typeof userId !== 'string') {
+      return {
+        success: false,
+        error: 'Invalid user ID',
+        message: 'ID user tidak valid'
+      }
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      return {
+        success: false,
+        error: 'Invalid password',
+        message: 'Password minimal 8 karakter'
+      }
+    }
+
+    // Check if user exists
+    const existingUser = await prisma.users.findUnique({
+      where: { id: userId }
+    })
+
+    if (!existingUser) {
+      return {
+        success: false,
+        error: 'User not found',
+        message: 'User tidak ditemukan'
+      }
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12)
+
+    // Update password
+    await prisma.users.update({
+      where: { id: userId },
+      data: {
+        password: hashedPassword,
+        updated_at: new Date()
+      }
+    })
+
+    return {
+      success: true,
+      message: 'Password user berhasil diubah'
+    }
+  } catch (error) {
+    console.error('Error changing user password:', error)
+    return {
+      success: false,
+      error: 'Failed to change password',
+      message: 'Gagal mengubah password user'
     }
   }
 }

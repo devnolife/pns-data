@@ -29,7 +29,8 @@ import {
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToastId } from "@/hooks/use-toast-id"
-import { Search, MoreHorizontal, UserPlus, Edit, Trash2, UserCheck, UserX, Filter, Loader2, Users } from "lucide-react"
+import { Search, MoreHorizontal, UserPlus, Edit, Trash2, UserCheck, UserX, Filter, Loader2, Users, Settings, Key, CheckSquare, Square, BarChart3 } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 type User = {
   id: string
@@ -42,6 +43,22 @@ type User = {
   status: "active" | "inactive"
   created_at: Date
   updated_at: Date
+}
+
+type UserStats = {
+  totalUsers: number
+  activeUsers: number
+  inactiveUsers: number
+  recentUsers: number
+  roleDistribution: {
+    admin: number
+    user: number
+    moderator: number
+  }
+  trainingPrograms: Array<{
+    training: string
+    count: number
+  }>
 }
 
 export default function ManageUsersPage() {
@@ -57,18 +74,28 @@ export default function ManageUsersPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [newUserDialogOpen, setNewUserDialogOpen] = useState(false)
   const [editUserDialogOpen, setEditUserDialogOpen] = useState(false)
+  const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false)
+  const [statsDialogOpen, setStatsDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [formLoading, setFormLoading] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [batchLoading, setBatchLoading] = useState(false)
+  const [userStats, setUserStats] = useState<UserStats | null>(null)
 
   const [formData, setFormData] = useState({
     name: "",
     username: "",
     email: "",
     role: "USER",
-    training: "",
+    training: "NONE",
     angkatan: "",
     password: "",
+  })
+
+  const [passwordData, setPasswordData] = useState({
+    newPassword: "",
+    confirmPassword: ""
   })
 
   useEffect(() => {
@@ -137,7 +164,9 @@ export default function ManageUsersPage() {
   }
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    // Convert "NONE" back to empty string for training field
+    const actualValue = (name === "training" && value === "NONE") ? "" : value
+    setFormData((prev) => ({ ...prev, [name]: actualValue }))
   }
 
   const handleCreateUser = async (e: React.FormEvent) => {
@@ -161,7 +190,7 @@ export default function ManageUsersPage() {
           email: formData.email,
           password: formData.password,
           role: formData.role,
-          training: formData.training || undefined,
+          training: formData.training === "NONE" ? undefined : formData.training || undefined,
           angkatan: formData.angkatan || undefined,
         }),
       })
@@ -178,7 +207,7 @@ export default function ManageUsersPage() {
           username: "",
           email: "",
           role: "USER",
-          training: "",
+          training: "NONE", // Use "NONE" for Select component
           angkatan: "",
           password: "",
         })
@@ -218,7 +247,7 @@ export default function ManageUsersPage() {
           username: formData.username,
           email: formData.email,
           role: formData.role,
-          training: formData.training || undefined,
+          training: formData.training === "NONE" ? undefined : formData.training || undefined,
           angkatan: formData.angkatan || undefined,
           ...(formData.password && { password: formData.password }),
         }),
@@ -236,7 +265,7 @@ export default function ManageUsersPage() {
           username: "",
           email: "",
           role: "USER",
-          training: "",
+          training: "NONE", // Use "NONE" for Select component
           angkatan: "",
           password: "",
         })
@@ -309,11 +338,133 @@ export default function ManageUsersPage() {
       username: user.username,
       email: user.email,
       role: user.role,
-      training: user.training || "",
+      training: user.training || "NONE", // Convert null/empty to "NONE" for Select component
       angkatan: user.angkatan || "",
       password: "",
     })
     setEditUserDialogOpen(true)
+  }
+
+  const fetchUserStats = async () => {
+    try {
+      const response = await fetch('/api/admin/users/stats')
+      const result = await response.json()
+
+      if (result.success) {
+        setUserStats(result.stats)
+      } else {
+        console.error('Failed to fetch user stats:', result.error)
+      }
+    } catch (err) {
+      console.error("Error fetching user stats:", err)
+    }
+  }
+
+  const handleSelectUser = (userId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedUsers(prev => [...prev, userId])
+    } else {
+      setSelectedUsers(prev => prev.filter(id => id !== userId))
+    }
+  }
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedUsers(filteredUsers.map(user => user.id))
+    } else {
+      setSelectedUsers([])
+    }
+  }
+
+  const handleBatchOperation = async (action: string) => {
+    if (selectedUsers.length === 0) {
+      error("batchOperation", { description: "Pilih setidaknya satu user untuk operasi batch" })
+      return
+    }
+
+    setBatchLoading(true)
+    try {
+      const response = await fetch('/api/admin/users/batch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action,
+          userIds: selectedUsers
+        }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        await fetchUsers()
+        setSelectedUsers([])
+        success("batchOperation", { description: result.message })
+      } else {
+        error("batchOperation", { description: result.message || `Gagal melakukan operasi ${action}` })
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : `Failed to ${action} users`
+      error("batchOperation", { description: errorMessage })
+    } finally {
+      setBatchLoading(false)
+    }
+  }
+
+  const openChangePasswordDialog = (user: User) => {
+    setSelectedUser(user)
+    setPasswordData({ newPassword: "", confirmPassword: "" })
+    setChangePasswordDialogOpen(true)
+  }
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedUser) return
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      error("changePassword", { description: "Password tidak cocok" })
+      return
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      error("changePassword", { description: "Password minimal 8 karakter" })
+      return
+    }
+
+    setFormLoading(true)
+    try {
+      const response = await fetch(`/api/admin/users/${selectedUser.id}/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newPassword: passwordData.newPassword
+        }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setChangePasswordDialogOpen(false)
+        setPasswordData({ newPassword: "", confirmPassword: "" })
+        setSelectedUser(null)
+        success("changePassword", { description: "Password berhasil diubah" })
+      } else {
+        error("changePassword", { description: result.message || "Gagal mengubah password" })
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to change password"
+      error("changePassword", { description: errorMessage })
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const openStatsDialog = async () => {
+    setStatsDialogOpen(true)
+    await fetchUserStats()
   }
 
   if (isLoading || !isAuthenticated || user?.role !== "ADMIN") {
@@ -335,6 +486,15 @@ export default function ManageUsersPage() {
             <p className="mt-2 text-white/90">Kelola pengguna sistem dan izin akses mereka</p>
           </div>
           <div className="flex items-center gap-4">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={openStatsDialog}
+              className="bg-white/20 text-white border-white/30 hover:bg-white/30"
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Statistik
+            </Button>
             <div className="rounded-full bg-white/20 p-4 backdrop-blur-sm">
               <Users className="h-8 w-8 animate-pulse" />
             </div>
@@ -343,7 +503,7 @@ export default function ManageUsersPage() {
       </div>
 
       <div className="p-6">
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex justify-start items-center">
           <div className="flex items-center gap-4">
             <Dialog open={newUserDialogOpen} onOpenChange={setNewUserDialogOpen}>
               <DialogTrigger asChild>
@@ -352,7 +512,7 @@ export default function ManageUsersPage() {
                   Tambah Pengguna
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-4xl bg-white top-10 left-96">
                 <form onSubmit={handleCreateUser}>
                   <DialogHeader>
                     <DialogTitle>Buat Pengguna Baru</DialogTitle>
@@ -422,7 +582,7 @@ export default function ManageUsersPage() {
                             <SelectItem value="PKP">PKP</SelectItem>
                             <SelectItem value="PKA">PKA</SelectItem>
                             <SelectItem value="PKN">PKN</SelectItem>
-                            <SelectItem value="">Tidak Ada</SelectItem>
+                            <SelectItem value="NONE">Tidak Ada</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -468,6 +628,49 @@ export default function ManageUsersPage() {
                 </form>
               </DialogContent>
             </Dialog>
+
+            {/* Batch Operations */}
+            {selectedUsers.length > 0 && (
+              <div className="flex items-center gap-2 p-2 bg-blue-50 rounded-lg border">
+                <span className="text-sm text-blue-700 font-medium">
+                  {selectedUsers.length} dipilih
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleBatchOperation('activate')}
+                  disabled={batchLoading}
+                  className="h-8"
+                >
+                  <UserCheck className="h-3 w-3 mr-1" />
+                  Aktifkan
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleBatchOperation('deactivate')}
+                  disabled={batchLoading}
+                  className="h-8"
+                >
+                  <UserX className="h-3 w-3 mr-1" />
+                  Nonaktifkan
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={() => handleBatchOperation('delete')}
+                  disabled={batchLoading}
+                  className="h-8"
+                >
+                  {batchLoading ? (
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  ) : (
+                    <Trash2 className="h-3 w-3 mr-1" />
+                  )}
+                  Hapus
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -524,6 +727,12 @@ export default function ManageUsersPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
+                      <th className="text-left p-4 w-8">
+                        <Checkbox
+                          checked={selectedUsers.length === filteredUsers.length && filteredUsers.length > 0}
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </th>
                       <th className="text-left p-4">Nama</th>
                       <th className="text-left p-4">Username</th>
                       <th className="text-left p-4">Email</th>
@@ -537,19 +746,25 @@ export default function ManageUsersPage() {
                   <tbody>
                     {filteredUsers.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="p-4 text-center text-gray-500">
+                        <td colSpan={9} className="p-4 text-center text-gray-500">
                           Tidak ada pengguna yang ditemukan sesuai kriteria.
                         </td>
                       </tr>
                     ) : (
                       filteredUsers.map((user) => (
                         <tr key={user.id} className="border-b hover:bg-gray-50">
+                          <td className="p-4">
+                            <Checkbox
+                              checked={selectedUsers.includes(user.id)}
+                              onCheckedChange={(checked) => handleSelectUser(user.id, checked as boolean)}
+                            />
+                          </td>
                           <td className="p-4 font-medium">{user.name || user.username}</td>
                           <td className="p-4">{user.username}</td>
                           <td className="p-4">{user.email}</td>
                           <td className="p-4">
                             <Badge variant={user.role === "ADMIN" ? "default" : "outline"}>
-                              {user.role === "ADMIN" ? "Admin" : "User"}
+                              {user.role === "ADMIN" ? "Admin" : user.role === "MODERATOR" ? "Moderator" : "User"}
                             </Badge>
                           </td>
                           <td className="p-4">{user.training || "Tidak Ada"}</td>
@@ -574,6 +789,10 @@ export default function ManageUsersPage() {
                                 <DropdownMenuItem onClick={() => openEditDialog(user)}>
                                   <Edit className="h-4 w-4 mr-2" />
                                   Edit Pengguna
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => openChangePasswordDialog(user)}>
+                                  <Key className="h-4 w-4 mr-2" />
+                                  Ubah Password
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleToggleUserStatus(user)}>
                                   {user.status === "active" ? (
@@ -611,9 +830,132 @@ export default function ManageUsersPage() {
           </CardContent>
         </Card>
 
+        {/* Change Password Dialog */}
+        <Dialog open={changePasswordDialogOpen} onOpenChange={setChangePasswordDialogOpen}>
+          <DialogContent className="max-w-4xl bg-white top-10 left-96">
+            <form onSubmit={handleChangePassword}>
+              <DialogHeader>
+                <DialogTitle>Ubah Password Pengguna</DialogTitle>
+                <DialogDescription>
+                  Ubah password untuk {selectedUser?.name || selectedUser?.username}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">Password Baru</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    placeholder="Masukkan password baru (min. 8 karakter)"
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Konfirmasi password baru"
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    required
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setChangePasswordDialogOpen(false)}>
+                  Batal
+                </Button>
+                <Button type="submit" disabled={formLoading}>
+                  {formLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Mengubah...
+                    </>
+                  ) : (
+                    "Ubah Password"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* User Statistics Dialog */}
+        <Dialog open={statsDialogOpen} onOpenChange={setStatsDialogOpen}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>Statistik Pengguna</DialogTitle>
+              <DialogDescription>
+                Ringkasan statistik pengguna sistem
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4">
+              {userStats ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Total Pengguna</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{userStats.totalUsers}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Pengguna Aktif</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-green-600">{userStats.activeUsers}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Pengguna Tidak Aktif</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold text-red-600">{userStats.inactiveUsers}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Admin</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{userStats.roleDistribution.admin}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">User</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{userStats.roleDistribution.user}</div>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium">Moderator</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{userStats.roleDistribution.moderator}</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                </div>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Edit User Dialog */}
         <Dialog open={editUserDialogOpen} onOpenChange={setEditUserDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-4xl bg-white top-10 left-96">
             <form onSubmit={handleEditUser}>
               <DialogHeader>
                 <DialogTitle>Edit Pengguna</DialogTitle>
@@ -680,7 +1022,7 @@ export default function ManageUsersPage() {
                         <SelectItem value="PKP">PKP</SelectItem>
                         <SelectItem value="PKA">PKA</SelectItem>
                         <SelectItem value="PKN">PKN</SelectItem>
-                        <SelectItem value="">Tidak Ada</SelectItem>
+                        <SelectItem value="NONE">Tidak Ada</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -729,7 +1071,7 @@ export default function ManageUsersPage() {
 
         {/* Delete User Dialog */}
         <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-4xl bg-white top-10 left-96">
             <DialogHeader>
               <DialogTitle>Hapus Pengguna</DialogTitle>
               <DialogDescription>

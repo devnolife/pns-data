@@ -194,11 +194,6 @@ export function ModernSidebar() {
       href: "/dashboard/admin/manage-users",
     },
     {
-      icon: Bell,
-      label: "Notifikasi",
-      href: "/dashboard/admin/notifications",
-    },
-    {
       icon: Settings,
       label: "Pengaturan",
       href: "/dashboard/admin/settings",
