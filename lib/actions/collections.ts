@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from './auth'
 import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
+import crypto from 'crypto'
+import { getPublicReportsByCategory, getPublicReportsByYear, getAvailableReportYears } from './reports'
 
 // Schemas
 const createCollectionSchema = z.object({
@@ -313,6 +315,10 @@ export async function getPublicCollectionsByCategory() {
       }
     });
 
+    // Get public reports from all users
+    const reportsResult = await getPublicReportsByCategory()
+    const reportCategories = (reportsResult.success && 'categories' in reportsResult) ? reportsResult.categories || [] : []
+
     // Define the categories we want to display
     const categories = [
       {
@@ -342,10 +348,17 @@ export async function getPublicCollectionsByCategory() {
         description: "Laporan Kepemimpinan Nasional",
         icon: "🏛️",
         color: "from-orange-500 to-red-500",
+      },
+      {
+        id: "laporan-umum",
+        name: "Laporan Umum",
+        description: "Laporan dan Dokumen Umum Lainnya",
+        icon: "📋",
+        color: "from-gray-500 to-slate-500",
       }
     ];
 
-    // Group collections by category
+    // Group collections by category and merge with reports
     const categorizedCollections = categories.map(category => {
       // Filter collections by category
       const categoryCollections = collections.filter(
@@ -353,7 +366,7 @@ export async function getPublicCollectionsByCategory() {
       );
 
       // Map the collections to the expected format
-      const files = categoryCollections.map((collection: any) => ({
+      const collectionFiles = categoryCollections.map((collection: any) => ({
         id: collection.id,
         title: collection.title,
         author: collection.users?.name || collection.users?.username || "Unknown",
@@ -363,7 +376,8 @@ export async function getPublicCollectionsByCategory() {
         type: "PDF",
         size: "2.5 MB", // Mock size
         downloadUrl: `/collections/${collection.id}`,
-        content: collection.content
+        content: collection.content,
+        isCollection: true
       }));
 
       // Map limited collections with this category
@@ -385,8 +399,17 @@ export async function getPublicCollectionsByCategory() {
           currentAccess: lc.current_access
         }));
 
-      // Combine both types of collections
-      const allFiles = [...files, ...limitedFiles];
+      // Get reports for this category
+      const reportCategory = reportCategories.find((rc: any) => rc.id === category.id)
+      const reportFiles = reportCategory ? reportCategory.files.map((report: any) => ({
+        ...report,
+        isPublicReport: true,
+        downloadUrl: '', // No download for reports
+        content: '' // No content access for reports
+      })) : []
+
+      // Combine all types of files
+      const allFiles = [...collectionFiles, ...limitedFiles, ...reportFiles];
 
       return {
         ...category,
@@ -427,12 +450,16 @@ export async function getAvailableYears() {
       }
     });
 
+    // Get available years from reports
+    const reportYearsResult = await getAvailableReportYears()
+    const reportYears = reportYearsResult.success ? reportYearsResult.years || [] : []
+
     // Extract years from collections
     const collectionYears = collections.map((c: any) => new Date(c.created_at).getFullYear());
     const limitedCollectionYears = limitedCollections.map((c: any) => new Date(c.created_at).getFullYear());
 
-    // Combine and remove duplicates
-    const allYears = [...collectionYears, ...limitedCollectionYears];
+    // Combine all years and remove duplicates
+    const allYears = [...collectionYears, ...limitedCollectionYears, ...reportYears];
     const uniqueYears = [...new Set(allYears)].sort((a, b) => b - a); // Sort descending (newest first)
 
     return {
@@ -500,6 +527,10 @@ export async function getPublicCollectionsByYear(year?: number) {
       }
     });
 
+    // Get public reports for the target year
+    const reportsResult = await getPublicReportsByYear(targetYear)
+    const reportCategories = (reportsResult.success && 'categories' in reportsResult) ? reportsResult.categories || [] : []
+
     // Define the categories we want to display
     const categories = [
       {
@@ -529,10 +560,17 @@ export async function getPublicCollectionsByYear(year?: number) {
         description: "Laporan Kepemimpinan Nasional",
         icon: "🏛️",
         color: "from-orange-500 to-red-500",
+      },
+      {
+        id: "laporan-umum",
+        name: "Laporan Umum",
+        description: "Laporan dan Dokumen Umum Lainnya",
+        icon: "📋",
+        color: "from-gray-500 to-slate-500",
       }
     ];
 
-    // Group collections by category
+    // Group collections by category and merge with reports
     const categorizedCollections = categories.map(category => {
       // Filter collections by category
       const categoryCollections = collections.filter(
@@ -540,7 +578,7 @@ export async function getPublicCollectionsByYear(year?: number) {
       );
 
       // Map the collections to the expected format
-      const files = categoryCollections.map((collection: any) => ({
+      const collectionFiles = categoryCollections.map((collection: any) => ({
         id: collection.id,
         title: collection.title,
         author: collection.users?.name || collection.users?.username || "Unknown",
@@ -550,7 +588,8 @@ export async function getPublicCollectionsByYear(year?: number) {
         type: "PDF",
         size: "2.5 MB", // Mock size
         downloadUrl: `/collections/${collection.id}`,
-        content: collection.content
+        content: collection.content,
+        isCollection: true
       }));
 
       // Map limited collections with this category
@@ -572,8 +611,17 @@ export async function getPublicCollectionsByYear(year?: number) {
           currentAccess: lc.current_access
         }));
 
-      // Combine both types of collections
-      const allFiles = [...files, ...limitedFiles];
+      // Get reports for this category
+      const reportCategory = reportCategories.find((rc: any) => rc.id === category.id)
+      const reportFiles = reportCategory ? reportCategory.files.map((report: any) => ({
+        ...report,
+        isPublicReport: true,
+        downloadUrl: '', // No download for reports
+        content: '' // No content access for reports
+      })) : []
+
+      // Combine all types of files
+      const allFiles = [...collectionFiles, ...limitedFiles, ...reportFiles];
 
       return {
         ...category,
@@ -585,11 +633,14 @@ export async function getPublicCollectionsByYear(year?: number) {
     // Filter out empty categories
     const nonEmptyCategories = categorizedCollections.filter(cat => cat.totalFiles > 0);
 
+    const totalCollections = collections.length + limitedCollections.length
+    const totalReports = (reportsResult.success && 'totalDocuments' in reportsResult) ? reportsResult.totalDocuments || 0 : 0
+
     return {
       success: true,
       categories: nonEmptyCategories,
       year: targetYear,
-      totalDocuments: collections.length + limitedCollections.length
+      totalDocuments: totalCollections + totalReports
     };
   } catch (error) {
     console.error('Get public collections by year error:', error);

@@ -24,6 +24,8 @@ import {
   Zap,
   Crown,
   Sparkles,
+  FolderOpen,
+  RefreshCw,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -38,8 +40,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
+import { useToast } from "@/hooks/use-toast"
+import { fixFolderMappingAction } from "@/lib/actions/admin"
 
 export default function SettingsPage() {
+  const { toast } = useToast()
+  const [isFixingFolders, setIsFixingFolders] = useState(false)
   const [settings, setSettings] = useState({
     profile: {
       name: "Administrator",
@@ -96,6 +102,38 @@ export default function SettingsPage() {
   const resetSettings = () => {
     // Reset to default values
     console.log("Resetting settings")
+  }
+
+  const handleFixFolderMapping = async () => {
+    setIsFixingFolders(true)
+    try {
+      const result = await fixFolderMappingAction()
+
+      if (result.success) {
+        toast({
+          title: "✅ Folder Mapping Fixed",
+          description: result.message,
+          duration: 5000,
+        })
+      } else {
+        toast({
+          title: "❌ Error",
+          description: result.message || "Failed to fix folder mapping",
+          variant: "destructive",
+          duration: 5000,
+        })
+      }
+    } catch (error) {
+      console.error('Error fixing folder mapping:', error)
+      toast({
+        title: "❌ Error",
+        description: "An unexpected error occurred while fixing folder mapping",
+        variant: "destructive",
+        duration: 5000,
+      })
+    } finally {
+      setIsFixingFolders(false)
+    }
   }
 
   return (
@@ -610,15 +648,45 @@ export default function SettingsPage() {
 
                     <Separator />
 
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      <Button variant="outline" className="rounded-xl">
-                        <Download className="mr-2 h-4 w-4" />
-                        Export Data
-                      </Button>
-                      <Button variant="outline" className="rounded-xl">
-                        <Upload className="mr-2 h-4 w-4" />
-                        Import Data
-                      </Button>
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Folder Mapping Fix</Label>
+                        <p className="text-xs text-muted-foreground">
+                          Fix folder mapping issues for completed reports. This ensures files are organized
+                          based on upload form data (year & batch) instead of user profile data.
+                        </p>
+                        <Button
+                          variant="outline"
+                          className="w-full rounded-xl"
+                          onClick={handleFixFolderMapping}
+                          disabled={isFixingFolders}
+                        >
+                          {isFixingFolders ? (
+                            <>
+                              <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                              Fixing Folder Mapping...
+                            </>
+                          ) : (
+                            <>
+                              <FolderOpen className="mr-2 h-4 w-4" />
+                              Fix Folder Mapping
+                            </>
+                          )}
+                        </Button>
+                      </div>
+
+                      <Separator />
+
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <Button variant="outline" className="rounded-xl">
+                          <Download className="mr-2 h-4 w-4" />
+                          Export Data
+                        </Button>
+                        <Button variant="outline" className="rounded-xl">
+                          <Upload className="mr-2 h-4 w-4" />
+                          Import Data
+                        </Button>
+                      </div>
                     </div>
 
                     <Button variant="destructive" className="w-full rounded-xl">

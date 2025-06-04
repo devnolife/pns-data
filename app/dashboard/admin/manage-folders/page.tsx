@@ -27,6 +27,7 @@ import {
   Sparkles,
   Zap,
   FileText,
+  X,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -207,8 +208,8 @@ export default function ManageFoldersPage() {
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Manage Folders 📁</h1>
-            <p className="mt-2 text-white/90">Organize your digital collections like a pro!</p>
+            <h1 className="text-3xl font-bold">Kelola Folder 📁</h1>
+            <p className="mt-2 text-white/90">Atur koleksi digital Anda seperti seorang profesional!</p>
           </div>
           <div className="flex items-center gap-4">
             <div className="rounded-full bg-white/20 p-4 backdrop-blur-sm">
@@ -224,7 +225,7 @@ export default function ManageFoldersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Folders</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Folder</p>
                 <p className="text-2xl font-bold">{folders.length}</p>
               </div>
               <div className="rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 p-3">
@@ -238,7 +239,7 @@ export default function ManageFoldersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Items</p>
+                <p className="text-sm font-medium text-muted-foreground">Total Item</p>
                 <p className="text-2xl font-bold">{folders.reduce((acc, folder) => acc + folder.items, 0)}</p>
               </div>
               <div className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-3">
@@ -252,7 +253,7 @@ export default function ManageFoldersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Storage Used</p>
+                <p className="text-sm font-medium text-muted-foreground">Penyimpanan</p>
                 <p className="text-2xl font-bold">13.0 GB</p>
               </div>
               <div className="rounded-full bg-gradient-to-r from-green-500 to-emerald-500 p-3">
@@ -266,7 +267,7 @@ export default function ManageFoldersPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Starred</p>
+                <p className="text-sm font-medium text-muted-foreground">Favorit</p>
                 <p className="text-2xl font-bold">{folders.filter((f) => f.isStarred).length}</p>
               </div>
               <div className="rounded-full bg-gradient-to-r from-orange-500 to-red-500 p-3">
@@ -283,7 +284,7 @@ export default function ManageFoldersPage() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search folders, tags, or descriptions..."
+              placeholder="Cari folder, tag, atau deskripsi..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-80 rounded-full pl-10"
@@ -319,134 +320,198 @@ export default function ManageFoldersPage() {
             <DialogTrigger asChild>
               <Button className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600">
                 <FolderPlus className="mr-2 h-4 w-4" />
-                Create New
+                Buat Folder Baru
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-purple-500" />
-                  Create New Folder
-                </DialogTitle>
-                <DialogDescription>
-                  Set up your new digital collection with style!
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="folder-name">Name</Label>
-                  <Input
-                    id="folder-name"
-                    placeholder="Enter folder name..."
-                    value={newFolder.name}
-                    onChange={(e) => setNewFolder({ ...newFolder, name: e.target.value })}
-                    className="rounded-xl"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="folder-description">Description</Label>
-                  <Textarea
-                    id="folder-description"
-                    placeholder="Describe what this folder contains..."
-                    value={newFolder.description}
-                    onChange={(e) => setNewFolder({ ...newFolder, description: e.target.value })}
-                    className="rounded-xl"
-                    rows={3}
-                  />
-                </div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label>Type</Label>
-                    <div className="flex gap-2">
-                      <Button
-                        type="button"
-                        variant={newFolder.type === "folder" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setNewFolder({ ...newFolder, type: "folder" })}
-                        className="flex-1 rounded-xl"
-                      >
-                        <Folder className="mr-2 h-4 w-4" />
-                        Folder
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={newFolder.type === "collection" ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setNewFolder({ ...newFolder, type: "collection" })}
-                        className="flex-1 rounded-xl"
-                      >
-                        <Archive className="mr-2 h-4 w-4" />
-                        Collection
-                      </Button>
+            <DialogContent
+              className="max-w-2xl max-h-[85vh] overflow-y-auto bg-white/95 backdrop-blur-md border-0 rounded-3xl shadow-2xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+              style={{
+                position: 'fixed',
+                top: '10%',
+                left: '30%',
+                transform: 'translate(-50%, -50%)',
+                margin: 0,
+                zIndex: 50
+              }}
+            >
+              <div className="relative">
+                {/* Background Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 rounded-3xl opacity-60" />
+
+                {/* Content */}
+                <div className="relative p-8">
+                  <DialogHeader className="text-center mb-8">
+                    <div className="mx-auto mb-4 w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <FolderPlus className="h-8 w-8 text-white" />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Color Theme</Label>
-                    <div className="flex gap-1">
-                      {["blue", "purple", "green", "orange", "pink"].map((color) => (
-                        <button
-                          key={color}
-                          type="button"
-                          title={`Select ${color} theme`}
-                          aria-label={`Select ${color} theme`}
-                          className={`h-8 w-8 rounded-full border-2 ${newFolder.color === color ? "border-foreground" : "border-muted"
-                            }`}
-                          style={{
-                            backgroundColor:
-                              color === "blue"
-                                ? "#3b82f6"
-                                : color === "purple"
-                                  ? "#8b5cf6"
-                                  : color === "green"
-                                    ? "#10b981"
-                                    : color === "orange"
-                                      ? "#f97316"
-                                      : "#ec4899",
-                          }}
-                          onClick={() => setNewFolder({ ...newFolder, color })}
+                    <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      ✨ Buat Folder Digital Baru
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-600 mt-2">
+                      Buat folder koleksi digital yang terorganisir dengan rapi dan modern
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="space-y-6">
+                    {/* Nama Folder */}
+                    <div className="space-y-3">
+                      <Label htmlFor="folder-name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        📁 Nama Folder
+                      </Label>
+                      <Input
+                        id="folder-name"
+                        placeholder="Masukkan nama folder yang menarik..."
+                        value={newFolder.name}
+                        onChange={(e) => setNewFolder({ ...newFolder, name: e.target.value })}
+                        className="rounded-2xl border-2 border-purple-200 focus:border-purple-400 bg-white/80 backdrop-blur-sm text-gray-800 placeholder:text-gray-500 transition-all duration-300"
+                      />
+                    </div>
+
+                    {/* Deskripsi */}
+                    <div className="space-y-3">
+                      <Label htmlFor="folder-description" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        📝 Deskripsi Folder
+                      </Label>
+                      <Textarea
+                        id="folder-description"
+                        placeholder="Jelaskan isi dan tujuan folder ini..."
+                        value={newFolder.description}
+                        onChange={(e) => setNewFolder({ ...newFolder, description: e.target.value })}
+                        className="rounded-2xl border-2 border-purple-200 focus:border-purple-400 bg-white/80 backdrop-blur-sm text-gray-800 placeholder:text-gray-500 transition-all duration-300 resize-none"
+                        rows={3}
+                      />
+                    </div>
+
+                    {/* Tipe dan Tema */}
+                    <div className="grid gap-6 sm:grid-cols-2">
+                      {/* Tipe Folder */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                          🗂️ Tipe Folder
+                        </Label>
+                        <div className="grid grid-cols-1 gap-3">
+                          <Button
+                            type="button"
+                            variant={newFolder.type === "folder" ? "default" : "outline"}
+                            className={`rounded-2xl h-12 transition-all duration-300 ${newFolder.type === "folder"
+                              ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg"
+                              : "border-2 border-gray-200 hover:border-blue-300 bg-white/60"
+                              }`}
+                            onClick={() => setNewFolder({ ...newFolder, type: "folder" })}
+                          >
+                            <Folder className="mr-2 h-5 w-5" />
+                            Folder Biasa
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={newFolder.type === "collection" ? "default" : "outline"}
+                            className={`rounded-2xl h-12 transition-all duration-300 ${newFolder.type === "collection"
+                              ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+                              : "border-2 border-gray-200 hover:border-purple-300 bg-white/60"
+                              }`}
+                            onClick={() => setNewFolder({ ...newFolder, type: "collection" })}
+                          >
+                            <Archive className="mr-2 h-5 w-5" />
+                            Koleksi Khusus
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Tema Warna */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                          🎨 Tema Warna
+                        </Label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {[
+                            { name: "blue", color: "#3b82f6", label: "Biru" },
+                            { name: "purple", color: "#8b5cf6", label: "Ungu" },
+                            { name: "green", color: "#10b981", label: "Hijau" },
+                            { name: "orange", color: "#f97316", label: "Oranye" },
+                            { name: "pink", color: "#ec4899", label: "Pink" },
+                            { name: "red", color: "#ef4444", label: "Merah" }
+                          ].map((colorOption) => (
+                            <button
+                              key={colorOption.name}
+                              type="button"
+                              title={`Pilih tema ${colorOption.label}`}
+                              className={`relative h-12 w-full rounded-2xl border-4 transition-all duration-300 hover:scale-105 ${newFolder.color === colorOption.name
+                                ? "border-gray-800 shadow-lg scale-105"
+                                : "border-gray-300 hover:border-gray-400"
+                                }`}
+                              style={{ backgroundColor: colorOption.color }}
+                              onClick={() => setNewFolder({ ...newFolder, color: colorOption.name })}
+                            >
+                              {newFolder.color === colorOption.name && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                                    <div className="w-3 h-3 bg-gray-800 rounded-full" />
+                                  </div>
+                                </div>
+                              )}
+                              <span className="sr-only">{colorOption.label}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Tags */}
+                    <div className="space-y-3">
+                      <Label htmlFor="folder-tags" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                        🏷️ Tag (Pisahkan dengan koma)
+                      </Label>
+                      <Input
+                        id="folder-tags"
+                        placeholder="contoh: penting, arsip, 2025, dokumen"
+                        value={newFolder.tags}
+                        onChange={(e) => setNewFolder({ ...newFolder, tags: e.target.value })}
+                        className="rounded-2xl border-2 border-purple-200 focus:border-purple-400 bg-white/80 backdrop-blur-sm text-gray-800 placeholder:text-gray-500 transition-all duration-300"
+                      />
+                    </div>
+
+                    {/* Pengaturan Privasi */}
+                    <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border-2 border-purple-100">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <Label htmlFor="private-folder" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                            🔒 Folder Privat
+                          </Label>
+                          <p className="text-xs text-gray-600">
+                            Hanya Anda yang dapat melihat dan mengakses folder ini
+                          </p>
+                        </div>
+                        <Switch
+                          id="private-folder"
+                          checked={newFolder.isPrivate}
+                          onCheckedChange={(checked) => setNewFolder({ ...newFolder, isPrivate: checked })}
+                          className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-purple-500 data-[state=checked]:to-pink-500"
                         />
-                      ))}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-4 pt-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsCreateDialogOpen(false)}
+                        className="flex-1 rounded-2xl h-12 border-2 border-gray-300 hover:border-gray-400 bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-gray-50 transition-all duration-300"
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Batal
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={handleCreateFolder}
+                        disabled={!newFolder.name.trim()}
+                        className="flex-1 rounded-2xl h-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 disabled:from-gray-400 disabled:to-gray-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 disabled:hover:scale-100"
+                      >
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Buat Folder
+                      </Button>
                     </div>
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="folder-tags">Tags (comma-separated)</Label>
-                  <Input
-                    id="folder-tags"
-                    placeholder="e.g., important, archive, 2025"
-                    value={newFolder.tags}
-                    onChange={(e) => setNewFolder({ ...newFolder, tags: e.target.value })}
-                    className="rounded-xl"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="private-folder" className="text-sm font-medium">
-                    Private Folder
-                  </Label>
-                  <Switch
-                    id="private-folder"
-                    checked={newFolder.isPrivate}
-                    onCheckedChange={(checked) => setNewFolder({ ...newFolder, isPrivate: checked })}
-                  />
-                </div>
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsCreateDialogOpen(false)}
-                    className="flex-1 rounded-xl"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={handleCreateFolder}
-                    disabled={!newFolder.name}
-                    className="flex-1 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600"
-                  >
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Create
-                  </Button>
                 </div>
               </div>
             </DialogContent>
@@ -658,9 +723,9 @@ export default function ManageFoldersPage() {
             <div className="rounded-full bg-muted p-6">
               <FolderOpen className="h-12 w-12 text-muted-foreground" />
             </div>
-            <h3 className="mt-4 text-lg font-semibold">No folders found</h3>
+            <h3 className="mt-4 text-lg font-semibold">Tidak ada folder ditemukan</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              {searchQuery ? "Try adjusting your search terms" : "Create your first folder to get started!"}
+              {searchQuery ? "Coba sesuaikan kata kunci pencarian Anda" : "Buat folder pertama Anda untuk memulai!"}
             </p>
             {!searchQuery && (
               <Button
@@ -668,7 +733,7 @@ export default function ManageFoldersPage() {
                 className="mt-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600"
               >
                 <FolderPlus className="mr-2 h-4 w-4" />
-                Create Folder
+                Buat Folder
               </Button>
             )}
           </CardContent>

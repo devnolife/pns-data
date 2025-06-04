@@ -775,4 +775,420 @@ function getFileTypeFromMime(mimeType: string): string {
   if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return 'PPTX'
   if (mimeType.includes('image')) return 'IMAGE'
   return 'FILE'
+}
+
+// Get all public reports from all users for public display
+export async function getPublicReportsAction() {
+  try {
+    // Get all completed/verified reports from all users
+    const reports = await prisma.reports.findMany({
+      where: {
+        status: 'COMPLETED' // Only show verified/completed reports
+      },
+      include: {
+        users_reports_author_idTousers: {
+          select: {
+            name: true,
+            username: true,
+            training: true,
+            angkatan: true
+          }
+        },
+        files: {
+          select: {
+            id: true,
+            filename: true,
+            original_name: true,
+            file_size: true,
+            mime_type: true,
+            category: true,
+            year: true,
+            batch: true,
+            created_at: true
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    // Format reports for public display
+    const formattedReports = reports.map(report => {
+      // Use file data for year and batch instead of user profile data
+      const firstFile = report.files[0]
+      const reportYear = firstFile?.year || new Date(report.created_at).getFullYear().toString()
+      const reportBatch = firstFile?.batch || 'General'
+
+      return {
+        id: report.id,
+        title: report.title,
+        description: report.description || '',
+        category: report.category || 'GENERAL',
+        priority: report.priority,
+        author: {
+          name: report.users_reports_author_idTousers?.name || 'Anonymous',
+          username: report.users_reports_author_idTousers?.username || 'anonymous',
+          training: report.users_reports_author_idTousers?.training || '',
+          angkatan: report.users_reports_author_idTousers?.angkatan || ''
+        },
+        created_at: report.created_at,
+        updated_at: report.updated_at,
+        files: report.files.map(file => ({
+          id: file.id,
+          name: file.original_name,
+          size: formatFileSize(file.file_size),
+          type: getFileTypeFromMime(file.mime_type),
+          category: file.category,
+          year: file.year,
+          batch: file.batch,
+          created_at: file.created_at
+        })),
+        // Summary only - no actual content or download links
+        abstract: report.description || `Laporan ${report.category} oleh ${report.users_reports_author_idTousers?.name || 'Anonymous'}`,
+        year: reportYear, // Use file's year instead of created_at year
+        batch: reportBatch // Use file's batch instead of user's angkatan
+      }
+    })
+
+    return {
+      success: true,
+      data: formattedReports
+    }
+  } catch (error) {
+    console.error('Get public reports error:', error)
+    return {
+      success: false,
+      error: 'Gagal mengambil laporan publik'
+    }
+  }
+}
+
+// Get public reports organized by category for public collections page
+export async function getPublicReportsByCategory() {
+  try {
+    const result = await getPublicReportsAction()
+
+    if (!result.success) {
+      return result
+    }
+
+    const reports = result.data
+
+    // Define report categories
+    const categories = [
+      {
+        id: "latsar-cpns",
+        name: "Latsar Aktualisasi CPNS",
+        description: "Laporan Aktualisasi Latsar Calon Pegawai Negeri Sipil",
+        icon: "🎓",
+        color: "from-blue-500 to-cyan-500",
+      },
+      {
+        id: "laporan-pka",
+        name: "Laporan PKA",
+        description: "Laporan Pelatihan Kepemimpinan Administrator",
+        icon: "👔",
+        color: "from-purple-500 to-pink-500",
+      },
+      {
+        id: "laporan-pkp",
+        name: "Laporan PKP",
+        description: "Laporan Pelatihan Kepemimpinan Pengawas",
+        icon: "🔍",
+        color: "from-green-500 to-emerald-500",
+      },
+      {
+        id: "laporan-pkn",
+        name: "Laporan PKN",
+        description: "Laporan Kepemimpinan Nasional",
+        icon: "🏛️",
+        color: "from-orange-500 to-red-500",
+      },
+      {
+        id: "laporan-umum",
+        name: "Laporan Umum",
+        description: "Laporan dan Dokumen Umum Lainnya",
+        icon: "📋",
+        color: "from-gray-500 to-slate-500",
+      }
+    ]
+
+    // Group reports by category
+    const categorizedReports = categories.map(category => {
+      // Filter reports by category
+      const categoryReports = reports.filter(report => {
+        const reportCategory = (report.category || '').toLowerCase()
+        const categoryId = category.id.toLowerCase()
+
+        if (categoryId.includes('latsar') || categoryId.includes('cpns')) {
+          return reportCategory.includes('latsar') || reportCategory.includes('cpns')
+        } else if (categoryId.includes('pka')) {
+          return reportCategory.includes('pka') || reportCategory.includes('administrator')
+        } else if (categoryId.includes('pkp')) {
+          return reportCategory.includes('pkp') || reportCategory.includes('pengawas')
+        } else if (categoryId.includes('pkn')) {
+          return reportCategory.includes('pkn') || reportCategory.includes('kepemimpinan nasional')
+        } else {
+          // General category for others
+          return !reportCategory.includes('latsar') &&
+            !reportCategory.includes('cpns') &&
+            !reportCategory.includes('pka') &&
+            !reportCategory.includes('pkp') &&
+            !reportCategory.includes('pkn')
+        }
+      })
+
+      // Map reports to file format expected by the UI
+      const files = categoryReports.map(report => ({
+        id: report.id,
+        title: report.title,
+        author: report.author.name,
+        year: report.year,
+        batch: report.batch,
+        abstract: report.abstract,
+        type: report.files.length > 0 ? report.files[0].type : 'REPORT',
+        size: report.files.length > 0 ? report.files[0].size : 'N/A',
+        downloadUrl: '', // No download for public view
+        content: '', // No content for public view
+        isPublicReport: true, // Flag to identify this as a public report
+        category: report.category,
+        priority: report.priority,
+        created_at: report.created_at,
+        fileCount: report.files.length
+      }))
+
+      return {
+        ...category,
+        files,
+        totalFiles: files.length
+      }
+    })
+
+    // Filter out empty categories
+    const nonEmptyCategories = categorizedReports.filter(cat => cat.totalFiles > 0)
+
+    return {
+      success: true,
+      categories: nonEmptyCategories,
+      totalReports: reports.length
+    }
+  } catch (error) {
+    console.error('Get public reports by category error:', error)
+    return {
+      success: false,
+      error: 'Gagal mengambil laporan berdasarkan kategori'
+    }
+  }
+}
+
+// Get public reports by year
+export async function getPublicReportsByYear(year?: number) {
+  try {
+    const targetYear = year || new Date().getFullYear()
+
+    // Start and end dates for the target year
+    const startDate = new Date(targetYear, 0, 1)
+    const endDate = new Date(targetYear, 11, 31, 23, 59, 59, 999)
+
+    // Get all completed reports for the target year
+    const reports = await prisma.reports.findMany({
+      where: {
+        status: 'COMPLETED',
+        created_at: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
+      include: {
+        users_reports_author_idTousers: {
+          select: {
+            name: true,
+            username: true,
+            training: true,
+            angkatan: true
+          }
+        },
+        files: {
+          select: {
+            id: true,
+            filename: true,
+            original_name: true,
+            file_size: true,
+            mime_type: true,
+            category: true,
+            year: true,
+            batch: true,
+            created_at: true
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    // Format and categorize reports
+    const formattedReports = reports.map(report => {
+      // Use file data for year and batch instead of user profile data
+      const firstFile = report.files[0]
+      const reportYear = firstFile?.year || new Date(report.created_at).getFullYear().toString()
+      const reportBatch = firstFile?.batch || 'General'
+
+      return {
+        id: report.id,
+        title: report.title,
+        description: report.description || '',
+        category: report.category || 'GENERAL',
+        priority: report.priority,
+        author: {
+          name: report.users_reports_author_idTousers?.name || 'Anonymous',
+          username: report.users_reports_author_idTousers?.username || 'anonymous',
+          training: report.users_reports_author_idTousers?.training || '',
+          angkatan: report.users_reports_author_idTousers?.angkatan || ''
+        },
+        created_at: report.created_at,
+        updated_at: report.updated_at,
+        files: report.files.map(file => ({
+          id: file.id,
+          name: file.original_name,
+          size: formatFileSize(file.file_size),
+          type: getFileTypeFromMime(file.mime_type),
+          category: file.category,
+          year: file.year,
+          batch: file.batch,
+          created_at: file.created_at
+        })),
+        abstract: report.description || `Laporan ${report.category} oleh ${report.users_reports_author_idTousers?.name || 'Anonymous'}`,
+        year: reportYear, // Use file's year instead of created_at year
+        batch: reportBatch // Use file's batch instead of user's angkatan
+      }
+    })
+
+    // Group reports by category
+    const categories = [
+      {
+        id: "latsar-cpns",
+        name: "Latsar Aktualisasi CPNS",
+        description: "Laporan Aktualisasi Latsar Calon Pegawai Negeri Sipil",
+        icon: "🎓",
+        color: "from-blue-500 to-cyan-500",
+      },
+      {
+        id: "laporan-pka",
+        name: "Laporan PKA",
+        description: "Laporan Pelatihan Kepemimpinan Administrator",
+        icon: "👔",
+        color: "from-purple-500 to-pink-500",
+      },
+      {
+        id: "laporan-pkp",
+        name: "Laporan PKP",
+        description: "Laporan Pelatihan Kepemimpinan Pengawas",
+        icon: "🔍",
+        color: "from-green-500 to-emerald-500",
+      },
+      {
+        id: "laporan-pkn",
+        name: "Laporan PKN",
+        description: "Laporan Kepemimpinan Nasional",
+        icon: "🏛️",
+        color: "from-orange-500 to-red-500",
+      },
+      {
+        id: "laporan-umum",
+        name: "Laporan Umum",
+        description: "Laporan dan Dokumen Umum Lainnya",
+        icon: "📋",
+        color: "from-gray-500 to-slate-500",
+      }
+    ]
+
+    // Group reports by category
+    const categorizedReports = categories.map(category => {
+      const categoryReports = formattedReports.filter(report => {
+        const reportCategory = (report.category || '').toLowerCase()
+        const categoryId = category.id.toLowerCase()
+
+        if (categoryId.includes('latsar') || categoryId.includes('cpns')) {
+          return reportCategory.includes('latsar') || reportCategory.includes('cpns')
+        } else if (categoryId.includes('pka')) {
+          return reportCategory.includes('pka') || reportCategory.includes('administrator')
+        } else if (categoryId.includes('pkp')) {
+          return reportCategory.includes('pkp') || reportCategory.includes('pengawas')
+        } else if (categoryId.includes('pkn')) {
+          return reportCategory.includes('pkn') || reportCategory.includes('kepemimpinan nasional')
+        } else {
+          return !reportCategory.includes('latsar') &&
+            !reportCategory.includes('cpns') &&
+            !reportCategory.includes('pka') &&
+            !reportCategory.includes('pkp') &&
+            !reportCategory.includes('pkn')
+        }
+      })
+
+      const files = categoryReports.map(report => ({
+        id: report.id,
+        title: report.title,
+        author: report.author.name,
+        year: report.year,
+        batch: report.batch,
+        abstract: report.abstract,
+        type: report.files.length > 0 ? report.files[0].type : 'REPORT',
+        size: report.files.length > 0 ? report.files[0].size : 'N/A',
+        downloadUrl: '',
+        content: '',
+        isPublicReport: true,
+        category: report.category,
+        priority: report.priority,
+        created_at: report.created_at,
+        fileCount: report.files.length
+      }))
+
+      return {
+        ...category,
+        files,
+        totalFiles: files.length
+      }
+    })
+
+    const nonEmptyCategories = categorizedReports.filter(cat => cat.totalFiles > 0)
+
+    return {
+      success: true,
+      categories: nonEmptyCategories,
+      year: targetYear,
+      totalDocuments: reports.length
+    }
+  } catch (error) {
+    console.error('Get public reports by year error:', error)
+    return {
+      success: false,
+      error: 'Gagal mengambil laporan berdasarkan tahun'
+    }
+  }
+}
+
+// Get available years from reports
+export async function getAvailableReportYears() {
+  try {
+    const reports = await prisma.reports.findMany({
+      where: {
+        status: 'COMPLETED'
+      },
+      select: {
+        created_at: true
+      }
+    })
+
+    const years = reports.map(report => new Date(report.created_at).getFullYear())
+    const uniqueYears = [...new Set(years)].sort((a, b) => b - a)
+
+    return {
+      success: true,
+      years: uniqueYears
+    }
+  } catch (error) {
+    console.error('Get available report years error:', error)
+    return {
+      success: false,
+      error: 'Gagal mengambil tahun laporan'
+    }
+  }
 } 

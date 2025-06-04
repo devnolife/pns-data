@@ -39,6 +39,11 @@ interface FileItem {
   isLimited?: boolean
   maxAccess?: number
   currentAccess?: number
+  isPublicReport?: boolean
+  isCollection?: boolean
+  category?: string
+  priority?: string
+  fileCount?: number
 }
 
 interface FolderData {
@@ -288,7 +293,7 @@ export default function PublicCollectionsPage() {
                       className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-2xl border border-gray-200 shadow-lg"
                     >
                       <p className="text-sm font-bold text-gray-800">{folder.name}</p>
-                      <p className="text-xs text-gray-600">{folder.totalFiles}+ dokumen yang fire! 🔥</p>
+                      <p className="text-xs text-gray-600">{folder.totalFiles}+ dokumen laporan</p>
                     </div>
                   ))}
                 </div>
@@ -390,7 +395,7 @@ export default function PublicCollectionsPage() {
                               {year}
                             </CardTitle>
                             <CardDescription className="text-sm mt-2 text-gray-600">
-                              Arsip dokumen yang epic! 🔥
+                              Arsip dokumen laporan di tahun {year}
                             </CardDescription>
                           </div>
                         </div>
@@ -537,13 +542,17 @@ export default function PublicCollectionsPage() {
                       transition={{ delay: index * 0.1 }}
                     >
                       <Card
-                        className={`group overflow-hidden bg-white/60 backdrop-blur-md border-0 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer rounded-3xl hover:scale-105 hover:-translate-y-2 ${file.isLimited ? 'border-l-4 border-amber-500' : ''}`}
+                        className={`group overflow-hidden bg-white/60 backdrop-blur-md border-0 shadow-xl hover:shadow-2xl transition-all duration-500 cursor-pointer rounded-3xl hover:scale-105 hover:-translate-y-2 ${file.isLimited ? 'border-l-4 border-amber-500' : file.isPublicReport ? 'border-l-4 border-orange-500' : ''}`}
                         onClick={() => handleFileClick(file)}
                       >
                         <CardHeader className="pb-4 p-6 relative">
                           <div className="flex items-center gap-4">
-                            <div className={`p-4 rounded-2xl bg-gradient-to-r from-indigo-400 to-purple-400 shadow-lg`}>
-                              <BookOpen className="h-6 w-6 text-white" />
+                            <div className={`p-4 rounded-2xl shadow-lg ${file.isPublicReport ? 'bg-gradient-to-r from-orange-400 to-red-400' : 'bg-gradient-to-r from-indigo-400 to-purple-400'}`}>
+                              {file.isPublicReport ? (
+                                <FileText className="h-6 w-6 text-white" />
+                              ) : (
+                                <BookOpen className="h-6 w-6 text-white" />
+                              )}
                             </div>
                             <div className="flex-1">
                               <CardTitle className="text-lg font-bold leading-tight text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">
@@ -551,6 +560,9 @@ export default function PublicCollectionsPage() {
                               </CardTitle>
                               <CardDescription className="text-sm mt-2 text-gray-600">
                                 {file.author} • {file.year}
+                                {file.isPublicReport && (
+                                  <span className="ml-2 text-orange-600 font-semibold">📋</span>
+                                )}
                               </CardDescription>
                             </div>
                           </div>
@@ -561,13 +573,20 @@ export default function PublicCollectionsPage() {
                           </p>
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                              <FileText className="h-4 w-4 text-purple-400" />
+                              {file.isPublicReport ? (
+                                <FileText className="h-4 w-4 text-orange-400" />
+                              ) : (
+                                <FileText className="h-4 w-4 text-purple-400" />
+                              )}
                               <span className="text-sm text-gray-600 font-medium">
                                 {file.type} • {file.size}
+                                {file.isPublicReport && file.fileCount && file.fileCount > 0 && (
+                                  <span className="ml-2 text-orange-600">({file.fileCount} files)</span>
+                                )}
                               </span>
                             </div>
-                            <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0 rounded-full px-3 py-1 text-xs font-bold">
-                              View
+                            <Badge className={`text-white border-0 rounded-full px-3 py-1 text-xs font-bold ${file.isPublicReport ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-purple-500 to-pink-500'}`}>
+                              {file.isPublicReport ? 'Laporan' : 'View'}
                             </Badge>
                           </div>
                           {file.isLimited && (
@@ -580,7 +599,7 @@ export default function PublicCollectionsPage() {
                           )}
                         </CardContent>
                         {/* Hover effect overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10 transition-all duration-500 rounded-3xl" />
+                        <div className={`absolute inset-0 transition-all duration-500 rounded-3xl ${file.isPublicReport ? 'bg-gradient-to-r from-orange-500/0 to-red-500/0 group-hover:from-orange-500/10 group-hover:to-red-500/10' : 'bg-gradient-to-r from-purple-500/0 to-pink-500/0 group-hover:from-purple-500/10 group-hover:to-pink-500/10'}`} />
                       </Card>
                     </motion.div>
                   ))}
@@ -594,88 +613,154 @@ export default function PublicCollectionsPage() {
       {/* File Detail Dialog with modern design */}
       {selectedFile && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white/90 backdrop-blur-md border-0 rounded-3xl" onContextMenu={(e) => e.preventDefault()}>
+          <DialogContent
+            className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white/90 backdrop-blur-md border-0 rounded-3xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]"
+            style={{
+              position: 'fixed',
+              top: '10rem',
+              left: '25rem',
+              transform: 'none',
+              margin: 0
+            }}
+            onContextMenu={(e) => e.preventDefault()}
+          >
             <DialogHeader>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl">
-                  <BookOpen className="h-8 w-8 text-white" />
+              <div className="flex items-center gap-3 mb-3">
+                <div className={`p-2 rounded-xl ${selectedFile.isPublicReport ? 'bg-gradient-to-r from-orange-500 to-red-500' : 'bg-gradient-to-r from-purple-500 to-pink-500'}`}>
+                  {selectedFile.isPublicReport ? (
+                    <FileText className="h-6 w-6 text-white" />
+                  ) : (
+                    <BookOpen className="h-6 w-6 text-white" />
+                  )}
                 </div>
                 <div className="flex-1">
-                  <DialogTitle className="text-2xl font-bold text-gray-800">
+                  <DialogTitle className="text-xl font-bold text-gray-800 leading-tight">
                     {selectedFile.title}
                   </DialogTitle>
-                  <DialogDescription className="text-gray-600 text-lg">
+                  <DialogDescription className="text-gray-600 text-sm mt-1">
                     {selectedFile.author} • {selectedFile.year} • {selectedFile.batch} ✨
+                    {selectedFile.isPublicReport && (
+                      <span className="ml-2 text-orange-600 font-semibold">📋 Laporan Publik</span>
+                    )}
                   </DialogDescription>
                 </div>
-                <div className="flex gap-2">
-                  <Star className="h-6 w-6 text-yellow-400 animate-pulse" />
-                  <Sparkles className="h-6 w-6 text-pink-400 animate-bounce" />
+                <div className="flex gap-1">
+                  <Star className="h-5 w-5 text-yellow-400 animate-pulse" />
+                  <Sparkles className="h-5 w-5 text-pink-400 animate-bounce" />
                 </div>
               </div>
             </DialogHeader>
 
-            <div className="space-y-6">
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border border-purple-200">
-                <h3 className="font-bold text-purple-800 mb-3 text-lg flex items-center gap-2">
-                  <BookOpen className="h-5 w-5" />
-                  Abstrak 📖
+            <div className="space-y-4">
+              <div className={`p-4 rounded-xl border ${selectedFile.isPublicReport ? 'bg-gradient-to-r from-orange-50 to-red-50 border-orange-200' : 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200'}`}>
+                <h3 className={`font-bold mb-2 text-base flex items-center gap-2 ${selectedFile.isPublicReport ? 'text-orange-800' : 'text-purple-800'}`}>
+                  {selectedFile.isPublicReport ? (
+                    <FileText className="h-4 w-4" />
+                  ) : (
+                    <BookOpen className="h-4 w-4" />
+                  )}
+                  {selectedFile.isPublicReport ? 'Ringkasan Laporan 📋' : 'Abstrak 📖'}
                 </h3>
-                <p className="text-gray-700 leading-relaxed text-base">{selectedFile.abstract}</p>
-              </div>
+                <p className="text-gray-700 leading-relaxed text-sm">{selectedFile.abstract}</p>
 
-              <div className="flex items-center justify-between p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl border border-gray-200">
-                <div className="flex items-center gap-4">
-                  <FileText className={`w-8 h-8 ${selectedFile.isLimited ? 'text-amber-500' : 'text-purple-500'}`} />
-                  <div>
-                    <p className="font-bold text-gray-800 text-lg">{selectedFile.type} Document 📄</p>
-                    <p className="text-sm text-gray-600">Ukuran: {selectedFile.size}</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <Button variant="outline" className="rounded-2xl border-purple-200 hover:bg-purple-50">
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview ✨
-                  </Button>
-                  <Button className="rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                    <Download className="w-4 h-4 mr-2" />
-                    Download 🚀
-                  </Button>
-                </div>
-              </div>
-
-              {selectedFile.isLimited && (
-                <div className="text-center p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Zap className="h-5 w-5 text-amber-600" />
-                    <p className="text-sm text-amber-800 font-bold">
-                      Perhatian: Dokumen ini memiliki akses terbatas! ⚠️
+                {selectedFile.isPublicReport && selectedFile.fileCount && selectedFile.fileCount > 0 && (
+                  <div className="mt-3 p-2 bg-white/50 rounded-lg border border-orange-200">
+                    <p className="text-xs text-orange-700">
+                      📎 Laporan ini memiliki <span className="font-bold">{selectedFile.fileCount}</span> file terlampir
                     </p>
                   </div>
-                  <p className="text-sm text-amber-700 mb-3">
-                    Telah diakses {selectedFile.currentAccess} dari {selectedFile.maxAccess} kali.
-                  </p>
-                  <div className="w-full bg-amber-200 rounded-full h-3">
-                    <div
-                      className="bg-gradient-to-r from-amber-500 to-orange-500 h-3 rounded-full transition-all duration-300"
-                      style={{ width: `${(selectedFile.currentAccess! / selectedFile.maxAccess!) * 100}%` }}
-                    ></div>
+                )}
+              </div>
+
+              {selectedFile.isPublicReport ? (
+                // Public Report UI - No download functionality
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-6 h-6 text-orange-500" />
+                      <div>
+                        <p className="font-bold text-gray-800 text-base">Laporan {selectedFile.type} 📋</p>
+                        <p className="text-xs text-gray-600">
+                          Kategori: {selectedFile.category || 'Umum'} •
+                          Prioritas: {selectedFile.priority || 'Medium'}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 rounded-full px-3 py-1 text-xs font-bold">
+                      Laporan Publik
+                    </Badge>
+                  </div>
+
+                  <div className="text-center p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border border-orange-200">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <Eye className="h-4 w-4 text-orange-600" />
+                      <p className="text-xs text-orange-800 font-bold">
+                        Laporan Hanya untuk Dibaca 👀
+                      </p>
+                    </div>
+                    <p className="text-xs text-orange-700">
+                      Ini adalah laporan yang telah diverifikasi dan dipublikasikan untuk kepentingan umum.
+                      Tidak tersedia untuk diunduh. 📋✨
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                // Collection/Document UI - With download functionality
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-3">
+                      <FileText className={`w-6 h-6 ${selectedFile.isLimited ? 'text-amber-500' : 'text-purple-500'}`} />
+                      <div>
+                        <p className="font-bold text-gray-800 text-base">{selectedFile.type} Document 📄</p>
+                        <p className="text-xs text-gray-600">Ukuran: {selectedFile.size}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="rounded-xl border-purple-200 hover:bg-purple-50">
+                        <Eye className="w-3 h-3 mr-1" />
+                        Preview ✨
+                      </Button>
+                      <Button size="sm" className="rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
+                        <Download className="w-3 h-3 mr-1" />
+                        Download 🚀
+                      </Button>
+                    </div>
+                  </div>
+
+                  {selectedFile.isLimited && (
+                    <div className="text-center p-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-200">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <Zap className="h-4 w-4 text-amber-600" />
+                        <p className="text-xs text-amber-800 font-bold">
+                          Perhatian: Dokumen ini memiliki akses terbatas! ⚠️
+                        </p>
+                      </div>
+                      <p className="text-xs text-amber-700 mb-2">
+                        Telah diakses {selectedFile.currentAccess} dari {selectedFile.maxAccess} kali.
+                      </p>
+                      <div className="w-full bg-amber-200 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${(selectedFile.currentAccess! / selectedFile.maxAccess!) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
+                    <div className="flex items-center justify-center gap-2 mb-1">
+                      <Eye className="h-4 w-4 text-blue-600" />
+                      <p className="text-xs text-blue-800 font-bold">
+                        Mode Baca Saja 👀
+                      </p>
+                    </div>
+                    <p className="text-xs text-blue-700">
+                      Dokumen ini hanya dapat dibaca dan tidak dapat disalin. Stay respectful! 😎
+                    </p>
                   </div>
                 </div>
               )}
-
-              <div className="text-center p-6 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl border border-blue-200">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Eye className="h-5 w-5 text-blue-600" />
-                  <p className="text-sm text-blue-800 font-bold">
-                    Mode Baca Saja 👀
-                  </p>
-                </div>
-                <p className="text-sm text-blue-700">
-                  Dokumen ini hanya dapat dibaca dan tidak dapat disalin. Stay respectful! 😎
-                </p>
-              </div>
             </div>
           </DialogContent>
         </Dialog>

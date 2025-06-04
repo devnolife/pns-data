@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users, Calendar, Clock, Download, TrendingUp, Eye, Activity, MessageSquare, Globe, BarChart3 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useToastId } from "@/hooks/use-toast-id"
 import {
   getVisitorStats,
   getTopPages,
@@ -25,7 +26,9 @@ export default function VisitorsStatisticsPage() {
   const [trafficSources, setTrafficSources] = useState<TrafficSource[]>([])
   const [guestbookAnalytics, setGuestbookAnalytics] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
   const [period, setPeriod] = useState("30")
+  const { success, error, info } = useToastId()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,15 +53,79 @@ export default function VisitorsStatisticsPage() {
         setRecentGuestbook(guestbookData)
         setTrafficSources(trafficData)
         setGuestbookAnalytics(analyticsData)
-      } catch (error) {
-        console.error('Error fetching visitor data:', error)
+      } catch (err) {
+        console.error('Error fetching visitor data:', err)
+        error("fetchError", {
+          description: "Gagal memuat data statistik pengunjung"
+        })
       } finally {
         setLoading(false)
       }
     }
 
     fetchData()
-  }, [period])
+  }, [period, error])
+
+  const handleExport = async () => {
+    try {
+      setExporting(true)
+
+      info("exporting", {
+        description: "Sedang menyiapkan file statistik pengunjung..."
+      })
+
+      // Call the export API
+      const response = await fetch(`/api/admin/export/visitors?period=${period}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Gagal mengekspor data')
+      }
+
+      // Get the CSV content
+      const csvContent = await response.text()
+
+      // Create blob and download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement('a')
+
+      // Create download URL
+      const url = URL.createObjectURL(blob)
+      link.setAttribute('href', url)
+
+      // Set filename
+      const now = new Date()
+      const dateStr = now.toISOString().split('T')[0]
+      const filename = `statistik-pengunjung-${period}-hari-${dateStr}.csv`
+      link.setAttribute('download', filename)
+
+      // Trigger download
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      // Clean up
+      URL.revokeObjectURL(url)
+
+      success("exportSuccess", {
+        description: `File ${filename} berhasil diunduh! 📊`
+      })
+
+    } catch (err) {
+      console.error('Export error:', err)
+      error("exportError", {
+        description: err instanceof Error ? err.message : "Terjadi kesalahan saat mengekspor data"
+      })
+    } finally {
+      setExporting(false)
+    }
+  }
 
   if (loading || !visitorStats) {
     return (
@@ -92,9 +159,22 @@ export default function VisitorsStatisticsPage() {
                 <SelectItem value="90">3 bulan terakhir</SelectItem>
               </SelectContent>
             </Select>
-            <Button className="bg-white/20 hover:bg-white/30 text-white border-white/30">
-              <Download className="mr-2 h-4 w-4" />
-              Export
+            <Button
+              onClick={handleExport}
+              disabled={exporting}
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {exporting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" />
+                  Exporting...
+                </>
+              ) : (
+                <>
+                  <Download className="mr-2 h-4 w-4" />
+                  Export CSV
+                </>
+              )}
             </Button>
           </div>
         </div>
