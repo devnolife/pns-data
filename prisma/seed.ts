@@ -270,10 +270,35 @@ async function main() {
     }
   ]
 
-  // Insert all reports
+  // Insert all reports with varied statuses
   const allReports = [...pknReports, ...pkaReports, ...pkpReports, ...latsarReports]
 
-  for (const reportData of allReports) {
+  for (let i = 0; i < allReports.length; i++) {
+    const reportData = allReports[i]
+
+    // Vary the status for testing
+    let status: 'PENDING' | 'COMPLETED' | 'REJECTED'
+    let feedback: string | undefined
+    let verified_at: Date | undefined
+    let rejected_at: Date | undefined
+
+    if (i % 3 === 0) {
+      status = 'PENDING'
+    } else if (i % 3 === 1) {
+      status = 'COMPLETED'
+      verified_at = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
+    } else {
+      status = 'REJECTED'
+      rejected_at = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
+      feedback = [
+        'Laporan perlu dilengkapi dengan data statistik yang lebih komprehensif dan referensi yang lebih update.',
+        'Metodologi penelitian kurang jelas. Mohon tambahkan penjelasan yang lebih detail tentang metode yang digunakan.',
+        'Analisis data perlu diperdalam. Tambahkan interpretasi yang lebih mendalam terhadap hasil penelitian.',
+        'Format laporan belum sesuai dengan template yang ditetapkan. Mohon perbaiki struktur dan format penulisan.',
+        'Kesimpulan tidak didukung oleh data yang cukup. Perkuat argumentasi dengan evidence yang lebih kuat.'
+      ][Math.floor(Math.random() * 5)]
+    }
+
     await prisma.reports.create({
       data: {
         id: crypto.randomUUID(),
@@ -282,8 +307,11 @@ async function main() {
         content: reportData.content,
         category: reportData.category,
         priority: 'MEDIUM',
-        status: 'COMPLETED',
+        status: status,
         author_id: reportData.author_id,
+        feedback: feedback,
+        verified_at: verified_at,
+        rejected_at: rejected_at,
         created_at: new Date(reportData.year, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
         updated_at: new Date(),
       },
@@ -413,6 +441,81 @@ async function main() {
   console.log(`📊 Created ${await prisma.reports.count()} reports`)
   console.log(`📚 Created ${await prisma.collections.count()} collections`)
   console.log(`💬 Created ${await prisma.guestbook_entries.count()} guestbook entries`)
+
+  // Create visitor analytics data
+  const pages = [
+    { path: '/', title: '🏠 Beranda' },
+    { path: '/login', title: '🔑 Halaman Login' },
+    { path: '/collections', title: '📚 Koleksi Digital' },
+    { path: '/guestbook', title: '📝 Buku Tamu' },
+    { path: '/register', title: '✨ Halaman Daftar' },
+    { path: '/profile', title: '👤 Profil Pengguna' },
+    { path: '/dashboard', title: '📊 Dashboard' },
+    { path: '/reports', title: '📋 Laporan' }
+  ]
+
+  const referrers = [
+    'https://google.com',
+    'https://facebook.com',
+    'https://twitter.com',
+    'https://linkedin.com',
+    'direct',
+    'https://instagram.com'
+  ]
+
+  const userAgents = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X)',
+    'Mozilla/5.0 (Android 11; Mobile; rv:68.0)'
+  ]
+
+  // Generate visitor data for the last 30 days
+  const visitorAnalytics = []
+  const currentDate = new Date()
+
+  for (let day = 29; day >= 0; day--) {
+    const date = new Date(currentDate)
+    date.setDate(date.getDate() - day)
+
+    // Generate 20-100 visits per day
+    const visitsPerDay = Math.floor(Math.random() * 80) + 20
+
+    for (let visit = 0; visit < visitsPerDay; visit++) {
+      const visitTime = new Date(date)
+      visitTime.setHours(Math.floor(Math.random() * 24))
+      visitTime.setMinutes(Math.floor(Math.random() * 60))
+
+      const page = pages[Math.floor(Math.random() * pages.length)]
+      const referrer = referrers[Math.floor(Math.random() * referrers.length)]
+      const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
+
+      visitorAnalytics.push({
+        id: crypto.randomUUID(),
+        ip_address: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
+        user_agent: userAgent,
+        page_path: page.path,
+        page_title: page.title,
+        referrer: referrer === 'direct' ? null : referrer,
+        session_id: crypto.randomUUID(),
+        user_id: Math.random() > 0.7 ? [admin.id, userPKN.id, userPKA.id, userPKP.id, userLatsar.id][Math.floor(Math.random() * 5)] : null,
+        visit_duration: Math.floor(Math.random() * 600) + 30, // 30 seconds to 10 minutes
+        created_at: visitTime
+      })
+    }
+  }
+
+  // Insert visitor analytics data in batches
+  const batchSize = 100
+  for (let i = 0; i < visitorAnalytics.length; i += batchSize) {
+    const batch = visitorAnalytics.slice(i, i + batchSize)
+    await prisma.visitor_analytics.createMany({
+      data: batch
+    })
+  }
+
+  console.log(`📈 Created ${visitorAnalytics.length} visitor analytics entries`)
 }
 
 main()

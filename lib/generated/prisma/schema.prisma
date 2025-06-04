@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model collections {
+  id          String   @id
+  title       String
+  description String?
+  content     String
+  image_url   String?
+  category    String?
+  tags        String?
+  is_public   Boolean  @default(true)
+  author_id   String
+  created_at  DateTime @default(now())
+  updated_at  DateTime
+  users       users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
+}
+
+model visitor_analytics {
+  id             String   @id
+  ip_address     String?
+  user_agent     String?
+  page_path      String
+  page_title     String?
+  referrer       String?
+  session_id     String?
+  user_id        String?
+  visit_duration Int? // in seconds
+  created_at     DateTime @default(now())
+  users          users?   @relation(fields: [user_id], references: [id])
+
+  @@index([created_at])
+  @@index([page_path])
+  @@index([session_id])
+}
+
+model guestbook_entries {
+  id          String   @id
+  name        String
+  email       String?
+  message     String
+  is_approved Boolean  @default(false)
+  author_id   String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime
+  users       users?   @relation(fields: [author_id], references: [id])
+}
+
+model limited_collections {
+  id             String   @id
+  title          String
+  description    String?
+  content        String
+  image_url      String?
+  category       String?
+  tags           String?
+  max_access     Int      @default(100)
+  current_access Int      @default(0)
+  is_active      Boolean  @default(true)
+  author_id      String
+  created_at     DateTime @default(now())
+  updated_at     DateTime
+  users          users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
+}
+
+model reports {
+  id                               String           @id
+  title                            String
+  description                      String?
+  content                          String
+  status                           ReportStatus     @default(PENDING)
+  category                         String?
+  priority                         Priority         @default(MEDIUM)
+  author_id                        String
+  assignee_id                      String?
+  feedback                         String? // Feedback for rejected reports
+  verified_at                      DateTime? // When the report was verified
+  rejected_at                      DateTime? // When the report was rejected
+  created_at                       DateTime         @default(now())
+  updated_at                       DateTime
+  users_reports_assignee_idTousers users?           @relation("reports_assignee_idTousers", fields: [assignee_id], references: [id])
+  users_reports_author_idTousers   users            @relation("reports_author_idTousers", fields: [author_id], references: [id], onDelete: Cascade)
+  files                            uploaded_files[]
+}
+
+model uploaded_files {
+  id            String   @id
+  filename      String
+  original_name String
+  file_path     String
+  file_size     Int
+  mime_type     String
+  category      String?
+  year          String?
+  batch         String?
+  report_id     String?
+  author_id     String
+  created_at    DateTime @default(now())
+  updated_at    DateTime
+  users         users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  reports       reports? @relation(fields: [report_id], references: [id], onDelete: Cascade)
+}
+
+model users {
+  id                                 String                @id
+  username                           String                @unique
+  email                              String                @unique
+  password                           String
+  role                               Role                  @default(USER)
+  name                               String?
+  avatar                             String?
+  training                           String?
+  angkatan                           String?
+  phone                              String?
+  created_at                         DateTime              @default(now())
+  updated_at                         DateTime
+  collections                        collections[]
+  visitor_analytics                  visitor_analytics[]
+  guestbook_entries                  guestbook_entries[]
+  limited_collections                limited_collections[]
+  reports_reports_assignee_idTousers reports[]             @relation("reports_assignee_idTousers")
+  reports_reports_author_idTousers   reports[]             @relation("reports_author_idTousers")
+  uploaded_files                     uploaded_files[]
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ReportStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}

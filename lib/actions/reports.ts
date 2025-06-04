@@ -695,4 +695,84 @@ export async function getUserFileStatsAction() {
       error: error instanceof Error ? error.message : 'Gagal mengambil statistik file'
     }
   }
+}
+
+// Get user reports for verification status page
+export async function getUserReportsForVerificationStatus() {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    const reports = await prisma.reports.findMany({
+      where: {
+        author_id: currentUser.id
+      },
+      include: {
+        files: {
+          select: {
+            id: true,
+            filename: true,
+            original_name: true,
+            file_size: true,
+            mime_type: true,
+            file_path: true
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    const formattedReports = reports.map(report => ({
+      id: report.id,
+      title: report.title,
+      description: report.description || '',
+      category: report.category || 'GENERAL',
+      status: (report.status.toLowerCase() === 'completed' ? 'verified' :
+        report.status.toLowerCase() === 'rejected' ? 'rejected' : 'pending') as "pending" | "verified" | "rejected",
+      submittedDate: report.created_at.toISOString(),
+      verifiedDate: report.verified_at ? report.verified_at.toISOString() : undefined,
+      rejectedDate: report.rejected_at ? report.rejected_at.toISOString() : undefined,
+      feedback: report.feedback || undefined,
+      files: report.files.map(file => ({
+        name: file.original_name,
+        size: formatFileSize(file.file_size),
+        type: getFileTypeFromMime(file.mime_type)
+      }))
+    }))
+
+    return {
+      success: true,
+      data: formattedReports
+    }
+  } catch (error) {
+    console.error('Error fetching user reports for verification status:', error)
+    return {
+      success: false,
+      error: 'Gagal mengambil laporan'
+    }
+  }
+}
+
+// Helper function to format file size
+function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 Bytes'
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
+}
+
+// Helper function to get file type from mime type
+function getFileTypeFromMime(mimeType: string): string {
+  if (mimeType.includes('pdf')) return 'PDF'
+  if (mimeType.includes('word') || mimeType.includes('document')) return 'DOCX'
+  if (mimeType.includes('excel') || mimeType.includes('spreadsheet')) return 'XLSX'
+  if (mimeType.includes('powerpoint') || mimeType.includes('presentation')) return 'PPTX'
+  if (mimeType.includes('image')) return 'IMAGE'
+  return 'FILE'
 } 

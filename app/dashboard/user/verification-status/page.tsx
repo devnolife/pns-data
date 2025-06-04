@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
+import { getUserReportsForVerificationStatus } from "@/lib/actions/reports"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -71,108 +72,22 @@ export default function VerificationStatusPage() {
     // Mock API call to fetch user's reports
     const fetchUserReports = async () => {
       try {
-        // In a real app, this would fetch reports for the current user
-        const mockReports: Report[] = [
-          {
-            id: "1",
-            title: "Laporan Keuangan Q1 2024 💰",
-            description: "Laporan keuangan kuartal pertama dengan analisis mendalam tentang performa bisnis.",
-            category: "CPNS",
-            status: "verified",
-            submittedDate: "2024-05-19T08:30:00",
-            verifiedDate: "2024-05-20T14:20:00",
-            files: [
-              {
-                name: "laporan-keuangan-q1.pdf",
-                size: "2.4 MB",
-                type: "PDF",
-              },
-              {
-                name: "data-pendukung.xlsx",
-                size: "1.8 MB",
-                type: "XLSX",
-              },
-            ],
-          },
-          {
-            id: "2",
-            title: "Proposal Inovasi Digital 🚀",
-            description: "Proposal implementasi teknologi AI untuk meningkatkan efisiensi operasional.",
-            category: "PKA",
-            status: "pending",
-            submittedDate: "2024-05-18T14:45:00",
-            files: [
-              {
-                name: "proposal-inovasi-digital.docx",
-                size: "3.2 MB",
-                type: "DOCX",
-              },
-              {
-                name: "presentasi-proposal.pptx",
-                size: "5.1 MB",
-                type: "PPTX",
-              },
-            ],
-          },
-          {
-            id: "3",
-            title: "Analisis Kepemimpinan Modern ✨",
-            description: "Studi kasus tentang gaya kepemimpinan di era digital dan dampaknya terhadap produktivitas tim.",
-            category: "PKP",
-            status: "rejected",
-            submittedDate: "2024-05-17T09:15:00",
-            rejectedDate: "2024-05-18T16:30:00",
-            feedback: "Laporan perlu dilengkapi dengan data statistik yang lebih komprehensif dan referensi yang lebih update. Mohon tambahkan analisis komparatif dengan perusahaan sejenis.",
-            files: [
-              {
-                name: "analisis-kepemimpinan.pdf",
-                size: "1.9 MB",
-                type: "PDF",
-              },
-            ],
-          },
-          {
-            id: "4",
-            title: "Evaluasi Program Pelatihan 📊",
-            description: "Evaluasi komprehensif terhadap efektivitas program pelatihan karyawan tahun 2024.",
-            category: "PKN",
-            status: "verified",
-            submittedDate: "2024-05-16T11:20:00",
-            verifiedDate: "2024-05-17T10:15:00",
-            files: [
-              {
-                name: "evaluasi-pelatihan.pdf",
-                size: "2.7 MB",
-                type: "PDF",
-              },
-              {
-                name: "survey-results.xlsx",
-                size: "1.3 MB",
-                type: "XLSX",
-              },
-            ],
-          },
-          {
-            id: "5",
-            title: "Strategi Marketing Digital 📱",
-            description: "Rencana strategis pemasaran digital untuk meningkatkan brand awareness dan engagement.",
-            category: "PKP",
-            status: "pending",
-            submittedDate: "2024-05-15T10:10:00",
-            files: [
-              {
-                name: "strategi-marketing.pdf",
-                size: "4.2 MB",
-                type: "PDF",
-              },
-            ],
-          },
-        ]
+        const result = await getUserReportsForVerificationStatus()
 
-        setReports(mockReports)
-        setFilteredReports(mockReports)
+        if (result.success && result.data) {
+          setReports(result.data)
+          setFilteredReports(result.data)
+        } else {
+          console.error("Error fetching reports:", result.error)
+          // Fallback to empty array if API fails
+          setReports([])
+          setFilteredReports([])
+        }
       } catch (error) {
         console.error("Error fetching reports:", error)
+        // Fallback to empty array if API fails
+        setReports([])
+        setFilteredReports([])
       }
     }
 

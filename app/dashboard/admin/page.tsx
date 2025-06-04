@@ -6,8 +6,46 @@ import { ActionCard } from "@/components/dashboard/action-card"
 import { OverviewChart } from "@/components/dashboard/overview-chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getDashboardStats, getRecentActivities, getMonthlyStats, type RecentActivity } from "@/lib/actions/admin"
 
-export default function AdminDashboard() {
+// Helper function to format time ago
+function formatTimeAgo(date: Date): string {
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+  if (diffInSeconds < 60) return 'Baru saja'
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} menit yang lalu`
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} jam yang lalu`
+  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} hari yang lalu`
+  return date.toLocaleDateString('id-ID')
+}
+
+// Helper function to get activity icon
+function getActivityIcon(activity: RecentActivity) {
+  switch (activity.type) {
+    case 'user':
+      return <UserPlus className="h-4 w-4 text-blue-500" />
+    case 'report':
+      return <FileText className="h-4 w-4 text-yellow-500" />
+    case 'collection':
+      return <FolderPlus className="h-4 w-4 text-green-500" />
+    default:
+      return <Bell className="h-4 w-4 text-gray-500" />
+  }
+}
+
+export default async function AdminDashboard() {
+  // Fetch real data from database
+  const [dashboardStats, recentActivities, monthlyStats] = await Promise.all([
+    getDashboardStats(),
+    getRecentActivities(),
+    getMonthlyStats()
+  ])
+
+  // Separate activities by type for tabs
+  const userActivities = recentActivities.filter(activity => activity.type === 'user')
+  const reportActivities = recentActivities.filter(activity => activity.type === 'report')
+
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
@@ -17,33 +55,45 @@ export default function AdminDashboard() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title="Total Pengguna"
-          value="128"
+          value={dashboardStats.totalUsers.toString()}
           description="Pengguna aktif dalam sistem"
-          trend={{ value: "12%", isPositive: true }}
+          trend={{
+            value: `${Math.abs(dashboardStats.userGrowth)}%`,
+            isPositive: dashboardStats.userGrowth >= 0
+          }}
           icon={<Users className="h-6 w-6" />}
           variant="info"
         />
         <StatCard
           title="Koleksi Digital"
-          value="56"
+          value={dashboardStats.totalCollections.toString()}
           description="Total koleksi digital"
-          trend={{ value: "8%", isPositive: true }}
+          trend={{
+            value: `${Math.abs(dashboardStats.collectionGrowth)}%`,
+            isPositive: dashboardStats.collectionGrowth >= 0
+          }}
           icon={<FolderOpen className="h-6 w-6" />}
           variant="success"
         />
         <StatCard
           title="Laporan"
-          value="23"
+          value={dashboardStats.pendingReports.toString()}
           description="Menunggu verifikasi"
-          trend={{ value: "5", isPositive: false }}
+          trend={{
+            value: Math.abs(dashboardStats.reportGrowth).toString(),
+            isPositive: dashboardStats.reportGrowth <= 0
+          }}
           icon={<FileText className="h-6 w-6" />}
           variant="warning"
         />
         <StatCard
           title="Pengunjung"
-          value="1,204"
+          value={dashboardStats.totalVisitors.toLocaleString('id-ID')}
           description="Pengunjung minggu ini"
-          trend={{ value: "18%", isPositive: true }}
+          trend={{
+            value: `${dashboardStats.visitorGrowth}%`,
+            isPositive: true
+          }}
           icon={<BarChart3 className="h-6 w-6" />}
           variant="primary"
         />
@@ -53,43 +103,7 @@ export default function AdminDashboard() {
       <div className="grid gap-6 lg:grid-cols-7">
         {/* Chart - Takes 4/7 of the grid */}
         <div className="lg:col-span-4">
-          <OverviewChart />
-        </div>
-
-        {/* Quick Actions - Takes 3/7 of the grid */}
-        <div className="lg:col-span-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Aksi Cepat</CardTitle>
-              <CardDescription>Tugas administratif umum</CardDescription>
-            </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2">
-              <ActionCard
-                title="Verifikasi Laporan"
-                description="Periksa dan verifikasi laporan yang masuk"
-                icon={<ClipboardCheck className="h-5 w-5" />}
-                href="/dashboard/admin/verify-reports"
-              />
-              <ActionCard
-                title="Kelola Pengguna"
-                description="Tambah, edit, atau hapus pengguna"
-                icon={<UserPlus className="h-5 w-5" />}
-                href="/dashboard/admin/manage-users"
-              />
-              <ActionCard
-                title="Kelola Folder"
-                description="Atur struktur folder koleksi"
-                icon={<FolderPlus className="h-5 w-5" />}
-                href="/dashboard/admin/manage-folders"
-              />
-              <ActionCard
-                title="Lihat Statistik"
-                description="Analisis data pengunjung"
-                icon={<BarChart3 className="h-5 w-5" />}
-                href="/dashboard/admin/number-of-visitors"
-              />
-            </CardContent>
-          </Card>
+          <OverviewChart monthlyData={monthlyStats} />
         </div>
       </div>
 
@@ -105,63 +119,67 @@ export default function AdminDashboard() {
             <Tabs defaultValue="all">
               <TabsList className="mb-4 w-full">
                 <TabsTrigger value="all" className="flex-1">
-                  Semua
+                  Semua ({recentActivities.length})
                 </TabsTrigger>
                 <TabsTrigger value="users" className="flex-1">
-                  Pengguna
+                  Pengguna ({userActivities.length})
                 </TabsTrigger>
                 <TabsTrigger value="reports" className="flex-1">
-                  Laporan
+                  Laporan ({reportActivities.length})
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="all" className="space-y-4">
-                <ActivityItem
-                  title="Pengguna Baru Terdaftar"
-                  description="Jane Smith (jane@example.com) membuat akun"
-                  timestamp="1 jam yang lalu"
-                  icon={<UserPlus className="h-4 w-4 text-blue-500" />}
-                  variant="highlight"
-                />
-                <ActivityItem
-                  title="Laporan Dikirimkan"
-                  description="Laporan baru 'Anggaran Tahunan' menunggu verifikasi"
-                  timestamp="3 jam yang lalu"
-                  icon={<FileText className="h-4 w-4 text-yellow-500" />}
-                />
-                <ActivityItem
-                  title="Koleksi Dibuat"
-                  description="Koleksi baru 'Laporan Keuangan 2025' dibuat"
-                  timestamp="Kemarin"
-                  icon={<FolderPlus className="h-4 w-4 text-green-500" />}
-                />
+                {recentActivities.length > 0 ? (
+                  recentActivities.slice(0, 5).map((activity) => (
+                    <ActivityItem
+                      key={activity.id}
+                      title={activity.title}
+                      description={activity.description}
+                      timestamp={formatTimeAgo(activity.timestamp)}
+                      icon={getActivityIcon(activity)}
+                      variant={activity.type === 'user' ? 'highlight' : 'default'}
+                    />
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Belum ada aktivitas terbaru
+                  </p>
+                )}
               </TabsContent>
               <TabsContent value="users" className="space-y-4">
-                <ActivityItem
-                  title="Pengguna Baru Terdaftar"
-                  description="Jane Smith (jane@example.com) membuat akun"
-                  timestamp="1 jam yang lalu"
-                  icon={<UserPlus className="h-4 w-4 text-blue-500" />}
-                />
-                <ActivityItem
-                  title="Profil Diperbarui"
-                  description="John Doe memperbarui informasi profil"
-                  timestamp="5 jam yang lalu"
-                  icon={<Users className="h-4 w-4 text-blue-500" />}
-                />
+                {userActivities.length > 0 ? (
+                  userActivities.slice(0, 5).map((activity) => (
+                    <ActivityItem
+                      key={activity.id}
+                      title={activity.title}
+                      description={activity.description}
+                      timestamp={formatTimeAgo(activity.timestamp)}
+                      icon={<UserPlus className="h-4 w-4 text-blue-500" />}
+                      variant="highlight"
+                    />
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Belum ada aktivitas pengguna terbaru
+                  </p>
+                )}
               </TabsContent>
               <TabsContent value="reports" className="space-y-4">
-                <ActivityItem
-                  title="Laporan Dikirimkan"
-                  description="Laporan baru 'Anggaran Tahunan' menunggu verifikasi"
-                  timestamp="3 jam yang lalu"
-                  icon={<FileText className="h-4 w-4 text-yellow-500" />}
-                />
-                <ActivityItem
-                  title="Laporan Diverifikasi"
-                  description="Laporan 'Laporan Kuartal Q1' telah diverifikasi"
-                  timestamp="Kemarin"
-                  icon={<ClipboardCheck className="h-4 w-4 text-green-500" />}
-                />
+                {reportActivities.length > 0 ? (
+                  reportActivities.slice(0, 5).map((activity) => (
+                    <ActivityItem
+                      key={activity.id}
+                      title={activity.title}
+                      description={activity.description}
+                      timestamp={formatTimeAgo(activity.timestamp)}
+                      icon={<FileText className="h-4 w-4 text-yellow-500" />}
+                    />
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Belum ada aktivitas laporan terbaru
+                  </p>
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>
@@ -177,43 +195,47 @@ export default function AdminDashboard() {
             <div className="relative">
               <Bell className="h-5 w-5 text-muted-foreground" />
               <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                3
+                {dashboardStats.pendingReports > 0 ? Math.min(dashboardStats.pendingReports, 9) : 0}
               </span>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-900/20">
-              <div className="mb-2 flex items-center gap-2">
-                <Bell className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
-                <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Pemeliharaan Sistem</h4>
+            {dashboardStats.pendingReports > 0 && (
+              <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-900/20">
+                <div className="mb-2 flex items-center gap-2">
+                  <Bell className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+                  <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-300">Laporan Menunggu</h4>
+                </div>
+                <p className="text-xs text-yellow-700 dark:text-yellow-400">
+                  Ada {dashboardStats.pendingReports} laporan yang menunggu verifikasi dari administrator.
+                </p>
+                <p className="mt-2 text-xs text-yellow-600 dark:text-yellow-500">Perlu tindakan</p>
               </div>
-              <p className="text-xs text-yellow-700 dark:text-yellow-400">
-                Sistem akan mengalami pemeliharaan pada tanggal 15 Juni 2025 pukul 02:00 - 04:00 WIB.
-              </p>
-              <p className="mt-2 text-xs text-yellow-600 dark:text-yellow-500">2 hari lagi</p>
-            </div>
+            )}
 
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-900/20">
               <div className="mb-2 flex items-center gap-2">
                 <Bell className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300">Pembaruan Sistem</h4>
+                <h4 className="text-sm font-medium text-blue-800 dark:text-blue-300">Statistik Sistem</h4>
               </div>
               <p className="text-xs text-blue-700 dark:text-blue-400">
-                Versi baru 2.5.0 telah dirilis dengan fitur pencarian lanjutan dan perbaikan bug.
+                Sistem memiliki {dashboardStats.totalUsers} pengguna aktif dan {dashboardStats.totalCollections} koleksi digital.
               </p>
-              <p className="mt-2 text-xs text-blue-600 dark:text-blue-500">5 jam yang lalu</p>
+              <p className="mt-2 text-xs text-blue-600 dark:text-blue-500">Informasi terkini</p>
             </div>
 
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900/50 dark:bg-red-900/20">
-              <div className="mb-2 flex items-center gap-2">
-                <Bell className="h-4 w-4 text-red-600 dark:text-red-400" />
-                <h4 className="text-sm font-medium text-red-800 dark:text-red-300">Peringatan Keamanan</h4>
+            {dashboardStats.userGrowth > 20 && (
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-900/50 dark:bg-green-900/20">
+                <div className="mb-2 flex items-center gap-2">
+                  <Bell className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <h4 className="text-sm font-medium text-green-800 dark:text-green-300">Pertumbuhan Pengguna</h4>
+                </div>
+                <p className="text-xs text-green-700 dark:text-green-400">
+                  Pertumbuhan pengguna mencapai {dashboardStats.userGrowth}% bulan ini. Sistem berkembang dengan baik!
+                </p>
+                <p className="mt-2 text-xs text-green-600 dark:text-green-500">Kabar baik</p>
               </div>
-              <p className="text-xs text-red-700 dark:text-red-400">
-                Terdeteksi 3 percobaan login yang gagal dari alamat IP tidak dikenal. Harap periksa log keamanan.
-              </p>
-              <p className="mt-2 text-xs text-red-600 dark:text-red-500">1 jam yang lalu</p>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>

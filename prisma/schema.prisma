@@ -23,6 +23,24 @@ model collections {
   users       users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
 }
 
+model visitor_analytics {
+  id             String   @id
+  ip_address     String?
+  user_agent     String?
+  page_path      String
+  page_title     String?
+  referrer       String?
+  session_id     String?
+  user_id        String?
+  visit_duration Int?     // in seconds
+  created_at     DateTime @default(now())
+  users          users?   @relation(fields: [user_id], references: [id])
+
+  @@index([created_at])
+  @@index([page_path])
+  @@index([session_id])
+}
+
 model guestbook_entries {
   id          String   @id
   name        String
@@ -62,6 +80,9 @@ model reports {
   priority                         Priority     @default(MEDIUM)
   author_id                        String
   assignee_id                      String?
+  feedback                         String?      // Feedback for rejected reports
+  verified_at                      DateTime?    // When the report was verified
+  rejected_at                      DateTime?    // When the report was rejected
   created_at                       DateTime     @default(now())
   updated_at                       DateTime
   users_reports_assignee_idTousers users?       @relation("reports_assignee_idTousers", fields: [assignee_id], references: [id])
@@ -101,6 +122,7 @@ model users {
   created_at                         DateTime              @default(now())
   updated_at                         DateTime
   collections                        collections[]
+  visitor_analytics                  visitor_analytics[]
   guestbook_entries                  guestbook_entries[]
   limited_collections                limited_collections[]
   reports_reports_assignee_idTousers reports[]             @relation("reports_assignee_idTousers")
