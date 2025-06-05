@@ -950,21 +950,41 @@ export async function verifyReportAction(reportId: string) {
       }
     })
 
-    // Validate folder mapping for all files when status becomes COMPLETED
-    // This ensures files are in the correct folder based on form data, not user profile data
+    // PERBAIKAN: Validasi file mapping yang lebih aman
+    // Hanya pindahkan file jika benar-benar diperlukan dan ada validasi ketat
     if (report.files && report.files.length > 0) {
       const fs = require('fs').promises
       const path = require('path')
+      const { existsSync } = require('fs')
+
+      console.log(`Verifying folder mapping for report ${reportId} with ${report.files.length} files`)
 
       for (const file of report.files) {
         try {
-          // Skip if file data is missing required fields
-          if (!file.year || !file.batch) {
-            console.warn(`File ${file.id} missing year or batch data, skipping folder validation`)
+          // Validasi ketat: pastikan file memiliki data yang diperlukan
+          if (!file.year || !file.batch || !file.filename) {
+            console.warn(`File ${file.id} missing required data (year: ${file.year}, batch: ${file.batch}, filename: ${file.filename}), skipping`)
             continue
           }
 
-          // Construct expected folder path based on file's form data
+          // PERBAIKAN: Validasi bahwa data year dan batch masuk akal
+          const currentYear = new Date().getFullYear()
+          const fileYear = parseInt(file.year)
+
+          // Validasi tahun (harus antara 2020-2030 untuk reasonable range)
+          if (isNaN(fileYear) || fileYear < 2020 || fileYear > 2030) {
+            console.error(`File ${file.id} has invalid year: ${file.year}, skipping folder validation`)
+            continue
+          }
+
+          // Validasi angkatan (harus berupa string yang valid)
+          const validBatches = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+          if (!validBatches.includes(file.batch)) {
+            console.error(`File ${file.id} has invalid batch: ${file.batch}, skipping folder validation`)
+            continue
+          }
+
+          // Construct expected folder path based on validated file data
           const expectedRelativePath = path.join('uploads', 'reports', file.year, file.batch)
           const expectedFullPath = path.join(process.cwd(), 'public', expectedRelativePath)
           const expectedFilePath = path.join(expectedFullPath, file.filename)
@@ -972,38 +992,50 @@ export async function verifyReportAction(reportId: string) {
           // Current file path
           const currentFullPath = path.join(process.cwd(), 'public', file.file_path)
 
+          // Validasi bahwa file source ada
+          if (!existsSync(currentFullPath)) {
+            console.error(`Source file not found: ${currentFullPath} for file ${file.id}`)
+            continue
+          }
+
           // Check if file is in the correct location
-          const currentDir = path.dirname(file.file_path)
+          const currentDir = path.dirname(file.file_path).replace(/\\/g, '/')
           const expectedDir = expectedRelativePath.replace(/\\/g, '/')
 
+          // PERBAIKAN: Hanya pindahkan jika benar-benar berbeda dan aman
           if (currentDir !== expectedDir) {
-            console.log(`Moving file ${file.filename} from ${currentDir} to ${expectedDir}`)
+            console.log(`File ${file.filename} needs to be moved from ${currentDir} to ${expectedDir}`)
 
-            // Create target directory if it doesn't exist
-            const { existsSync } = require('fs')
-            if (!existsSync(expectedFullPath)) {
-              await fs.mkdir(expectedFullPath, { recursive: true })
+            // Double check: pastikan target folder masuk akal
+            if (expectedDir.includes(file.year) && expectedDir.includes(file.batch)) {
+              // Create target directory if it doesn't exist
+              if (!existsSync(expectedFullPath)) {
+                await fs.mkdir(expectedFullPath, { recursive: true })
+                console.log(`Created directory: ${expectedFullPath}`)
+              }
+
+              // Move file only if target doesn't exist
+              if (!existsSync(expectedFilePath)) {
+                await fs.rename(currentFullPath, expectedFilePath)
+
+                // Update file path in database
+                await prisma.uploaded_files.update({
+                  where: { id: file.id },
+                  data: {
+                    file_path: path.join(expectedRelativePath, file.filename).replace(/\\/g, '/'),
+                    updated_at: new Date()
+                  }
+                })
+
+                console.log(`✅ Successfully moved file ${file.filename} from ${currentDir} to ${expectedDir}`)
+              } else {
+                console.warn(`Target file already exists: ${expectedFilePath}, skipping move`)
+              }
+            } else {
+              console.error(`Invalid target directory detected: ${expectedDir}, skipping move for safety`)
             }
-
-            // Move file to correct location if it exists and target doesn't exist
-            if (existsSync(currentFullPath) && !existsSync(expectedFilePath)) {
-              await fs.rename(currentFullPath, expectedFilePath)
-
-              // Update file path in database
-              await prisma.uploaded_files.update({
-                where: { id: file.id },
-                data: {
-                  file_path: path.join(expectedRelativePath, file.filename).replace(/\\/g, '/'),
-                  updated_at: new Date()
-                }
-              })
-
-              console.log(`Successfully moved file ${file.filename} to correct folder`)
-            } else if (!existsSync(currentFullPath)) {
-              console.warn(`Source file not found: ${currentFullPath}`)
-            } else if (existsSync(expectedFilePath)) {
-              console.warn(`Target file already exists: ${expectedFilePath}`)
-            }
+          } else {
+            console.log(`File ${file.filename} is already in correct location: ${currentDir}`)
           }
         } catch (fileError) {
           console.error(`Error processing file ${file.id}:`, fileError)
@@ -1624,13 +1656,28 @@ export async function fixFolderMappingAction() {
         try {
           processedFiles++
 
-          // Skip if file data is missing required fields
-          if (!file.year || !file.batch) {
-            console.warn(`File ${file.id} missing year or batch data, skipping`)
+          // PERBAIKAN: Validasi data file yang lebih ketat
+          if (!file.year || !file.batch || !file.filename) {
+            console.warn(`File ${file.id} missing required data (year: ${file.year}, batch: ${file.batch}, filename: ${file.filename}), skipping`)
             continue
           }
 
-          // Construct expected folder path based on file's form data
+          // Validasi tahun dan angkatan
+          const fileYear = parseInt(file.year)
+          if (isNaN(fileYear) || fileYear < 2020 || fileYear > 2030) {
+            console.error(`File ${file.id} has invalid year: ${file.year}, skipping`)
+            errors++
+            continue
+          }
+
+          const validBatches = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+          if (!validBatches.includes(file.batch)) {
+            console.error(`File ${file.id} has invalid batch: ${file.batch}, skipping`)
+            errors++
+            continue
+          }
+
+          // Construct expected folder path based on validated file data
           const expectedRelativePath = path.join('uploads', 'reports', file.year, file.batch)
           const expectedFullPath = path.join(process.cwd(), 'public', expectedRelativePath)
           const expectedFilePath = path.join(expectedFullPath, file.filename)
@@ -1638,40 +1685,51 @@ export async function fixFolderMappingAction() {
           // Current file path
           const currentFullPath = path.join(process.cwd(), 'public', file.file_path)
 
+          // Validasi bahwa file source ada
+          if (!existsSync(currentFullPath)) {
+            console.error(`Source file not found: ${currentFullPath} for file ${file.id}`)
+            errors++
+            continue
+          }
+
           // Check if file is in the correct location
-          const currentDir = path.dirname(file.file_path)
+          const currentDir = path.dirname(file.file_path).replace(/\\/g, '/')
           const expectedDir = expectedRelativePath.replace(/\\/g, '/')
 
           if (currentDir !== expectedDir) {
-            console.log(`Moving file ${file.filename} from ${currentDir} to ${expectedDir}`)
+            console.log(`📁 File ${file.filename} needs to be moved from ${currentDir} to ${expectedDir}`)
 
-            // Create target directory if it doesn't exist
-            if (!existsSync(expectedFullPath)) {
-              await fs.mkdir(expectedFullPath, { recursive: true })
+            // Validasi bahwa target directory masuk akal
+            if (expectedDir.includes(file.year) && expectedDir.includes(file.batch)) {
+              // Create target directory if it doesn't exist
+              if (!existsSync(expectedFullPath)) {
+                await fs.mkdir(expectedFullPath, { recursive: true })
+                console.log(`📂 Created directory: ${expectedFullPath}`)
+              }
+
+              // Move file only if target doesn't exist
+              if (!existsSync(expectedFilePath)) {
+                await fs.rename(currentFullPath, expectedFilePath)
+
+                // Update file path in database
+                await prisma.uploaded_files.update({
+                  where: { id: file.id },
+                  data: {
+                    file_path: path.join(expectedRelativePath, file.filename).replace(/\\/g, '/'),
+                    updated_at: new Date()
+                  }
+                })
+
+                movedFiles++
+                console.log(`✅ Successfully moved file ${file.filename} from ${currentDir} to ${expectedDir}`)
+              } else {
+                console.warn(`Target file already exists: ${expectedFilePath}`)
+              }
+            } else {
+              console.error(`Invalid target directory detected: ${expectedDir}, skipping for safety`)
             }
-
-            // Move file to correct location if it exists and target doesn't exist
-            if (existsSync(currentFullPath) && !existsSync(expectedFilePath)) {
-              await fs.rename(currentFullPath, expectedFilePath)
-
-              // Update file path in database
-              await prisma.uploaded_files.update({
-                where: { id: file.id },
-                data: {
-                  file_path: path.join(expectedRelativePath, file.filename).replace(/\\/g, '/'),
-                  updated_at: new Date()
-                }
-              })
-
-              movedFiles++
-              console.log(`Successfully moved file ${file.filename} to correct folder`)
-            } else if (!existsSync(currentFullPath)) {
-              console.warn(`Source file not found: ${currentFullPath}`)
-              errors++
-            } else if (existsSync(expectedFilePath)) {
-              console.warn(`Target file already exists: ${expectedFilePath}`)
-              errors++
-            }
+          } else {
+            console.log(`✓ File ${file.filename} is already in correct location: ${currentDir}`)
           }
         } catch (fileError) {
           console.error(`Error processing file ${file.id}:`, fileError)
@@ -1936,7 +1994,7 @@ export async function getUserStats() {
     allUsers.forEach(user => {
       const neverUpdated = user.updated_at.getTime() === user.created_at.getTime()
       const veryOld = user.updated_at < sixMonthsAgo
-      
+
       if (veryOld || neverUpdated) {
         inactiveUsers++
       } else {
@@ -2229,6 +2287,276 @@ export async function changeUserPassword(userId: string, newPassword: string) {
       success: false,
       error: 'Failed to change password',
       message: 'Gagal mengubah password user'
+    }
+  }
+}
+
+// PERBAIKAN: Fungsi untuk mengaudit data file dan mencari inkonsistensi
+export async function auditFileDataAction() {
+  try {
+    console.log('🔍 Starting file data audit...')
+
+    // Ambil semua file yang ada
+    const allFiles = await prisma.uploaded_files.findMany({
+      include: {
+        reports: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            created_at: true
+          }
+        },
+        users: {
+          select: {
+            id: true,
+            username: true,
+            training: true,
+            angkatan: true
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    let totalFiles = allFiles.length
+    let invalidYearFiles = 0
+    let invalidBatchFiles = 0
+    let missingMetadata = 0
+    let inconsistentFiles = 0
+
+    const issues = []
+
+    for (const file of allFiles) {
+      let hasIssue = false
+
+      // Check missing metadata
+      if (!file.year || !file.batch || !file.category) {
+        missingMetadata++
+        hasIssue = true
+        issues.push({
+          fileId: file.id,
+          filename: file.original_name,
+          issue: 'Missing metadata',
+          details: `year: ${file.year}, batch: ${file.batch}, category: ${file.category}`,
+          reportId: file.report_id,
+          created_at: file.created_at
+        })
+      }
+
+      // Check invalid year
+      if (file.year) {
+        const yearNum = parseInt(file.year)
+        if (isNaN(yearNum) || yearNum < 2020 || yearNum > 2030) {
+          invalidYearFiles++
+          hasIssue = true
+          issues.push({
+            fileId: file.id,
+            filename: file.original_name,
+            issue: 'Invalid year',
+            details: `year: ${file.year}`,
+            reportId: file.report_id,
+            created_at: file.created_at
+          })
+        }
+      }
+
+      // Check invalid batch
+      if (file.batch) {
+        const validBatches = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+        if (!validBatches.includes(file.batch)) {
+          invalidBatchFiles++
+          hasIssue = true
+          issues.push({
+            fileId: file.id,
+            filename: file.original_name,
+            issue: 'Invalid batch',
+            details: `batch: ${file.batch}`,
+            reportId: file.report_id,
+            created_at: file.created_at
+          })
+        }
+      }
+
+      // Check inconsistency between file metadata and user profile
+      if (file.users && file.year && file.batch) {
+        const userAngkatan = file.users.angkatan
+        const userTraining = file.users.training
+
+        // Jika ada perbedaan signifikan, tandai sebagai inconsistent
+        if (userAngkatan && userAngkatan !== file.batch) {
+          inconsistentFiles++
+          issues.push({
+            fileId: file.id,
+            filename: file.original_name,
+            issue: 'Inconsistent data',
+            details: `File batch: ${file.batch}, User angkatan: ${userAngkatan}`,
+            reportId: file.report_id,
+            created_at: file.created_at
+          })
+        }
+      }
+    }
+
+    const summary = {
+      totalFiles,
+      invalidYearFiles,
+      invalidBatchFiles,
+      missingMetadata,
+      inconsistentFiles,
+      totalIssues: issues.length
+    }
+
+    console.log('📊 Audit Summary:', summary)
+
+    return {
+      success: true,
+      summary,
+      issues: issues.slice(0, 50), // Limit untuk performa
+      message: `Audit completed. Found ${issues.length} issues out of ${totalFiles} files.`
+    }
+  } catch (error) {
+    console.error('Error during file data audit:', error)
+    return {
+      success: false,
+      error: 'Failed to audit file data',
+      message: 'Gagal mengaudit data file'
+    }
+  }
+}
+
+// PERBAIKAN: Fungsi untuk memperbaiki file yang terdeteksi bermasalah
+export async function fixProblematicFilesAction() {
+  try {
+    console.log('🔧 Starting fix for problematic files...')
+
+    // Ambil semua file yang berpotensi bermasalah
+    const problematicFiles = await prisma.uploaded_files.findMany({
+      where: {
+        OR: [
+          { year: null },
+          { batch: null },
+          { year: { notIn: ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'] } },
+          { batch: { notIn: ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'] } }
+        ]
+      },
+      include: {
+        reports: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            content: true
+          }
+        },
+        users: {
+          select: {
+            username: true,
+            training: true,
+            angkatan: true
+          }
+        }
+      }
+    })
+
+    let fixedFiles = 0
+    let skippedFiles = 0
+    const fixLog = []
+
+    for (const file of problematicFiles) {
+      try {
+        let needsUpdate = false
+        const updates: any = {}
+
+        // Coba ekstrak tahun dan angkatan dari konten laporan jika tersedia
+        if (file.reports && file.reports.content) {
+          const content = file.reports.content
+
+          // Ekstrak tahun dari konten
+          const yearMatch = content.match(/tahun.*?(\d{4})/i) || content.match(/(\d{4})/g)
+          if (yearMatch && !file.year) {
+            const extractedYear = yearMatch[1] || yearMatch[0]
+            const yearNum = parseInt(extractedYear)
+            if (yearNum >= 2020 && yearNum <= 2030) {
+              updates.year = extractedYear
+              needsUpdate = true
+              fixLog.push(`File ${file.id}: Set year to ${extractedYear} from content`)
+            }
+          }
+
+          // Ekstrak angkatan dari konten
+          const batchMatch = content.match(/angkatan\s*(I{1,3}|IV|V|VI|VII|VIII|IX|X|XI|XII)/i)
+          if (batchMatch && !file.batch) {
+            const extractedBatch = batchMatch[1].toUpperCase()
+            updates.batch = extractedBatch
+            needsUpdate = true
+            fixLog.push(`File ${file.id}: Set batch to ${extractedBatch} from content`)
+          }
+        }
+
+        // Jika tidak bisa dari konten, gunakan default berdasarkan tanggal upload
+        if (!updates.year && !file.year) {
+          const uploadYear = file.created_at.getFullYear().toString()
+          updates.year = uploadYear
+          needsUpdate = true
+          fixLog.push(`File ${file.id}: Set year to ${uploadYear} based on upload date`)
+        }
+
+        if (!updates.batch && !file.batch) {
+          // Gunakan angkatan user sebagai fallback terakhir
+          if (file.users && file.users.angkatan) {
+            const validBatches = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+            if (validBatches.includes(file.users.angkatan)) {
+              updates.batch = file.users.angkatan
+              needsUpdate = true
+              fixLog.push(`File ${file.id}: Set batch to ${file.users.angkatan} from user profile`)
+            }
+          } else {
+            // Default ke angkatan I jika tidak ada data lain
+            updates.batch = 'I'
+            needsUpdate = true
+            fixLog.push(`File ${file.id}: Set batch to I as default`)
+          }
+        }
+
+        if (needsUpdate) {
+          await prisma.uploaded_files.update({
+            where: { id: file.id },
+            data: {
+              ...updates,
+              updated_at: new Date()
+            }
+          })
+          fixedFiles++
+        } else {
+          skippedFiles++
+        }
+      } catch (error) {
+        console.error(`Error fixing file ${file.id}:`, error)
+        skippedFiles++
+      }
+    }
+
+    const summary = {
+      totalProblematicFiles: problematicFiles.length,
+      fixedFiles,
+      skippedFiles,
+      fixLog: fixLog.slice(0, 20) // Limit log untuk performa
+    }
+
+    console.log('🔧 Fix Summary:', summary)
+
+    return {
+      success: true,
+      summary,
+      message: `Fixed ${fixedFiles} files out of ${problematicFiles.length} problematic files.`
+    }
+  } catch (error) {
+    console.error('Error fixing problematic files:', error)
+    return {
+      success: false,
+      error: 'Failed to fix problematic files',
+      message: 'Gagal memperbaiki file bermasalah'
     }
   }
 }

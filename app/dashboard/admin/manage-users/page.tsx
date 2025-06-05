@@ -139,14 +139,11 @@ export default function ManageUsersPage() {
       const response = await fetch(`/api/admin/users?${params.toString()}`)
       const result = await response.json()
 
-      console.log('Fetch users result:', result)
 
       if (result.success) {
         setUsers(result.users)
         setFilteredUsers(result.users)
-        console.log(`Successfully loaded ${result.users.length} users`)
       } else {
-        console.error('Failed to fetch users:', result.error)
         error("fetchUsers", { description: `Gagal mengambil data pengguna: ${result.error}` })
       }
     } catch (err) {

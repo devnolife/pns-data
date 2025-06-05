@@ -6219,6 +6219,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     content: string | null
+    cover_image_url: string | null
     status: $Enums.ReportStatus | null
     category: string | null
     priority: $Enums.Priority | null
@@ -6236,6 +6237,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     content: string | null
+    cover_image_url: string | null
     status: $Enums.ReportStatus | null
     category: string | null
     priority: $Enums.Priority | null
@@ -6253,6 +6255,7 @@ export namespace Prisma {
     title: number
     description: number
     content: number
+    cover_image_url: number
     status: number
     category: number
     priority: number
@@ -6272,6 +6275,7 @@ export namespace Prisma {
     title?: true
     description?: true
     content?: true
+    cover_image_url?: true
     status?: true
     category?: true
     priority?: true
@@ -6289,6 +6293,7 @@ export namespace Prisma {
     title?: true
     description?: true
     content?: true
+    cover_image_url?: true
     status?: true
     category?: true
     priority?: true
@@ -6306,6 +6311,7 @@ export namespace Prisma {
     title?: true
     description?: true
     content?: true
+    cover_image_url?: true
     status?: true
     category?: true
     priority?: true
@@ -6396,6 +6402,7 @@ export namespace Prisma {
     title: string
     description: string | null
     content: string
+    cover_image_url: string | null
     status: $Enums.ReportStatus
     category: string | null
     priority: $Enums.Priority
@@ -6430,6 +6437,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     content?: boolean
+    cover_image_url?: boolean
     status?: boolean
     category?: boolean
     priority?: boolean
@@ -6451,6 +6459,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     content?: boolean
+    cover_image_url?: boolean
     status?: boolean
     category?: boolean
     priority?: boolean
@@ -6470,6 +6479,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     content?: boolean
+    cover_image_url?: boolean
     status?: boolean
     category?: boolean
     priority?: boolean
@@ -6489,6 +6499,7 @@ export namespace Prisma {
     title?: boolean
     description?: boolean
     content?: boolean
+    cover_image_url?: boolean
     status?: boolean
     category?: boolean
     priority?: boolean
@@ -6501,7 +6512,7 @@ export namespace Prisma {
     updated_at?: boolean
   }
 
-  export type reportsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "content" | "status" | "category" | "priority" | "author_id" | "assignee_id" | "feedback" | "verified_at" | "rejected_at" | "created_at" | "updated_at", ExtArgs["result"]["reports"]>
+  export type reportsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "content" | "cover_image_url" | "status" | "category" | "priority" | "author_id" | "assignee_id" | "feedback" | "verified_at" | "rejected_at" | "created_at" | "updated_at", ExtArgs["result"]["reports"]>
   export type reportsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users_reports_assignee_idTousers?: boolean | reports$users_reports_assignee_idTousersArgs<ExtArgs>
     users_reports_author_idTousers?: boolean | usersDefaultArgs<ExtArgs>
@@ -6529,6 +6540,7 @@ export namespace Prisma {
       title: string
       description: string | null
       content: string
+      cover_image_url: string | null
       status: $Enums.ReportStatus
       category: string | null
       priority: $Enums.Priority
@@ -6969,6 +6981,7 @@ export namespace Prisma {
     readonly title: FieldRef<"reports", 'String'>
     readonly description: FieldRef<"reports", 'String'>
     readonly content: FieldRef<"reports", 'String'>
+    readonly cover_image_url: FieldRef<"reports", 'String'>
     readonly status: FieldRef<"reports", 'ReportStatus'>
     readonly category: FieldRef<"reports", 'String'>
     readonly priority: FieldRef<"reports", 'Priority'>
@@ -7463,6 +7476,7 @@ export namespace Prisma {
     file_path: string | null
     file_size: number | null
     mime_type: string | null
+    file_type: string | null
     category: string | null
     year: string | null
     batch: string | null
@@ -7479,6 +7493,7 @@ export namespace Prisma {
     file_path: string | null
     file_size: number | null
     mime_type: string | null
+    file_type: string | null
     category: string | null
     year: string | null
     batch: string | null
@@ -7495,6 +7510,7 @@ export namespace Prisma {
     file_path: number
     file_size: number
     mime_type: number
+    file_type: number
     category: number
     year: number
     batch: number
@@ -7521,6 +7537,7 @@ export namespace Prisma {
     file_path?: true
     file_size?: true
     mime_type?: true
+    file_type?: true
     category?: true
     year?: true
     batch?: true
@@ -7537,6 +7554,7 @@ export namespace Prisma {
     file_path?: true
     file_size?: true
     mime_type?: true
+    file_type?: true
     category?: true
     year?: true
     batch?: true
@@ -7553,6 +7571,7 @@ export namespace Prisma {
     file_path?: true
     file_size?: true
     mime_type?: true
+    file_type?: true
     category?: true
     year?: true
     batch?: true
@@ -7656,6 +7675,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type: string | null
     category: string | null
     year: string | null
     batch: string | null
@@ -7691,6 +7711,7 @@ export namespace Prisma {
     file_path?: boolean
     file_size?: boolean
     mime_type?: boolean
+    file_type?: boolean
     category?: boolean
     year?: boolean
     batch?: boolean
@@ -7709,6 +7730,7 @@ export namespace Prisma {
     file_path?: boolean
     file_size?: boolean
     mime_type?: boolean
+    file_type?: boolean
     category?: boolean
     year?: boolean
     batch?: boolean
@@ -7727,6 +7749,7 @@ export namespace Prisma {
     file_path?: boolean
     file_size?: boolean
     mime_type?: boolean
+    file_type?: boolean
     category?: boolean
     year?: boolean
     batch?: boolean
@@ -7745,6 +7768,7 @@ export namespace Prisma {
     file_path?: boolean
     file_size?: boolean
     mime_type?: boolean
+    file_type?: boolean
     category?: boolean
     year?: boolean
     batch?: boolean
@@ -7754,7 +7778,7 @@ export namespace Prisma {
     updated_at?: boolean
   }
 
-  export type uploaded_filesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filename" | "original_name" | "file_path" | "file_size" | "mime_type" | "category" | "year" | "batch" | "report_id" | "author_id" | "created_at" | "updated_at", ExtArgs["result"]["uploaded_files"]>
+  export type uploaded_filesOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "filename" | "original_name" | "file_path" | "file_size" | "mime_type" | "file_type" | "category" | "year" | "batch" | "report_id" | "author_id" | "created_at" | "updated_at", ExtArgs["result"]["uploaded_files"]>
   export type uploaded_filesInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | usersDefaultArgs<ExtArgs>
     reports?: boolean | uploaded_files$reportsArgs<ExtArgs>
@@ -7781,6 +7805,7 @@ export namespace Prisma {
       file_path: string
       file_size: number
       mime_type: string
+      file_type: string | null
       category: string | null
       year: string | null
       batch: string | null
@@ -8219,6 +8244,7 @@ export namespace Prisma {
     readonly file_path: FieldRef<"uploaded_files", 'String'>
     readonly file_size: FieldRef<"uploaded_files", 'Int'>
     readonly mime_type: FieldRef<"uploaded_files", 'String'>
+    readonly file_type: FieldRef<"uploaded_files", 'String'>
     readonly category: FieldRef<"uploaded_files", 'String'>
     readonly year: FieldRef<"uploaded_files", 'String'>
     readonly batch: FieldRef<"uploaded_files", 'String'>
@@ -10073,6 +10099,7 @@ export namespace Prisma {
     title: 'title',
     description: 'description',
     content: 'content',
+    cover_image_url: 'cover_image_url',
     status: 'status',
     category: 'category',
     priority: 'priority',
@@ -10095,6 +10122,7 @@ export namespace Prisma {
     file_path: 'file_path',
     file_size: 'file_size',
     mime_type: 'mime_type',
+    file_type: 'file_type',
     category: 'category',
     year: 'year',
     batch: 'batch',
@@ -10604,6 +10632,7 @@ export namespace Prisma {
     title?: StringFilter<"reports"> | string
     description?: StringNullableFilter<"reports"> | string | null
     content?: StringFilter<"reports"> | string
+    cover_image_url?: StringNullableFilter<"reports"> | string | null
     status?: EnumReportStatusFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableFilter<"reports"> | string | null
     priority?: EnumPriorityFilter<"reports"> | $Enums.Priority
@@ -10624,6 +10653,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     content?: SortOrder
+    cover_image_url?: SortOrderInput | SortOrder
     status?: SortOrder
     category?: SortOrderInput | SortOrder
     priority?: SortOrder
@@ -10647,6 +10677,7 @@ export namespace Prisma {
     title?: StringFilter<"reports"> | string
     description?: StringNullableFilter<"reports"> | string | null
     content?: StringFilter<"reports"> | string
+    cover_image_url?: StringNullableFilter<"reports"> | string | null
     status?: EnumReportStatusFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableFilter<"reports"> | string | null
     priority?: EnumPriorityFilter<"reports"> | $Enums.Priority
@@ -10667,6 +10698,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrderInput | SortOrder
     content?: SortOrder
+    cover_image_url?: SortOrderInput | SortOrder
     status?: SortOrder
     category?: SortOrderInput | SortOrder
     priority?: SortOrder
@@ -10690,6 +10722,7 @@ export namespace Prisma {
     title?: StringWithAggregatesFilter<"reports"> | string
     description?: StringNullableWithAggregatesFilter<"reports"> | string | null
     content?: StringWithAggregatesFilter<"reports"> | string
+    cover_image_url?: StringNullableWithAggregatesFilter<"reports"> | string | null
     status?: EnumReportStatusWithAggregatesFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableWithAggregatesFilter<"reports"> | string | null
     priority?: EnumPriorityWithAggregatesFilter<"reports"> | $Enums.Priority
@@ -10712,6 +10745,7 @@ export namespace Prisma {
     file_path?: StringFilter<"uploaded_files"> | string
     file_size?: IntFilter<"uploaded_files"> | number
     mime_type?: StringFilter<"uploaded_files"> | string
+    file_type?: StringNullableFilter<"uploaded_files"> | string | null
     category?: StringNullableFilter<"uploaded_files"> | string | null
     year?: StringNullableFilter<"uploaded_files"> | string | null
     batch?: StringNullableFilter<"uploaded_files"> | string | null
@@ -10730,6 +10764,7 @@ export namespace Prisma {
     file_path?: SortOrder
     file_size?: SortOrder
     mime_type?: SortOrder
+    file_type?: SortOrderInput | SortOrder
     category?: SortOrderInput | SortOrder
     year?: SortOrderInput | SortOrder
     batch?: SortOrderInput | SortOrder
@@ -10751,6 +10786,7 @@ export namespace Prisma {
     file_path?: StringFilter<"uploaded_files"> | string
     file_size?: IntFilter<"uploaded_files"> | number
     mime_type?: StringFilter<"uploaded_files"> | string
+    file_type?: StringNullableFilter<"uploaded_files"> | string | null
     category?: StringNullableFilter<"uploaded_files"> | string | null
     year?: StringNullableFilter<"uploaded_files"> | string | null
     batch?: StringNullableFilter<"uploaded_files"> | string | null
@@ -10769,6 +10805,7 @@ export namespace Prisma {
     file_path?: SortOrder
     file_size?: SortOrder
     mime_type?: SortOrder
+    file_type?: SortOrderInput | SortOrder
     category?: SortOrderInput | SortOrder
     year?: SortOrderInput | SortOrder
     batch?: SortOrderInput | SortOrder
@@ -10793,6 +10830,7 @@ export namespace Prisma {
     file_path?: StringWithAggregatesFilter<"uploaded_files"> | string
     file_size?: IntWithAggregatesFilter<"uploaded_files"> | number
     mime_type?: StringWithAggregatesFilter<"uploaded_files"> | string
+    file_type?: StringNullableWithAggregatesFilter<"uploaded_files"> | string | null
     category?: StringNullableWithAggregatesFilter<"uploaded_files"> | string | null
     year?: StringNullableWithAggregatesFilter<"uploaded_files"> | string | null
     batch?: StringNullableWithAggregatesFilter<"uploaded_files"> | string | null
@@ -11289,6 +11327,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -11307,6 +11346,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -11325,6 +11365,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -11343,6 +11384,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -11361,6 +11403,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -11378,6 +11421,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -11393,6 +11437,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -11412,6 +11457,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -11428,6 +11474,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -11444,6 +11491,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11460,6 +11508,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11476,6 +11525,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -11492,6 +11542,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11506,6 +11557,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12041,6 +12093,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     content?: SortOrder
+    cover_image_url?: SortOrder
     status?: SortOrder
     category?: SortOrder
     priority?: SortOrder
@@ -12058,6 +12111,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     content?: SortOrder
+    cover_image_url?: SortOrder
     status?: SortOrder
     category?: SortOrder
     priority?: SortOrder
@@ -12075,6 +12129,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     content?: SortOrder
+    cover_image_url?: SortOrder
     status?: SortOrder
     category?: SortOrder
     priority?: SortOrder
@@ -12133,6 +12188,7 @@ export namespace Prisma {
     file_path?: SortOrder
     file_size?: SortOrder
     mime_type?: SortOrder
+    file_type?: SortOrder
     category?: SortOrder
     year?: SortOrder
     batch?: SortOrder
@@ -12153,6 +12209,7 @@ export namespace Prisma {
     file_path?: SortOrder
     file_size?: SortOrder
     mime_type?: SortOrder
+    file_type?: SortOrder
     category?: SortOrder
     year?: SortOrder
     batch?: SortOrder
@@ -12169,6 +12226,7 @@ export namespace Prisma {
     file_path?: SortOrder
     file_size?: SortOrder
     mime_type?: SortOrder
+    file_type?: SortOrder
     category?: SortOrder
     year?: SortOrder
     batch?: SortOrder
@@ -13551,6 +13609,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -13566,6 +13625,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -13716,6 +13776,7 @@ export namespace Prisma {
     file_path?: StringFilter<"uploaded_files"> | string
     file_size?: IntFilter<"uploaded_files"> | number
     mime_type?: StringFilter<"uploaded_files"> | string
+    file_type?: StringNullableFilter<"uploaded_files"> | string | null
     category?: StringNullableFilter<"uploaded_files"> | string | null
     year?: StringNullableFilter<"uploaded_files"> | string | null
     batch?: StringNullableFilter<"uploaded_files"> | string | null
@@ -13777,6 +13838,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -13794,6 +13856,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -13880,6 +13943,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -13897,6 +13961,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -14054,6 +14119,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -14071,6 +14137,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -14098,6 +14165,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -14115,6 +14183,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -14144,6 +14213,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -14159,6 +14229,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -14331,6 +14402,7 @@ export namespace Prisma {
     title?: StringFilter<"reports"> | string
     description?: StringNullableFilter<"reports"> | string | null
     content?: StringFilter<"reports"> | string
+    cover_image_url?: StringNullableFilter<"reports"> | string | null
     status?: EnumReportStatusFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableFilter<"reports"> | string | null
     priority?: EnumPriorityFilter<"reports"> | $Enums.Priority
@@ -14382,6 +14454,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -14397,6 +14470,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14412,6 +14486,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14427,6 +14502,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14490,6 +14566,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -14506,6 +14583,7 @@ export namespace Prisma {
     title: string
     description?: string | null
     content: string
+    cover_image_url?: string | null
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
@@ -14524,6 +14602,7 @@ export namespace Prisma {
     file_path: string
     file_size: number
     mime_type: string
+    file_type?: string | null
     category?: string | null
     year?: string | null
     batch?: string | null
@@ -14687,6 +14766,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -14704,6 +14784,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -14721,6 +14802,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -14737,6 +14819,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -14754,6 +14837,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -14771,6 +14855,7 @@ export namespace Prisma {
     title?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
+    cover_image_url?: NullableStringFieldUpdateOperationsInput | string | null
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
@@ -14789,6 +14874,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14804,6 +14890,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14819,6 +14906,7 @@ export namespace Prisma {
     file_path?: StringFieldUpdateOperationsInput | string
     file_size?: IntFieldUpdateOperationsInput | number
     mime_type?: StringFieldUpdateOperationsInput | string
+    file_type?: NullableStringFieldUpdateOperationsInput | string | null
     category?: NullableStringFieldUpdateOperationsInput | string | null
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null

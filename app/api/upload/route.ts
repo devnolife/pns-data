@@ -41,12 +41,36 @@ export async function POST(request: NextRequest) {
     const batch = formData.get('batch') as string
     const reportId = formData.get('reportId') as string | null
 
+    // PERBAIKAN: Validasi input form yang ketat
     if (!files || files.length === 0) {
       return NextResponse.json(
         { success: false, error: 'No files provided' },
         { status: 400 }
       )
     }
+
+    // Validasi tahun
+    if (year) {
+      const yearNum = parseInt(year)
+      if (isNaN(yearNum) || yearNum < 2020 || yearNum > 2030) {
+        return NextResponse.json(
+          { success: false, error: 'Invalid year provided. Year must be between 2020-2030.' },
+          { status: 400 }
+        )
+      }
+    }
+
+    // Validasi angkatan
+    if (batch) {
+      const validBatches = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
+      if (!validBatches.includes(batch)) {
+        return NextResponse.json(
+          { success: false, error: 'Invalid batch provided. Batch must be Roman numerals I-XII.' },
+          { status: 400 }
+        )
+      }
+    }
+
 
     const uploadedFiles = []
 
@@ -92,12 +116,15 @@ export async function POST(request: NextRequest) {
       await writeFile(filePath, buffer)
 
       // Save file metadata to database
+      const normalizedFilePath = join(relativePath, filename).replace(/\\/g, '/')
+
+
       const fileRecord = await prisma.uploaded_files.create({
         data: {
           id: crypto.randomUUID(),
           filename: filename,
           original_name: file.name,
-          file_path: join(relativePath, filename).replace(/\\/g, '/'), // Normalize path separators
+          file_path: normalizedFilePath,
           file_size: file.size,
           mime_type: file.type,
           category: category,
@@ -108,6 +135,7 @@ export async function POST(request: NextRequest) {
           updated_at: new Date()
         }
       })
+
 
       uploadedFiles.push({
         id: fileRecord.id,

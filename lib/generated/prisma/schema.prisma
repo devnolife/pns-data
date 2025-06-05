@@ -75,6 +75,7 @@ model reports {
   title                            String
   description                      String?
   content                          String
+  cover_image_url                  String? // Field baru untuk sampul laporan
   status                           ReportStatus     @default(PENDING)
   category                         String?
   priority                         Priority         @default(MEDIUM)
@@ -97,6 +98,7 @@ model uploaded_files {
   file_path     String
   file_size     Int
   mime_type     String
+  file_type     String? // 'report' atau 'cover' untuk membedakan jenis file
   category      String?
   year          String?
   batch         String?

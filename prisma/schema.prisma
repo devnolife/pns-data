@@ -75,6 +75,7 @@ model reports {
   title                            String
   description                      String?
   content                          String
+  cover_image_url                  String?      // Field baru untuk sampul laporan
   status                           ReportStatus @default(PENDING)
   category                         String?
   priority                         Priority     @default(MEDIUM)
@@ -91,21 +92,22 @@ model reports {
 }
 
 model uploaded_files {
-  id           String    @id
-  filename     String
-  original_name String
-  file_path    String
-  file_size    Int
-  mime_type    String
-  category     String?
-  year         String?
-  batch        String?
-  report_id    String?
-  author_id    String
-  created_at   DateTime  @default(now())
-  updated_at   DateTime
-  users        users     @relation(fields: [author_id], references: [id], onDelete: Cascade)
-  reports      reports?  @relation(fields: [report_id], references: [id], onDelete: Cascade)
+  id              String    @id
+  filename        String
+  original_name   String
+  file_path       String
+  file_size       Int
+  mime_type       String
+  file_type       String?   // 'report' atau 'cover' untuk membedakan jenis file
+  category        String?
+  year            String?
+  batch           String?
+  report_id       String?
+  author_id       String
+  created_at      DateTime  @default(now())
+  updated_at      DateTime
+  users           users     @relation(fields: [author_id], references: [id], onDelete: Cascade)
+  reports         reports?  @relation(fields: [report_id], references: [id], onDelete: Cascade)
 }
 
 model users {

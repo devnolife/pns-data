@@ -32,7 +32,10 @@ import {
   getReportsByAngkatanAction,
   getReportByIdAction,
   getCollectionByIdAction,
-  searchUserDocumentsAction
+  searchUserDocumentsAction,
+  getAllCompletedReportsByCategoryAction,
+  getAllCompletedReportsByAngkatanAction,
+  searchPublicDocumentsAction
 } from '@/lib/actions/documents'
 
 // Types
@@ -41,6 +44,7 @@ interface ReportData {
   title: string
   description: string | null
   content: string
+  cover_image_url?: string | null // Added cover image URL
   status: string
   category: string | null
   priority: string
@@ -121,8 +125,10 @@ export default function DigitalCollectionPage() {
   const loadCategories = async () => {
     setLoading(true)
     try {
+      // PERBAIKAN: Gunakan fungsi publik untuk menampilkan SEMUA laporan COMPLETED
+      // bukan hanya milik user tertentu
       const [reportsResult, collectionsResult] = await Promise.all([
-        getUserReportsByCategoryAction(),
+        getAllCompletedReportsByCategoryAction(), // Ganti dari getUserReportsByCategoryAction
         getUserCollectionsByCategoryAction()
       ])
 
@@ -133,10 +139,12 @@ export default function DigitalCollectionPage() {
           return {
             ...reportCat,
             collections: collectionCat?.collections || [],
-            totalCollections: collectionCat?.totalCollections || 0
+            totalCollections: collectionCat?.totalCollections || 0,
+            isPublicView: reportsResult.data.isPublicView // Flag untuk menandai view publik
           }
         })
         setCategories(mergedCategories)
+        console.log(`📋 Loaded ${reportsResult.data.totalReports} public reports from all users`)
       }
     } catch (error) {
       console.error('Error loading categories:', error)
@@ -160,7 +168,8 @@ export default function DigitalCollectionPage() {
 
     setLoading(true)
     try {
-      const result = await getReportsByAngkatanAction(
+      // PERBAIKAN: Gunakan fungsi publik untuk menampilkan laporan dari semua user
+      const result = await getAllCompletedReportsByAngkatanAction(
         selectedCategory.id,
         selectedYear.year,
         angkatan.angkatan
@@ -192,9 +201,11 @@ export default function DigitalCollectionPage() {
 
     setLoading(true)
     try {
-      const result = await searchUserDocumentsAction(searchQuery)
+      // PERBAIKAN: Gunakan fungsi pencarian publik untuk mencari semua laporan COMPLETED
+      const result = await searchPublicDocumentsAction(searchQuery)
       if (result.success && result.data) {
         setSearchResults(result.data)
+        console.log(`🔍 Search results: ${result.data.reports.length} public reports, ${result.data.collections.length} collections`)
       }
     } catch (error) {
       console.error('Error searching documents:', error)
@@ -281,6 +292,18 @@ export default function DigitalCollectionPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Digital Collection</h1>
             <p className="text-gray-600 mt-1">{getBreadcrumb()}</p>
+            {/* PERBAIKAN: Tambahkan indikator untuk view publik */}
+            {categories.length > 0 && categories[0]?.isPublicView && (
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                  <Users className="h-4 w-4" />
+                  Koleksi Publik
+                </div>
+                <span className="text-xs text-gray-500">
+                  Menampilkan laporan yang telah diverifikasi dari semua pengguna
+                </span>
+              </div>
+            )}
           </div>
           {viewMode !== 'categories' && (
             <Button onClick={handleBack} variant="outline" className="flex items-center gap-2">
@@ -333,6 +356,16 @@ export default function DigitalCollectionPage() {
                               <div className="flex items-center gap-2 mt-2">
                                 {getStatusBadge(report.status)}
                                 <Badge variant="outline">{report.category}</Badge>
+                                {/* PERBAIKAN: Tambahkan badge untuk laporan publik di hasil pencarian */}
+                                {(report as any).isPublicReport && (
+                                  <Badge className="bg-green-500 text-white text-xs">
+                                    <Users className="h-3 w-3 mr-1" />
+                                    Publik
+                                  </Badge>
+                                )}
+                                <span className="text-xs text-gray-500">
+                                  oleh {report.author.name || report.author.username}
+                                </span>
                                 <span className="text-xs text-gray-500">
                                   {format(new Date(report.created_at), 'dd MMM yyyy', { locale: id })}
                                 </span>
@@ -549,13 +582,36 @@ export default function DigitalCollectionPage() {
                   {reports.map((report) => (
                     <Card key={report.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => handleDocumentView(report)}>
                       <CardContent className="p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-lg mb-2">{report.title}</h3>
-                            <p className="text-gray-600 mb-3 line-clamp-2">{report.description}</p>
+                        <div className="flex items-start gap-4">
+                          {/* Cover Image */}
+                          {report.cover_image_url ? (
+                            <div className="flex-shrink-0">
+                              <img
+                                src={report.cover_image_url}
+                                alt={`Sampul ${report.title}`}
+                                className="w-20 h-28 object-cover rounded-lg border shadow-sm"
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex-shrink-0 w-20 h-28 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg border flex items-center justify-center">
+                              <FileText className="h-8 w-8 text-gray-400" />
+                            </div>
+                          )}
+
+                          {/* Content */}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold text-lg mb-2 line-clamp-2">{report.title}</h3>
+                            <p className="text-gray-600 mb-3 line-clamp-2 text-sm">{report.description}</p>
                             <div className="flex items-center gap-2 flex-wrap">
                               {getStatusBadge(report.status)}
                               <Badge variant="outline">{report.category}</Badge>
+                              {/* PERBAIKAN: Tambahkan badge untuk laporan publik */}
+                              {(report as any).isPublicReport && (
+                                <Badge className="bg-green-500 text-white">
+                                  <Users className="h-3 w-3 mr-1" />
+                                  Publik
+                                </Badge>
+                              )}
                               <div className="flex items-center gap-1 text-sm text-gray-500">
                                 <User className="h-3 w-3" />
                                 {report.author.name || report.author.username}
@@ -564,9 +620,20 @@ export default function DigitalCollectionPage() {
                                 <Clock className="h-3 w-3" />
                                 {format(new Date(report.created_at), 'dd MMM yyyy', { locale: id })}
                               </div>
+                              {/* PERBAIKAN: Tampilkan info file jika ada */}
+                              {(report as any).files && (report as any).files.length > 0 && (
+                                <div className="flex items-center gap-1 text-sm text-blue-600">
+                                  <FileText className="h-3 w-3" />
+                                  {(report as any).files.length} file(s)
+                                </div>
+                              )}
                             </div>
                           </div>
-                          <Eye className="h-5 w-5 text-gray-400" />
+
+                          {/* Action Icon */}
+                          <div className="flex-shrink-0">
+                            <Eye className="h-5 w-5 text-gray-400" />
+                          </div>
                         </div>
                       </CardContent>
                     </Card>

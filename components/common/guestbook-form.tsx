@@ -74,9 +74,21 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
         return
       }
 
-      // Set flag bahwa user sudah mengisi guestbook - only on client side
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('hasFilledGuestbook', 'true')
+      // Improved session management dengan server validation
+      if (typeof window !== 'undefined' && result.sessionToken) {
+        // Set session token with expiry
+        const sessionData = {
+          token: result.sessionToken,
+          timestamp: Date.now(),
+          name: values.name,
+          expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+        }
+
+        localStorage.setItem('guestbookSession', JSON.stringify(sessionData))
+        localStorage.setItem('hasFilledGuestbook', 'true') // Backward compatibility
+
+        // Set session cookie untuk server-side validation
+        document.cookie = `guest_session=${result.sessionToken}; path=/; max-age=${24 * 60 * 60}; SameSite=Lax`
       }
 
       // Call the onSubmitSuccess callback if provided
@@ -85,8 +97,9 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
       }
 
       toast({
-        title: "Terima kasih telah mengisi buku tamu!",
-        description: "Pesan Anda telah tercatat. Sekarang Anda dapat mengakses koleksi digital!",
+        title: "🎉 Terima kasih telah mengisi buku tamu!",
+        description: "Pesan Anda telah tercatat. Sekarang Anda dapat mengakses koleksi digital selama 24 jam! ⏰",
+        duration: 6000,
       })
       form.reset()
     } catch (error) {

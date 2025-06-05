@@ -92,34 +92,20 @@ export default function VerifyReportsPage() {
       setLoading(true)
 
       // First get database statistics via API
-      console.log('Getting database statistics...')
       const dbStatsResponse = await fetch('/api/admin/reports?debug=true')
       const dbStats = await dbStatsResponse.json()
-      console.log('Database stats:', dbStats)
       setDebugInfo(dbStats)
 
       if (!dbStats.success) {
-        console.error('Failed to get database stats:', dbStats.error)
         error("fetchReports", { description: `Database error: ${dbStats.error}` })
         return
       }
 
       if (!dbStats.stats || dbStats.stats.reportCount === 0) {
-        console.log('No reports found in database')
         setReports([])
         setFilteredReports([])
         return
       }
-
-      console.log(`Found ${dbStats.stats.reportCount} total reports in database`)
-      console.log('Reports by status:', dbStats.stats.reportsByStatus)
-
-      console.log('Fetching reports with filters:', {
-        statusFilter,
-        categoryFilter,
-        searchTerm
-      })
-
       // Build query parameters
       const params = new URLSearchParams({
         page: '1',
@@ -142,14 +128,11 @@ export default function VerifyReportsPage() {
       const reportsResponse = await fetch(`/api/admin/reports?${params.toString()}`)
       const result = await reportsResponse.json()
 
-      console.log('Fetch reports result:', result)
 
       if (result.success) {
         setReports(result.reports)
         setFilteredReports(result.reports)
-        console.log(`Successfully loaded ${result.reports.length} reports`)
       } else {
-        console.error('Failed to fetch reports:', result.error)
         error("fetchReports", { description: `Gagal mengambil data laporan: ${result.error}` })
       }
     } catch (err) {

@@ -13,8 +13,15 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useToast } from "@/hooks/use-toast"
-import { Upload, File, X, Loader2, Sparkles, Star, Zap, CloudUpload, FileText, CheckCircle } from "lucide-react"
+import { Upload, File, X, Loader2, Sparkles, Star, Zap, CloudUpload, FileText, CheckCircle, ImageIcon } from "lucide-react"
 import { createReportWithFilesAction } from "@/lib/actions/reports"
+
+interface UploadedFile {
+  id: string
+  originalName: string
+  fileSize: number
+  mimeType: string
+}
 
 export default function UploadReportPage() {
   const { user, isAuthenticated } = useAuth()
@@ -27,10 +34,14 @@ export default function UploadReportPage() {
   const [year, setYear] = useState("")
   const [batch, setBatch] = useState("")
   const [files, setFiles] = useState<File[]>([])
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([])
-  const [dragging, setDragging] = useState(false)
+  const [coverImage, setCoverImage] = useState<File | null>(null)
+  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null)
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadingFiles, setUploadingFiles] = useState(false)
+  const [uploadingCover, setUploadingCover] = useState(false)
+  const [dragging, setDragging] = useState(false)
+  const [draggingCover, setDraggingCover] = useState(false)
   const [error, setError] = useState("")
 
   if (!isAuthenticated) {
@@ -104,6 +115,111 @@ export default function UploadReportPage() {
     }
   }
 
+  // Handler untuk upload cover image
+  const handleCoverImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0]
+
+      // Validasi file type
+      if (!file.type.startsWith('image/')) {
+        setError("File sampul harus berupa gambar (JPG, PNG, GIF)! 🖼️")
+        return
+      }
+
+      // Validasi file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Ukuran file sampul maksimal 5MB! 📏")
+        return
+      }
+
+      setCoverImage(file)
+
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setCoverImagePreview(event.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+
+      setError("") // Clear any previous errors
+    }
+  }
+
+  const handleCoverDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setDraggingCover(true)
+  }
+
+  const handleCoverDragLeave = () => {
+    setDraggingCover(false)
+  }
+
+  const handleCoverDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setDraggingCover(false)
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const file = e.dataTransfer.files[0]
+
+      if (!file.type.startsWith('image/')) {
+        setError("File sampul harus berupa gambar (JPG, PNG, GIF)! 🖼️")
+        return
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Ukuran file sampul maksimal 5MB! 📏")
+        return
+      }
+
+      setCoverImage(file)
+
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setCoverImagePreview(event.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+
+      setError("")
+    }
+  }
+
+  const removeCoverImage = () => {
+    setCoverImage(null)
+    setCoverImagePreview(null)
+  }
+
+  // Upload cover image function
+  const uploadCoverImage = async (): Promise<string | null> => {
+    if (!coverImage) return null
+
+    setUploadingCover(true)
+    try {
+      const formData = new FormData()
+      formData.append('coverImage', coverImage)
+      formData.append('category', category)
+      formData.append('year', year)
+      formData.append('batch', batch)
+
+      const response = await fetch('/api/upload-cover', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error('Cover upload failed')
+      }
+
+      const result = await response.json()
+      return result.coverImageUrl
+    } catch (error) {
+      console.error('Cover upload error:', error)
+      throw error
+    } finally {
+      setUploadingCover(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -136,7 +252,13 @@ export default function UploadReportPage() {
     setUploading(true)
 
     try {
-      // First upload files
+      // First upload cover image if provided
+      let coverImageUrl = null
+      if (coverImage) {
+        coverImageUrl = await uploadCoverImage()
+      }
+
+      // Then upload files
       const fileIds = await uploadFiles()
 
       // Create content based on form data
@@ -151,7 +273,7 @@ ${description}` : ''}
 
 File yang diunggah: ${files.map(f => f.name).join(', ')}`
 
-      // Then create report with file references
+      // Create report with file references and cover
       const result = await createReportWithFilesAction({
         title,
         description,
@@ -159,7 +281,8 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
         category,
         year,
         batch,
-        fileIds
+        fileIds,
+        coverImageUrl
       })
 
       if (!result.success) {
@@ -169,7 +292,7 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
       // Show success toast with better messaging
       toast({
         title: "🎉 Laporan berhasil diunggah!",
-        description: `Laporan "${title}" telah berhasil diunggah dengan ${files.length} file. Laporan sedang menunggu verifikasi admin. ✨`,
+        description: `Laporan "${title}" telah berhasil diunggah dengan ${files.length} file${coverImage ? ' dan sampul' : ''}. Laporan sedang menunggu verifikasi admin. ✨`,
         duration: 5000,
       })
 
@@ -180,6 +303,8 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
       setYear("")
       setBatch("")
       setFiles([])
+      setCoverImage(null)
+      setCoverImagePreview(null)
       setUploadedFiles([])
 
       // Redirect to dashboard after a short delay to let user see the toast
@@ -367,6 +492,91 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                     rows={4}
                     className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300 focus:ring-2 focus:ring-purple-400 resize-none"
                   />
+                </div>
+
+                {/* Cover Image Upload */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                    🖼️ Sampul Laporan (Opsional)
+                  </Label>
+                  <div
+                    className={`relative border-2 border-dashed rounded-xl p-4 text-center transition-all duration-300 ${draggingCover
+                      ? "border-pink-500 bg-pink-50/80 backdrop-blur-sm scale-105"
+                      : "border-gray-300 bg-white/50 backdrop-blur-sm hover:border-pink-400 hover:bg-pink-50/50"
+                      }`}
+                    onDragOver={handleCoverDragOver}
+                    onDragLeave={handleCoverDragLeave}
+                    onDrop={handleCoverDrop}
+                  >
+                    {coverImage && coverImagePreview ? (
+                      <div className="relative">
+                        <img
+                          src={coverImagePreview}
+                          alt="Preview sampul"
+                          className="max-h-40 mx-auto rounded-lg object-cover shadow-md"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={removeCoverImage}
+                          className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 hover:bg-red-600 text-white"
+                          disabled={uploadingCover}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                        <div className="mt-2 p-2 bg-white/70 backdrop-blur-sm rounded-lg">
+                          <p className="text-xs font-medium text-gray-700">{coverImage.name}</p>
+                          <p className="text-xs text-gray-500">{formatFileSize(coverImage.size)}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative z-10">
+                        <div className="mb-3">
+                          <ImageIcon className={`h-12 w-12 mx-auto transition-all duration-300 ${draggingCover ? "text-pink-500 scale-110" : "text-gray-400"
+                            }`} />
+                        </div>
+                        <h4 className="text-lg font-bold text-gray-800 mb-1">
+                          {draggingCover ? "Drop gambar di sini! 🎯" : "Drag & Drop gambar sampul ✨"}
+                        </h4>
+                        <p className="text-gray-600 mb-1">atau klik tombol di bawah untuk memilih</p>
+                        <p className="text-xs text-gray-500 mb-4">
+                          Format: JPG, PNG, GIF (Maks 5MB) 🖼️
+                        </p>
+                        <Button
+                          type="button"
+                          className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white border-0 rounded-xl px-6 py-2 text-sm font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                          onClick={() => document.getElementById("cover-upload")?.click()}
+                          disabled={uploadingCover}
+                        >
+                          {uploadingCover ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <ImageIcon className="mr-2 h-4 w-4" />
+                              Pilih Sampul 🎨
+                            </>
+                          )}
+                        </Button>
+                        <input
+                          id="cover-upload"
+                          type="file"
+                          accept="image/jpeg,image/png,image/gif"
+                          className="hidden"
+                          onChange={handleCoverImageChange}
+                          aria-label="Upload cover image"
+                          title="Upload cover image"
+                        />
+                      </div>
+                    )}
+
+                    {/* Floating elements in cover upload zone */}
+                    <div className="absolute top-2 right-2 text-lg animate-bounce opacity-50">🎨</div>
+                    <div className="absolute bottom-2 left-2 text-lg animate-pulse opacity-50">🖼️</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -69,6 +69,7 @@ export interface CreateReportData {
   year: string
   batch: string
   fileIds?: string[]
+  coverImageUrl?: string
 }
 
 export async function createReportAction(formData: FormData) {
@@ -350,6 +351,7 @@ export async function createReportWithFilesAction(data: CreateReportData) {
         title: validatedData.title,
         description: validatedData.description || '',
         content: `Laporan ${validatedData.category} - ${validatedData.title}`,
+        cover_image_url: data.coverImageUrl || null,
         status: 'PENDING',
         category: validatedData.category,
         priority: 'MEDIUM',

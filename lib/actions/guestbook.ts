@@ -65,7 +65,15 @@ export async function createGuestbookEntryAction(data: {
       })
 
       revalidatePath('/guestbook')
-      return { success: true, entry: guestbookEntry }
+
+      // Return session token untuk access validation
+      const sessionToken = `guest_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`
+
+      return {
+        success: true,
+        entry: guestbookEntry,
+        sessionToken: sessionToken
+      }
     } catch (dbError) {
       console.error('Database operation error:', dbError)
       return { error: 'Database error. Please try again later.' }
@@ -172,5 +180,49 @@ export async function approveGuestbookEntryAction(id: string) {
   } catch (error) {
     console.error('Approve guestbook entry error:', error)
     return { error: 'Gagal menyetujui entri buku tamu' }
+  }
+}
+
+// Fungsi baru untuk validasi akses publik
+export async function validatePublicAccessAction(sessionToken?: string) {
+  try {
+    // Jika tidak ada session token, return false
+    if (!sessionToken) {
+      return { hasAccess: false, reason: 'No session token provided' }
+    }
+
+    // Validasi format session token
+    if (!sessionToken.startsWith('guest_') || sessionToken.length < 20) {
+      return { hasAccess: false, reason: 'Invalid session token format' }
+    }
+
+    // Extract timestamp dari session token untuk validasi expiry (24 jam)
+    const parts = sessionToken.split('_')
+    if (parts.length !== 3) {
+      return { hasAccess: false, reason: 'Malformed session token' }
+    }
+
+    const timestamp = parseInt(parts[1])
+    if (isNaN(timestamp)) {
+      return { hasAccess: false, reason: 'Invalid timestamp in session token' }
+    }
+
+    // Check if session is expired (24 hours)
+    const now = Date.now()
+    const sessionAge = now - timestamp
+    const maxAge = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+
+    if (sessionAge > maxAge) {
+      return { hasAccess: false, reason: 'Session expired. Please fill guestbook again.' }
+    }
+
+    return {
+      hasAccess: true,
+      message: 'Valid public access session',
+      expiresIn: Math.floor((maxAge - sessionAge) / 1000 / 60 / 60) // hours remaining
+    }
+  } catch (error) {
+    console.error('Validate public access error:', error)
+    return { hasAccess: false, reason: 'Session validation failed' }
   }
 } 

@@ -55,8 +55,6 @@ export default function VisitorsStatisticsPage() {
     try {
       setLoading(true)
 
-      console.log('🔄 Fetching visitor analytics data from API...')
-
       // Fetch data from API route
       const response = await fetch(`/api/admin/visitor-stats?period=${period}`)
 
@@ -70,7 +68,6 @@ export default function VisitorsStatisticsPage() {
 
       // Handle visitor stats
       if (data.visitorStats) {
-        console.log('✅ Visitor stats loaded successfully')
         setVisitorStats(data.visitorStats)
       } else {
         console.error('❌ Error fetching visitor stats:', data.errors?.visitorStats)
@@ -90,7 +87,6 @@ export default function VisitorsStatisticsPage() {
 
       // Handle top pages
       if (data.topPages) {
-        console.log('✅ Top pages loaded successfully')
         setTopPages(data.topPages)
       } else {
         console.error('❌ Error fetching top pages:', data.errors?.topPages)
@@ -107,7 +103,6 @@ export default function VisitorsStatisticsPage() {
 
       // Handle recent guestbook
       if (data.recentGuestbook) {
-        console.log('✅ Recent guestbook loaded successfully')
         setRecentGuestbook(data.recentGuestbook)
       } else {
         console.error('❌ Error fetching recent guestbook:', data.errors?.recentGuestbook)
@@ -118,7 +113,6 @@ export default function VisitorsStatisticsPage() {
 
       // Handle traffic sources
       if (data.trafficSources) {
-        console.log('✅ Traffic sources loaded successfully')
         setTrafficSources(data.trafficSources)
       } else {
         console.error('❌ Error fetching traffic sources:', data.errors?.trafficSources)
@@ -135,7 +129,6 @@ export default function VisitorsStatisticsPage() {
 
       // Handle guestbook analytics
       if (data.guestbookAnalytics) {
-        console.log('✅ Guestbook analytics loaded successfully')
         setGuestbookAnalytics(data.guestbookAnalytics)
       } else {
         console.error('❌ Error fetching guestbook analytics:', data.errors?.guestbookAnalytics)
@@ -151,12 +144,9 @@ export default function VisitorsStatisticsPage() {
 
       // Show notification if fallbacks were used
       if (fallbacksUsed > 0) {
-        console.log(`⚠️ ${fallbacksUsed} fallback data sets were used`)
         info("fallbackUsed", {
           description: `Data demo ditampilkan karena ${fallbacksUsed} sumber data tidak tersedia`
         })
-      } else {
-        console.log('🎉 All data loaded successfully from database')
       }
 
     } catch (err) {
