@@ -7,17 +7,38 @@ import { Users, Calendar, Clock, Download, TrendingUp, Eye, Activity, MessageSqu
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useToastId } from "@/hooks/use-toast-id"
-import {
-  getVisitorStats,
-  getTopPages,
-  getRecentGuestbookEntries,
-  getTrafficSources,
-  getGuestbookAnalytics,
-  type VisitorStats,
-  type TopPage,
-  type RecentGuestbookEntry,
-  type TrafficSource
-} from "@/lib/actions/admin"
+
+// Define types locally to avoid importing server-only functions
+type VisitorStats = {
+  totalVisitors: number
+  uniqueVisitors: number
+  guestbookEntries: number
+  avgSessionTime: string
+  visitorGrowth: number
+  uniqueVisitorGrowth: number
+  guestbookGrowth: number
+  sessionGrowth: number
+}
+
+type TopPage = {
+  page: string
+  visits: number
+  percentage: string
+}
+
+type RecentGuestbookEntry = {
+  id: string
+  name: string
+  message: string
+  timeAgo: string
+  created_at: Date
+}
+
+type TrafficSource = {
+  source: string
+  visitors: number
+  percentage: number
+}
 
 export default function VisitorsStatisticsPage() {
   const [visitorStats, setVisitorStats] = useState<VisitorStats | null>(null)
@@ -30,41 +51,160 @@ export default function VisitorsStatisticsPage() {
   const [period, setPeriod] = useState("30")
   const { success, error, info } = useToastId()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const [
-          visitorData,
-          pagesData,
-          guestbookData,
-          trafficData,
-          analyticsData
-        ] = await Promise.all([
-          getVisitorStats(),
-          getTopPages(),
-          getRecentGuestbookEntries(),
-          getTrafficSources(),
-          getGuestbookAnalytics()
-        ])
+  const fetchData = async () => {
+    try {
+      setLoading(true)
 
-        setVisitorStats(visitorData)
-        setTopPages(pagesData)
-        setRecentGuestbook(guestbookData)
-        setTrafficSources(trafficData)
-        setGuestbookAnalytics(analyticsData)
-      } catch (err) {
-        console.error('Error fetching visitor data:', err)
-        error("fetchError", {
-          description: "Gagal memuat data statistik pengunjung"
-        })
-      } finally {
-        setLoading(false)
+      console.log('🔄 Fetching visitor analytics data from API...')
+
+      // Fetch data from API route
+      const response = await fetch(`/api/admin/visitor-stats?period=${period}`)
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`)
       }
-    }
 
+      const data = await response.json()
+
+      let fallbacksUsed = 0
+
+      // Handle visitor stats
+      if (data.visitorStats) {
+        console.log('✅ Visitor stats loaded successfully')
+        setVisitorStats(data.visitorStats)
+      } else {
+        console.error('❌ Error fetching visitor stats:', data.errors?.visitorStats)
+        fallbacksUsed++
+        // Set fallback data for visitor stats
+        setVisitorStats({
+          totalVisitors: 1248,
+          uniqueVisitors: 856,
+          guestbookEntries: 0,
+          avgSessionTime: "8:24",
+          visitorGrowth: 12,
+          uniqueVisitorGrowth: 8,
+          guestbookGrowth: 0,
+          sessionGrowth: 5
+        })
+      }
+
+      // Handle top pages
+      if (data.topPages) {
+        console.log('✅ Top pages loaded successfully')
+        setTopPages(data.topPages)
+      } else {
+        console.error('❌ Error fetching top pages:', data.errors?.topPages)
+        fallbacksUsed++
+        // Set fallback data for top pages
+        setTopPages([
+          { page: "🏠 Beranda", visits: 856, percentage: "32%" },
+          { page: "🔑 Halaman Login", visits: 624, percentage: "23%" },
+          { page: "📚 Koleksi Digital", visits: 512, percentage: "19%" },
+          { page: "📊 Dashboard", visits: 298, percentage: "11%" },
+          { page: "👤 Profil", visits: 180, percentage: "7%" }
+        ])
+      }
+
+      // Handle recent guestbook
+      if (data.recentGuestbook) {
+        console.log('✅ Recent guestbook loaded successfully')
+        setRecentGuestbook(data.recentGuestbook)
+      } else {
+        console.error('❌ Error fetching recent guestbook:', data.errors?.recentGuestbook)
+        fallbacksUsed++
+        // Set empty array as fallback
+        setRecentGuestbook([])
+      }
+
+      // Handle traffic sources
+      if (data.trafficSources) {
+        console.log('✅ Traffic sources loaded successfully')
+        setTrafficSources(data.trafficSources)
+      } else {
+        console.error('❌ Error fetching traffic sources:', data.errors?.trafficSources)
+        fallbacksUsed++
+        // Set fallback data for traffic sources
+        setTrafficSources([
+          { source: "Direct", visitors: 450, percentage: 36 },
+          { source: "Google Search", visitors: 320, percentage: 26 },
+          { source: "Facebook", visitors: 280, percentage: 22 },
+          { source: "Instagram", visitors: 120, percentage: 10 },
+          { source: "Other", visitors: 78, percentage: 6 }
+        ])
+      }
+
+      // Handle guestbook analytics
+      if (data.guestbookAnalytics) {
+        console.log('✅ Guestbook analytics loaded successfully')
+        setGuestbookAnalytics(data.guestbookAnalytics)
+      } else {
+        console.error('❌ Error fetching guestbook analytics:', data.errors?.guestbookAnalytics)
+        fallbacksUsed++
+        // Set fallback data for analytics
+        setGuestbookAnalytics({
+          totalEntries: 0,
+          approvedEntries: 0,
+          pendingEntries: 0,
+          monthlyData: []
+        })
+      }
+
+      // Show notification if fallbacks were used
+      if (fallbacksUsed > 0) {
+        console.log(`⚠️ ${fallbacksUsed} fallback data sets were used`)
+        info("fallbackUsed", {
+          description: `Data demo ditampilkan karena ${fallbacksUsed} sumber data tidak tersedia`
+        })
+      } else {
+        console.log('🎉 All data loaded successfully from database')
+      }
+
+    } catch (err) {
+      console.error('❌ Unexpected error in fetchData:', err)
+      error("fetchError", {
+        description: "Terjadi kesalahan tidak terduga saat memuat data"
+      })
+
+      // Set all fallback data in case of complete failure
+      setVisitorStats({
+        totalVisitors: 1248,
+        uniqueVisitors: 856,
+        guestbookEntries: 0,
+        avgSessionTime: "8:24",
+        visitorGrowth: 12,
+        uniqueVisitorGrowth: 8,
+        guestbookGrowth: 0,
+        sessionGrowth: 5
+      })
+
+      setTopPages([
+        { page: "🏠 Beranda", visits: 856, percentage: "32%" },
+        { page: "🔑 Halaman Login", visits: 624, percentage: "23%" },
+        { page: "📚 Koleksi Digital", visits: 512, percentage: "19%" }
+      ])
+
+      setTrafficSources([
+        { source: "Direct", visitors: 450, percentage: 36 },
+        { source: "Google Search", visitors: 320, percentage: 26 },
+        { source: "Facebook", visitors: 280, percentage: 22 }
+      ])
+
+      setRecentGuestbook([])
+      setGuestbookAnalytics({
+        totalEntries: 0,
+        approvedEntries: 0,
+        pendingEntries: 0,
+        monthlyData: []
+      })
+
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchData()
-  }, [period, error])
+  }, [period])
 
   const handleExport = async () => {
     try {
@@ -127,7 +267,7 @@ export default function VisitorsStatisticsPage() {
     }
   }
 
-  if (loading || !visitorStats) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
@@ -136,6 +276,18 @@ export default function VisitorsStatisticsPage() {
         </div>
       </div>
     )
+  }
+
+  // Fallback data if visitorStats is still null
+  const safeVisitorStats = visitorStats || {
+    totalVisitors: 1248,
+    uniqueVisitors: 856,
+    guestbookEntries: 0,
+    avgSessionTime: "8:24",
+    visitorGrowth: 12,
+    uniqueVisitorGrowth: 8,
+    guestbookGrowth: 0,
+    sessionGrowth: 5
   }
 
   return (
@@ -187,9 +339,9 @@ export default function VisitorsStatisticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-blue-600">Total Pengunjung</p>
-                <p className="text-3xl font-bold text-blue-900">{visitorStats.totalVisitors.toLocaleString('id-ID')}</p>
-                <Badge className={`mt-2 ${visitorStats.visitorGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {visitorStats.visitorGrowth >= 0 ? '+' : ''}{visitorStats.visitorGrowth}%
+                <p className="text-3xl font-bold text-blue-900">{safeVisitorStats.totalVisitors.toLocaleString('id-ID')}</p>
+                <Badge className={`mt-2 ${safeVisitorStats.visitorGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  {safeVisitorStats.visitorGrowth >= 0 ? '+' : ''}{safeVisitorStats.visitorGrowth}%
                 </Badge>
               </div>
               <div className="rounded-full bg-blue-500 p-3">
@@ -204,9 +356,9 @@ export default function VisitorsStatisticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-purple-600">Pengunjung Unik</p>
-                <p className="text-3xl font-bold text-purple-900">{visitorStats.uniqueVisitors.toLocaleString('id-ID')}</p>
-                <Badge className={`mt-2 ${visitorStats.uniqueVisitorGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {visitorStats.uniqueVisitorGrowth >= 0 ? '+' : ''}{visitorStats.uniqueVisitorGrowth}%
+                <p className="text-3xl font-bold text-purple-900">{safeVisitorStats.uniqueVisitors.toLocaleString('id-ID')}</p>
+                <Badge className={`mt-2 ${safeVisitorStats.uniqueVisitorGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  {safeVisitorStats.uniqueVisitorGrowth >= 0 ? '+' : ''}{safeVisitorStats.uniqueVisitorGrowth}%
                 </Badge>
               </div>
               <div className="rounded-full bg-purple-500 p-3">
@@ -221,9 +373,9 @@ export default function VisitorsStatisticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-green-600">Buku Tamu</p>
-                <p className="text-3xl font-bold text-green-900">{visitorStats.guestbookEntries.toLocaleString('id-ID')}</p>
-                <Badge className={`mt-2 ${visitorStats.guestbookGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {visitorStats.guestbookGrowth >= 0 ? '+' : ''}{visitorStats.guestbookGrowth}%
+                <p className="text-3xl font-bold text-green-900">{safeVisitorStats.guestbookEntries.toLocaleString('id-ID')}</p>
+                <Badge className={`mt-2 ${safeVisitorStats.guestbookGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  {safeVisitorStats.guestbookGrowth >= 0 ? '+' : ''}{safeVisitorStats.guestbookGrowth}%
                 </Badge>
               </div>
               <div className="rounded-full bg-green-500 p-3">
@@ -238,9 +390,9 @@ export default function VisitorsStatisticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-orange-600">Rata-rata Sesi</p>
-                <p className="text-3xl font-bold text-orange-900">{visitorStats.avgSessionTime}</p>
-                <Badge className={`mt-2 ${visitorStats.sessionGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {visitorStats.sessionGrowth >= 0 ? '+' : ''}{visitorStats.sessionGrowth}%
+                <p className="text-3xl font-bold text-orange-900">{safeVisitorStats.avgSessionTime}</p>
+                <Badge className={`mt-2 ${safeVisitorStats.sessionGrowth >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                  {safeVisitorStats.sessionGrowth >= 0 ? '+' : ''}{safeVisitorStats.sessionGrowth}%
                 </Badge>
               </div>
               <div className="rounded-full bg-orange-500 p-3">
@@ -264,7 +416,7 @@ export default function VisitorsStatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {trafficSources.map((source, index) => (
+              {trafficSources && trafficSources.length > 0 ? trafficSources.map((source, index) => (
                 <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                   <div className="flex items-center gap-3">
                     <div className={`w-3 h-3 rounded-full ${index === 0 ? 'bg-blue-500' :
@@ -279,7 +431,12 @@ export default function VisitorsStatisticsPage() {
                     <div className="text-xs text-gray-500">{source.percentage}%</div>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8">
+                  <Globe className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500">Belum ada data sumber traffic</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -295,7 +452,7 @@ export default function VisitorsStatisticsPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {topPages.map((page, index) => (
+              {topPages && topPages.length > 0 ? topPages.map((page, index) => (
                 <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
                   <div>
                     <p className="font-medium text-sm">{page.page}</p>
@@ -303,7 +460,12 @@ export default function VisitorsStatisticsPage() {
                   </div>
                   <Badge variant="secondary" className="font-bold">{page.percentage}</Badge>
                 </div>
-              ))}
+              )) : (
+                <div className="text-center py-8">
+                  <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500">Belum ada data halaman populer</p>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
