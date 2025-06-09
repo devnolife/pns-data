@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Menu } from "lucide-react"
@@ -26,6 +26,19 @@ const navItems = [
 export function Header() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const [navItemsState, setNavItemsState] = useState(navItems)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('guestbookSession')) {
+      setNavItemsState([...navItems, {
+        title: "Koleksi Digital",
+        href: "/public-collections",
+        icon: "📚"
+      }])
+    } else {
+      setNavItemsState(navItems)
+    }
+  }, [])
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-purple-200/50 shadow-lg">
@@ -69,7 +82,7 @@ export function Header() {
 
           {/* Navigation links */}
           <nav className="hidden gap-2 md:flex">
-            {navItems.map((item, index) => (
+            {navItemsState.map((item, index) => (
               <Link
                 key={index}
                 href={item.href}
@@ -135,7 +148,7 @@ export function Header() {
                 </div>
               </div>
               <nav className="mt-8 flex flex-col gap-3 px-7">
-                {navItems.map((item, index) => (
+                {navItemsState.map((item, index) => (
                   <Link
                     key={index}
                     href={item.href}

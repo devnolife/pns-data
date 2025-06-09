@@ -4,12 +4,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { GuestbookForm } from "@/components/common/guestbook-form"
 import { getGuestbookEntriesAction } from "@/lib/actions/guestbook"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Clock, MapPin, User, Mail } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import { id } from "date-fns/locale"
 
 interface GuestbookEntry {
   id: string

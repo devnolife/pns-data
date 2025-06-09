@@ -476,7 +476,7 @@ export default function PublicCollectionsPage() {
                             <div className="flex items-center gap-3">
                               <FolderOpen className="h-4 w-4 text-purple-400" />
                               <span className="text-sm text-gray-600 font-medium">
-                                {folder.totalFiles} dokumen yang fire! 🔥
+                                {folder.totalFiles} dokumen 
                               </span>
                             </div>
                             <Badge className={`bg-gradient-to-r ${folder.gradient || getGradientByIndex(index)} text-white border-0 rounded-full px-3 py-1 text-xs font-bold`}>
