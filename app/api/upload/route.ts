@@ -58,14 +58,38 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         )
       }
-    }
-
-    // Validasi angkatan
+    }    // Validasi angkatan
     if (batch) {
       const validBatches = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']
       if (!validBatches.includes(batch)) {
         return NextResponse.json(
           { success: false, error: 'Invalid batch provided. Batch must be Roman numerals I-XII.' },
+          { status: 400 }
+        )
+      }
+    }
+
+    // BARU: Validasi terhadap report_folders schema
+    if (year && batch) {
+      const reportFolder = await prisma.report_folders.findUnique({
+        where: {
+          year_batch: {
+            year: year,
+            batch: batch
+          }
+        }
+      })
+
+      if (!reportFolder) {
+        return NextResponse.json(
+          { success: false, error: `Folder laporan untuk tahun ${year} angkatan ${batch} belum dibuat. Hubungi administrator untuk membuat folder terlebih dahulu.` },
+          { status: 400 }
+        )
+      }
+
+      if (!reportFolder.is_active) {
+        return NextResponse.json(
+          { success: false, error: `Folder laporan untuk tahun ${year} angkatan ${batch} sedang nonaktif. Hubungi administrator.` },
           { status: 400 }
         )
       }

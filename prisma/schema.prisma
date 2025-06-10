@@ -81,9 +81,9 @@ model reports {
   priority                         Priority     @default(MEDIUM)
   author_id                        String
   assignee_id                      String?
-  feedback                         String?      // Feedback for rejected reports
-  verified_at                      DateTime?    // When the report was verified
-  rejected_at                      DateTime?    // When the report was rejected
+  feedback                         String?
+  verified_at                      DateTime?
+  rejected_at                      DateTime?
   created_at                       DateTime     @default(now())
   updated_at                       DateTime
   users_reports_assignee_idTousers users?       @relation("reports_assignee_idTousers", fields: [assignee_id], references: [id])
@@ -98,7 +98,7 @@ model uploaded_files {
   file_path       String
   file_size       Int
   mime_type       String
-  file_type       String?   // 'report' atau 'cover' untuk membedakan jenis file
+  file_type       String?   // 'report' atau 'cover'
   category        String?
   year            String?
   batch           String?
@@ -130,6 +130,24 @@ model users {
   reports_reports_assignee_idTousers reports[]             @relation("reports_assignee_idTousers")
   reports_reports_author_idTousers   reports[]             @relation("reports_author_idTousers")
   uploaded_files                     uploaded_files[]
+  created_folders                    report_folders[]      @relation("folder_creator")
+}
+
+model report_folders {
+  id          String   @id @default(uuid())
+  year        String
+  batch       String
+  description String?
+  created_by  String
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  creator     users    @relation("folder_creator", fields: [created_by], references: [id], onDelete: Cascade)
+
+  @@unique([year, batch])
+  @@index([year])
+  @@index([batch])
 }
 
 enum Priority {

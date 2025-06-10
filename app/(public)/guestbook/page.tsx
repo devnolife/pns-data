@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { GuestbookForm } from "@/components/common/guestbook-form"
 import { getGuestbookEntriesAction } from "@/lib/actions/guestbook"
+import { LoadingState } from "@/components/common/loading-state"
 
 interface GuestbookEntry {
   id: string
@@ -27,7 +28,7 @@ export default function GuestbookPage() {
     try {
       const result = await getGuestbookEntriesAction(1, 10)
       if (result.success && result.entries) {
-        setRecentEntries(result.entries)
+        setRecentEntries(result.entries as any)
       }
     } catch (error) {
       console.error('Error loading guestbook entries:', error)
@@ -88,12 +89,7 @@ export default function GuestbookPage() {
               </h2>
 
               {isLoading ? (
-                <div className="text-center py-12">
-                  <div className="inline-flex items-center gap-3 text-primary">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                    <p className="font-medium">Memuat data...</p>
-                  </div>
-                </div>
+                <LoadingState message="Memuat data..." />
               ) : (
                 <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                   {recentEntries.length === 0 ? (

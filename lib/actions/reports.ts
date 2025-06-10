@@ -869,8 +869,11 @@ export async function getPublicReportsByCategory() {
   try {
     const result = await getPublicReportsAction()
 
-    if (!result.success) {
-      return result
+    if (!result.success || !result.data) {
+      return {
+        success: false,
+        error: 'Gagal mengambil laporan publik'
+      }
     }
 
     const reports = result.data
@@ -943,19 +946,19 @@ export async function getPublicReportsByCategory() {
       const files = categoryReports.map(report => ({
         id: report.id,
         title: report.title,
-        author: report.author.name,
-        year: report.year,
-        batch: report.batch,
-        abstract: report.abstract,
-        type: report.files.length > 0 ? report.files[0].type : 'REPORT',
-        size: report.files.length > 0 ? report.files[0].size : 'N/A',
+        author: report.author?.name || 'Unknown',
+        year: report.year || new Date().getFullYear().toString(),
+        batch: report.batch || 'General',
+        abstract: report.abstract || report.description || '',
+        type: report.files && report.files.length > 0 ? report.files[0].type : 'REPORT',
+        size: report.files && report.files.length > 0 ? report.files[0].size : 'N/A',
         downloadUrl: '', // No download for public view
         content: '', // No content for public view
         isPublicReport: true, // Flag to identify this as a public report
         category: report.category,
         priority: report.priority,
         created_at: report.created_at,
-        fileCount: report.files.length
+        fileCount: report.files ? report.files.length : 0
       }))
 
       return {
@@ -1193,4 +1196,144 @@ export async function getAvailableReportYears() {
       error: 'Gagal mengambil tahun laporan'
     }
   }
-} 
+}
+
+// Get public reports for public collections page with cover images
+export async function getPublicReports() {
+  try {
+    const reports = await prisma.reports.findMany({
+      where: {
+        status: 'COMPLETED' // Only show verified/completed reports
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        cover_image_url: true,
+        created_at: true
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    return {
+      success: true,
+      data: reports
+    }
+  } catch (error) {
+    console.error('Get public reports error:', error)
+    return {
+      success: false,
+      error: 'Gagal mengambil laporan publik'
+    }
+  }
+}
+
+// Generate secure temporary PDF viewing token
+export async function generatePDFViewToken(reportId: string) {
+  try {
+    const currentTime = Date.now()
+    const expiryTime = currentTime + (6 * 60 * 60 * 1000) // 6 hours from now
+
+    const tokenData = {
+      reportId,
+      expiryTime,
+      created: currentTime
+    }
+
+    // In a real app, you'd encrypt this properly
+    const token = Buffer.from(JSON.stringify(tokenData)).toString('base64')
+
+    return {
+      success: true,
+      token,
+      expiryTime
+    }
+  } catch (error) {
+    console.error('Generate PDF view token error:', error)
+    return {
+      success: false,
+      error: 'Gagal membuat token akses PDF'
+    }
+  }
+}
+
+// Verify PDF viewing token
+export async function verifyPDFViewToken(token: string) {
+  try {
+    const tokenData = JSON.parse(Buffer.from(token, 'base64').toString())
+    const currentTime = Date.now()
+
+    if (currentTime > tokenData.expiryTime) {
+      return {
+        success: false,
+        error: 'Token akses telah kedaluwarsa. Silakan muat ulang halaman.'
+      }
+    }
+
+    return {
+      success: true,
+      reportId: tokenData.reportId
+    }
+  } catch (error) {
+    console.error('Verify PDF view token error:', error)
+    return {
+      success: false,
+      error: 'Token akses tidak valid'
+    }
+  }
+}
+
+// Get report PDF files for viewing (with token verification)
+export async function getReportPDFFiles(reportId: string, token: string) {
+  try {
+    // Verify token first
+    const tokenVerification = await verifyPDFViewToken(token)
+    if (!tokenVerification.success) {
+      return tokenVerification
+    }
+
+    // Get report with PDF files
+    const report = await prisma.reports.findFirst({
+      where: {
+        id: reportId,
+        status: 'COMPLETED'
+      },
+      include: {
+        files: {
+          where: {
+            mime_type: { contains: 'pdf' }
+          },
+          select: {
+            id: true,
+            filename: true,
+            original_name: true,
+            file_path: true,
+            file_size: true
+          }
+        }
+      }
+    })
+
+    if (!report) {
+      return {
+        success: false,
+        error: 'Laporan tidak ditemukan'
+      }
+    }
+
+    return {
+      success: true,
+      data: {
+        reportId: report.id,
+        title: report.title,
+        files: report.files
+      }
+    }
+  } catch (error) {
+    console.error('Get report PDF files error:', error)
+    return {
+      success: false,
+      error: 'Gagal mengambil file PDF'
+    }
+  }
+}

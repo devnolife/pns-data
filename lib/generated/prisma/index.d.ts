@@ -48,6 +48,11 @@ export type uploaded_files = $Result.DefaultSelection<Prisma.$uploaded_filesPayl
  * 
  */
 export type users = $Result.DefaultSelection<Prisma.$usersPayload>
+/**
+ * Model report_folders
+ * 
+ */
+export type report_folders = $Result.DefaultSelection<Prisma.$report_foldersPayload>
 
 /**
  * Enums
@@ -289,6 +294,16 @@ export class PrismaClient<
     * ```
     */
   get users(): Prisma.usersDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.report_folders`: Exposes CRUD operations for the **report_folders** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Report_folders
+    * const report_folders = await prisma.report_folders.findMany()
+    * ```
+    */
+  get report_folders(): Prisma.report_foldersDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -735,7 +750,8 @@ export namespace Prisma {
     limited_collections: 'limited_collections',
     reports: 'reports',
     uploaded_files: 'uploaded_files',
-    users: 'users'
+    users: 'users',
+    report_folders: 'report_folders'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -754,7 +770,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "collections" | "visitor_analytics" | "guestbook_entries" | "limited_collections" | "reports" | "uploaded_files" | "users"
+      modelProps: "collections" | "visitor_analytics" | "guestbook_entries" | "limited_collections" | "reports" | "uploaded_files" | "users" | "report_folders"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1276,6 +1292,80 @@ export namespace Prisma {
           }
         }
       }
+      report_folders: {
+        payload: Prisma.$report_foldersPayload<ExtArgs>
+        fields: Prisma.report_foldersFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.report_foldersFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.report_foldersFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>
+          }
+          findFirst: {
+            args: Prisma.report_foldersFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.report_foldersFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>
+          }
+          findMany: {
+            args: Prisma.report_foldersFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>[]
+          }
+          create: {
+            args: Prisma.report_foldersCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>
+          }
+          createMany: {
+            args: Prisma.report_foldersCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.report_foldersCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>[]
+          }
+          delete: {
+            args: Prisma.report_foldersDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>
+          }
+          update: {
+            args: Prisma.report_foldersUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>
+          }
+          deleteMany: {
+            args: Prisma.report_foldersDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.report_foldersUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.report_foldersUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>[]
+          }
+          upsert: {
+            args: Prisma.report_foldersUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$report_foldersPayload>
+          }
+          aggregate: {
+            args: Prisma.Report_foldersAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateReport_folders>
+          }
+          groupBy: {
+            args: Prisma.report_foldersGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Report_foldersGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.report_foldersCountArgs<ExtArgs>
+            result: $Utils.Optional<Report_foldersCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1367,6 +1457,7 @@ export namespace Prisma {
     reports?: reportsOmit
     uploaded_files?: uploaded_filesOmit
     users?: usersOmit
+    report_folders?: report_foldersOmit
   }
 
   /* Types for Logging */
@@ -1499,6 +1590,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers: number
     reports_reports_author_idTousers: number
     uploaded_files: number
+    created_folders: number
   }
 
   export type UsersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1509,6 +1601,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: boolean | UsersCountOutputTypeCountReports_reports_assignee_idTousersArgs
     reports_reports_author_idTousers?: boolean | UsersCountOutputTypeCountReports_reports_author_idTousersArgs
     uploaded_files?: boolean | UsersCountOutputTypeCountUploaded_filesArgs
+    created_folders?: boolean | UsersCountOutputTypeCountCreated_foldersArgs
   }
 
   // Custom InputTypes
@@ -1569,6 +1662,13 @@ export namespace Prisma {
    */
   export type UsersCountOutputTypeCountUploaded_filesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: uploaded_filesWhereInput
+  }
+
+  /**
+   * UsersCountOutputType without action
+   */
+  export type UsersCountOutputTypeCountCreated_foldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: report_foldersWhereInput
   }
 
 
@@ -8912,6 +9012,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: boolean | users$reports_reports_assignee_idTousersArgs<ExtArgs>
     reports_reports_author_idTousers?: boolean | users$reports_reports_author_idTousersArgs<ExtArgs>
     uploaded_files?: boolean | users$uploaded_filesArgs<ExtArgs>
+    created_folders?: boolean | users$created_foldersArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["users"]>
 
@@ -8969,6 +9070,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: boolean | users$reports_reports_assignee_idTousersArgs<ExtArgs>
     reports_reports_author_idTousers?: boolean | users$reports_reports_author_idTousersArgs<ExtArgs>
     uploaded_files?: boolean | users$uploaded_filesArgs<ExtArgs>
+    created_folders?: boolean | users$created_foldersArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type usersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -8984,6 +9086,7 @@ export namespace Prisma {
       reports_reports_assignee_idTousers: Prisma.$reportsPayload<ExtArgs>[]
       reports_reports_author_idTousers: Prisma.$reportsPayload<ExtArgs>[]
       uploaded_files: Prisma.$uploaded_filesPayload<ExtArgs>[]
+      created_folders: Prisma.$report_foldersPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9399,6 +9502,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers<T extends users$reports_reports_assignee_idTousersArgs<ExtArgs> = {}>(args?: Subset<T, users$reports_reports_assignee_idTousersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$reportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reports_reports_author_idTousers<T extends users$reports_reports_author_idTousersArgs<ExtArgs> = {}>(args?: Subset<T, users$reports_reports_author_idTousersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$reportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     uploaded_files<T extends users$uploaded_filesArgs<ExtArgs> = {}>(args?: Subset<T, users$uploaded_filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$uploaded_filesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    created_folders<T extends users$created_foldersArgs<ExtArgs> = {}>(args?: Subset<T, users$created_foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9996,6 +10100,30 @@ export namespace Prisma {
   }
 
   /**
+   * users.created_folders
+   */
+  export type users$created_foldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    where?: report_foldersWhereInput
+    orderBy?: report_foldersOrderByWithRelationInput | report_foldersOrderByWithRelationInput[]
+    cursor?: report_foldersWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Report_foldersScalarFieldEnum | Report_foldersScalarFieldEnum[]
+  }
+
+  /**
    * users without action
    */
   export type usersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10011,6 +10139,1103 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: usersInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model report_folders
+   */
+
+  export type AggregateReport_folders = {
+    _count: Report_foldersCountAggregateOutputType | null
+    _min: Report_foldersMinAggregateOutputType | null
+    _max: Report_foldersMaxAggregateOutputType | null
+  }
+
+  export type Report_foldersMinAggregateOutputType = {
+    id: string | null
+    year: string | null
+    batch: string | null
+    description: string | null
+    created_by: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Report_foldersMaxAggregateOutputType = {
+    id: string | null
+    year: string | null
+    batch: string | null
+    description: string | null
+    created_by: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Report_foldersCountAggregateOutputType = {
+    id: number
+    year: number
+    batch: number
+    description: number
+    created_by: number
+    is_active: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type Report_foldersMinAggregateInputType = {
+    id?: true
+    year?: true
+    batch?: true
+    description?: true
+    created_by?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Report_foldersMaxAggregateInputType = {
+    id?: true
+    year?: true
+    batch?: true
+    description?: true
+    created_by?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Report_foldersCountAggregateInputType = {
+    id?: true
+    year?: true
+    batch?: true
+    description?: true
+    created_by?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type Report_foldersAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which report_folders to aggregate.
+     */
+    where?: report_foldersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of report_folders to fetch.
+     */
+    orderBy?: report_foldersOrderByWithRelationInput | report_foldersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: report_foldersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` report_folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` report_folders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned report_folders
+    **/
+    _count?: true | Report_foldersCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Report_foldersMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Report_foldersMaxAggregateInputType
+  }
+
+  export type GetReport_foldersAggregateType<T extends Report_foldersAggregateArgs> = {
+        [P in keyof T & keyof AggregateReport_folders]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateReport_folders[P]>
+      : GetScalarType<T[P], AggregateReport_folders[P]>
+  }
+
+
+
+
+  export type report_foldersGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: report_foldersWhereInput
+    orderBy?: report_foldersOrderByWithAggregationInput | report_foldersOrderByWithAggregationInput[]
+    by: Report_foldersScalarFieldEnum[] | Report_foldersScalarFieldEnum
+    having?: report_foldersScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Report_foldersCountAggregateInputType | true
+    _min?: Report_foldersMinAggregateInputType
+    _max?: Report_foldersMaxAggregateInputType
+  }
+
+  export type Report_foldersGroupByOutputType = {
+    id: string
+    year: string
+    batch: string
+    description: string | null
+    created_by: string
+    is_active: boolean
+    created_at: Date
+    updated_at: Date
+    _count: Report_foldersCountAggregateOutputType | null
+    _min: Report_foldersMinAggregateOutputType | null
+    _max: Report_foldersMaxAggregateOutputType | null
+  }
+
+  type GetReport_foldersGroupByPayload<T extends report_foldersGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Report_foldersGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Report_foldersGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Report_foldersGroupByOutputType[P]>
+            : GetScalarType<T[P], Report_foldersGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type report_foldersSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    year?: boolean
+    batch?: boolean
+    description?: boolean
+    created_by?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    creator?: boolean | usersDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["report_folders"]>
+
+  export type report_foldersSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    year?: boolean
+    batch?: boolean
+    description?: boolean
+    created_by?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    creator?: boolean | usersDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["report_folders"]>
+
+  export type report_foldersSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    year?: boolean
+    batch?: boolean
+    description?: boolean
+    created_by?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    creator?: boolean | usersDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["report_folders"]>
+
+  export type report_foldersSelectScalar = {
+    id?: boolean
+    year?: boolean
+    batch?: boolean
+    description?: boolean
+    created_by?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type report_foldersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "year" | "batch" | "description" | "created_by" | "is_active" | "created_at" | "updated_at", ExtArgs["result"]["report_folders"]>
+  export type report_foldersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | usersDefaultArgs<ExtArgs>
+  }
+  export type report_foldersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | usersDefaultArgs<ExtArgs>
+  }
+  export type report_foldersIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    creator?: boolean | usersDefaultArgs<ExtArgs>
+  }
+
+  export type $report_foldersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "report_folders"
+    objects: {
+      creator: Prisma.$usersPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      year: string
+      batch: string
+      description: string | null
+      created_by: string
+      is_active: boolean
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["report_folders"]>
+    composites: {}
+  }
+
+  type report_foldersGetPayload<S extends boolean | null | undefined | report_foldersDefaultArgs> = $Result.GetResult<Prisma.$report_foldersPayload, S>
+
+  type report_foldersCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<report_foldersFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Report_foldersCountAggregateInputType | true
+    }
+
+  export interface report_foldersDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['report_folders'], meta: { name: 'report_folders' } }
+    /**
+     * Find zero or one Report_folders that matches the filter.
+     * @param {report_foldersFindUniqueArgs} args - Arguments to find a Report_folders
+     * @example
+     * // Get one Report_folders
+     * const report_folders = await prisma.report_folders.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends report_foldersFindUniqueArgs>(args: SelectSubset<T, report_foldersFindUniqueArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Report_folders that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {report_foldersFindUniqueOrThrowArgs} args - Arguments to find a Report_folders
+     * @example
+     * // Get one Report_folders
+     * const report_folders = await prisma.report_folders.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends report_foldersFindUniqueOrThrowArgs>(args: SelectSubset<T, report_foldersFindUniqueOrThrowArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Report_folders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {report_foldersFindFirstArgs} args - Arguments to find a Report_folders
+     * @example
+     * // Get one Report_folders
+     * const report_folders = await prisma.report_folders.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends report_foldersFindFirstArgs>(args?: SelectSubset<T, report_foldersFindFirstArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Report_folders that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {report_foldersFindFirstOrThrowArgs} args - Arguments to find a Report_folders
+     * @example
+     * // Get one Report_folders
+     * const report_folders = await prisma.report_folders.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends report_foldersFindFirstOrThrowArgs>(args?: SelectSubset<T, report_foldersFindFirstOrThrowArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Report_folders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {report_foldersFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Report_folders
+     * const report_folders = await prisma.report_folders.findMany()
+     * 
+     * // Get first 10 Report_folders
+     * const report_folders = await prisma.report_folders.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const report_foldersWithIdOnly = await prisma.report_folders.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends report_foldersFindManyArgs>(args?: SelectSubset<T, report_foldersFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Report_folders.
+     * @param {report_foldersCreateArgs} args - Arguments to create a Report_folders.
+     * @example
+     * // Create one Report_folders
+     * const Report_folders = await prisma.report_folders.create({
+     *   data: {
+     *     // ... data to create a Report_folders
+     *   }
+     * })
+     * 
+     */
+    create<T extends report_foldersCreateArgs>(args: SelectSubset<T, report_foldersCreateArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Report_folders.
+     * @param {report_foldersCreateManyArgs} args - Arguments to create many Report_folders.
+     * @example
+     * // Create many Report_folders
+     * const report_folders = await prisma.report_folders.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends report_foldersCreateManyArgs>(args?: SelectSubset<T, report_foldersCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Report_folders and returns the data saved in the database.
+     * @param {report_foldersCreateManyAndReturnArgs} args - Arguments to create many Report_folders.
+     * @example
+     * // Create many Report_folders
+     * const report_folders = await prisma.report_folders.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Report_folders and only return the `id`
+     * const report_foldersWithIdOnly = await prisma.report_folders.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends report_foldersCreateManyAndReturnArgs>(args?: SelectSubset<T, report_foldersCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Report_folders.
+     * @param {report_foldersDeleteArgs} args - Arguments to delete one Report_folders.
+     * @example
+     * // Delete one Report_folders
+     * const Report_folders = await prisma.report_folders.delete({
+     *   where: {
+     *     // ... filter to delete one Report_folders
+     *   }
+     * })
+     * 
+     */
+    delete<T extends report_foldersDeleteArgs>(args: SelectSubset<T, report_foldersDeleteArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Report_folders.
+     * @param {report_foldersUpdateArgs} args - Arguments to update one Report_folders.
+     * @example
+     * // Update one Report_folders
+     * const report_folders = await prisma.report_folders.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends report_foldersUpdateArgs>(args: SelectSubset<T, report_foldersUpdateArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Report_folders.
+     * @param {report_foldersDeleteManyArgs} args - Arguments to filter Report_folders to delete.
+     * @example
+     * // Delete a few Report_folders
+     * const { count } = await prisma.report_folders.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends report_foldersDeleteManyArgs>(args?: SelectSubset<T, report_foldersDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Report_folders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {report_foldersUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Report_folders
+     * const report_folders = await prisma.report_folders.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends report_foldersUpdateManyArgs>(args: SelectSubset<T, report_foldersUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Report_folders and returns the data updated in the database.
+     * @param {report_foldersUpdateManyAndReturnArgs} args - Arguments to update many Report_folders.
+     * @example
+     * // Update many Report_folders
+     * const report_folders = await prisma.report_folders.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Report_folders and only return the `id`
+     * const report_foldersWithIdOnly = await prisma.report_folders.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends report_foldersUpdateManyAndReturnArgs>(args: SelectSubset<T, report_foldersUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Report_folders.
+     * @param {report_foldersUpsertArgs} args - Arguments to update or create a Report_folders.
+     * @example
+     * // Update or create a Report_folders
+     * const report_folders = await prisma.report_folders.upsert({
+     *   create: {
+     *     // ... data to create a Report_folders
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Report_folders we want to update
+     *   }
+     * })
+     */
+    upsert<T extends report_foldersUpsertArgs>(args: SelectSubset<T, report_foldersUpsertArgs<ExtArgs>>): Prisma__report_foldersClient<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Report_folders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {report_foldersCountArgs} args - Arguments to filter Report_folders to count.
+     * @example
+     * // Count the number of Report_folders
+     * const count = await prisma.report_folders.count({
+     *   where: {
+     *     // ... the filter for the Report_folders we want to count
+     *   }
+     * })
+    **/
+    count<T extends report_foldersCountArgs>(
+      args?: Subset<T, report_foldersCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Report_foldersCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Report_folders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Report_foldersAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Report_foldersAggregateArgs>(args: Subset<T, Report_foldersAggregateArgs>): Prisma.PrismaPromise<GetReport_foldersAggregateType<T>>
+
+    /**
+     * Group by Report_folders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {report_foldersGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends report_foldersGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: report_foldersGroupByArgs['orderBy'] }
+        : { orderBy?: report_foldersGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, report_foldersGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetReport_foldersGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the report_folders model
+   */
+  readonly fields: report_foldersFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for report_folders.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__report_foldersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    creator<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the report_folders model
+   */
+  interface report_foldersFieldRefs {
+    readonly id: FieldRef<"report_folders", 'String'>
+    readonly year: FieldRef<"report_folders", 'String'>
+    readonly batch: FieldRef<"report_folders", 'String'>
+    readonly description: FieldRef<"report_folders", 'String'>
+    readonly created_by: FieldRef<"report_folders", 'String'>
+    readonly is_active: FieldRef<"report_folders", 'Boolean'>
+    readonly created_at: FieldRef<"report_folders", 'DateTime'>
+    readonly updated_at: FieldRef<"report_folders", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * report_folders findUnique
+   */
+  export type report_foldersFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * Filter, which report_folders to fetch.
+     */
+    where: report_foldersWhereUniqueInput
+  }
+
+  /**
+   * report_folders findUniqueOrThrow
+   */
+  export type report_foldersFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * Filter, which report_folders to fetch.
+     */
+    where: report_foldersWhereUniqueInput
+  }
+
+  /**
+   * report_folders findFirst
+   */
+  export type report_foldersFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * Filter, which report_folders to fetch.
+     */
+    where?: report_foldersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of report_folders to fetch.
+     */
+    orderBy?: report_foldersOrderByWithRelationInput | report_foldersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for report_folders.
+     */
+    cursor?: report_foldersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` report_folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` report_folders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of report_folders.
+     */
+    distinct?: Report_foldersScalarFieldEnum | Report_foldersScalarFieldEnum[]
+  }
+
+  /**
+   * report_folders findFirstOrThrow
+   */
+  export type report_foldersFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * Filter, which report_folders to fetch.
+     */
+    where?: report_foldersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of report_folders to fetch.
+     */
+    orderBy?: report_foldersOrderByWithRelationInput | report_foldersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for report_folders.
+     */
+    cursor?: report_foldersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` report_folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` report_folders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of report_folders.
+     */
+    distinct?: Report_foldersScalarFieldEnum | Report_foldersScalarFieldEnum[]
+  }
+
+  /**
+   * report_folders findMany
+   */
+  export type report_foldersFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * Filter, which report_folders to fetch.
+     */
+    where?: report_foldersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of report_folders to fetch.
+     */
+    orderBy?: report_foldersOrderByWithRelationInput | report_foldersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing report_folders.
+     */
+    cursor?: report_foldersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` report_folders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` report_folders.
+     */
+    skip?: number
+    distinct?: Report_foldersScalarFieldEnum | Report_foldersScalarFieldEnum[]
+  }
+
+  /**
+   * report_folders create
+   */
+  export type report_foldersCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * The data needed to create a report_folders.
+     */
+    data: XOR<report_foldersCreateInput, report_foldersUncheckedCreateInput>
+  }
+
+  /**
+   * report_folders createMany
+   */
+  export type report_foldersCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many report_folders.
+     */
+    data: report_foldersCreateManyInput | report_foldersCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * report_folders createManyAndReturn
+   */
+  export type report_foldersCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * The data used to create many report_folders.
+     */
+    data: report_foldersCreateManyInput | report_foldersCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * report_folders update
+   */
+  export type report_foldersUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * The data needed to update a report_folders.
+     */
+    data: XOR<report_foldersUpdateInput, report_foldersUncheckedUpdateInput>
+    /**
+     * Choose, which report_folders to update.
+     */
+    where: report_foldersWhereUniqueInput
+  }
+
+  /**
+   * report_folders updateMany
+   */
+  export type report_foldersUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update report_folders.
+     */
+    data: XOR<report_foldersUpdateManyMutationInput, report_foldersUncheckedUpdateManyInput>
+    /**
+     * Filter which report_folders to update
+     */
+    where?: report_foldersWhereInput
+    /**
+     * Limit how many report_folders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * report_folders updateManyAndReturn
+   */
+  export type report_foldersUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * The data used to update report_folders.
+     */
+    data: XOR<report_foldersUpdateManyMutationInput, report_foldersUncheckedUpdateManyInput>
+    /**
+     * Filter which report_folders to update
+     */
+    where?: report_foldersWhereInput
+    /**
+     * Limit how many report_folders to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * report_folders upsert
+   */
+  export type report_foldersUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * The filter to search for the report_folders to update in case it exists.
+     */
+    where: report_foldersWhereUniqueInput
+    /**
+     * In case the report_folders found by the `where` argument doesn't exist, create a new report_folders with this data.
+     */
+    create: XOR<report_foldersCreateInput, report_foldersUncheckedCreateInput>
+    /**
+     * In case the report_folders was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<report_foldersUpdateInput, report_foldersUncheckedUpdateInput>
+  }
+
+  /**
+   * report_folders delete
+   */
+  export type report_foldersDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    /**
+     * Filter which report_folders to delete.
+     */
+    where: report_foldersWhereUniqueInput
+  }
+
+  /**
+   * report_folders deleteMany
+   */
+  export type report_foldersDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which report_folders to delete
+     */
+    where?: report_foldersWhereInput
+    /**
+     * Limit how many report_folders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * report_folders without action
+   */
+  export type report_foldersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
   }
 
 
@@ -10151,6 +11376,20 @@ export namespace Prisma {
   };
 
   export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
+
+
+  export const Report_foldersScalarFieldEnum: {
+    id: 'id',
+    year: 'year',
+    batch: 'batch',
+    description: 'description',
+    created_by: 'created_by',
+    is_active: 'is_active',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type Report_foldersScalarFieldEnum = (typeof Report_foldersScalarFieldEnum)[keyof typeof Report_foldersScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -10863,6 +12102,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: ReportsListRelationFilter
     reports_reports_author_idTousers?: ReportsListRelationFilter
     uploaded_files?: Uploaded_filesListRelationFilter
+    created_folders?: Report_foldersListRelationFilter
   }
 
   export type usersOrderByWithRelationInput = {
@@ -10885,6 +12125,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsOrderByRelationAggregateInput
     reports_reports_author_idTousers?: reportsOrderByRelationAggregateInput
     uploaded_files?: uploaded_filesOrderByRelationAggregateInput
+    created_folders?: report_foldersOrderByRelationAggregateInput
   }
 
   export type usersWhereUniqueInput = Prisma.AtLeast<{
@@ -10910,6 +12151,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: ReportsListRelationFilter
     reports_reports_author_idTousers?: ReportsListRelationFilter
     uploaded_files?: Uploaded_filesListRelationFilter
+    created_folders?: Report_foldersListRelationFilter
   }, "id" | "username" | "email">
 
   export type usersOrderByWithAggregationInput = {
@@ -10946,6 +12188,77 @@ export namespace Prisma {
     phone?: StringNullableWithAggregatesFilter<"users"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"users"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"users"> | Date | string
+  }
+
+  export type report_foldersWhereInput = {
+    AND?: report_foldersWhereInput | report_foldersWhereInput[]
+    OR?: report_foldersWhereInput[]
+    NOT?: report_foldersWhereInput | report_foldersWhereInput[]
+    id?: StringFilter<"report_folders"> | string
+    year?: StringFilter<"report_folders"> | string
+    batch?: StringFilter<"report_folders"> | string
+    description?: StringNullableFilter<"report_folders"> | string | null
+    created_by?: StringFilter<"report_folders"> | string
+    is_active?: BoolFilter<"report_folders"> | boolean
+    created_at?: DateTimeFilter<"report_folders"> | Date | string
+    updated_at?: DateTimeFilter<"report_folders"> | Date | string
+    creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
+  }
+
+  export type report_foldersOrderByWithRelationInput = {
+    id?: SortOrder
+    year?: SortOrder
+    batch?: SortOrder
+    description?: SortOrderInput | SortOrder
+    created_by?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    creator?: usersOrderByWithRelationInput
+  }
+
+  export type report_foldersWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    year_batch?: report_foldersYearBatchCompoundUniqueInput
+    AND?: report_foldersWhereInput | report_foldersWhereInput[]
+    OR?: report_foldersWhereInput[]
+    NOT?: report_foldersWhereInput | report_foldersWhereInput[]
+    year?: StringFilter<"report_folders"> | string
+    batch?: StringFilter<"report_folders"> | string
+    description?: StringNullableFilter<"report_folders"> | string | null
+    created_by?: StringFilter<"report_folders"> | string
+    is_active?: BoolFilter<"report_folders"> | boolean
+    created_at?: DateTimeFilter<"report_folders"> | Date | string
+    updated_at?: DateTimeFilter<"report_folders"> | Date | string
+    creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
+  }, "id" | "year_batch">
+
+  export type report_foldersOrderByWithAggregationInput = {
+    id?: SortOrder
+    year?: SortOrder
+    batch?: SortOrder
+    description?: SortOrderInput | SortOrder
+    created_by?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: report_foldersCountOrderByAggregateInput
+    _max?: report_foldersMaxOrderByAggregateInput
+    _min?: report_foldersMinOrderByAggregateInput
+  }
+
+  export type report_foldersScalarWhereWithAggregatesInput = {
+    AND?: report_foldersScalarWhereWithAggregatesInput | report_foldersScalarWhereWithAggregatesInput[]
+    OR?: report_foldersScalarWhereWithAggregatesInput[]
+    NOT?: report_foldersScalarWhereWithAggregatesInput | report_foldersScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"report_folders"> | string
+    year?: StringWithAggregatesFilter<"report_folders"> | string
+    batch?: StringWithAggregatesFilter<"report_folders"> | string
+    description?: StringNullableWithAggregatesFilter<"report_folders"> | string | null
+    created_by?: StringWithAggregatesFilter<"report_folders"> | string
+    is_active?: BoolWithAggregatesFilter<"report_folders"> | boolean
+    created_at?: DateTimeWithAggregatesFilter<"report_folders"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"report_folders"> | Date | string
   }
 
   export type collectionsCreateInput = {
@@ -11587,6 +12900,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateInput = {
@@ -11609,6 +12923,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUpdateInput = {
@@ -11631,6 +12946,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateInput = {
@@ -11653,6 +12969,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersCreateManyInput = {
@@ -11696,6 +13013,82 @@ export namespace Prisma {
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersCreateInput = {
+    id?: string
+    year: string
+    batch: string
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    creator: usersCreateNestedOneWithoutCreated_foldersInput
+  }
+
+  export type report_foldersUncheckedCreateInput = {
+    id?: string
+    year: string
+    batch: string
+    description?: string | null
+    created_by: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type report_foldersUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: usersUpdateOneRequiredWithoutCreated_foldersNestedInput
+  }
+
+  export type report_foldersUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersCreateManyInput = {
+    id?: string
+    year: string
+    batch: string
+    description?: string | null
+    created_by: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type report_foldersUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12277,6 +13670,12 @@ export namespace Prisma {
     none?: reportsWhereInput
   }
 
+  export type Report_foldersListRelationFilter = {
+    every?: report_foldersWhereInput
+    some?: report_foldersWhereInput
+    none?: report_foldersWhereInput
+  }
+
   export type collectionsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -12294,6 +13693,10 @@ export namespace Prisma {
   }
 
   export type reportsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type report_foldersOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -12350,6 +13753,44 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRoleFilter<$PrismaModel>
     _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
+  export type report_foldersYearBatchCompoundUniqueInput = {
+    year: string
+    batch: string
+  }
+
+  export type report_foldersCountOrderByAggregateInput = {
+    id?: SortOrder
+    year?: SortOrder
+    batch?: SortOrder
+    description?: SortOrder
+    created_by?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type report_foldersMaxOrderByAggregateInput = {
+    id?: SortOrder
+    year?: SortOrder
+    batch?: SortOrder
+    description?: SortOrder
+    created_by?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type report_foldersMinOrderByAggregateInput = {
+    id?: SortOrder
+    year?: SortOrder
+    batch?: SortOrder
+    description?: SortOrder
+    created_by?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
   }
 
   export type usersCreateNestedOneWithoutCollectionsInput = {
@@ -12607,6 +14048,13 @@ export namespace Prisma {
     connect?: uploaded_filesWhereUniqueInput | uploaded_filesWhereUniqueInput[]
   }
 
+  export type report_foldersCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<report_foldersCreateWithoutCreatorInput, report_foldersUncheckedCreateWithoutCreatorInput> | report_foldersCreateWithoutCreatorInput[] | report_foldersUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCreatorInput | report_foldersCreateOrConnectWithoutCreatorInput[]
+    createMany?: report_foldersCreateManyCreatorInputEnvelope
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+  }
+
   export type collectionsUncheckedCreateNestedManyWithoutUsersInput = {
     create?: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput> | collectionsCreateWithoutUsersInput[] | collectionsUncheckedCreateWithoutUsersInput[]
     connectOrCreate?: collectionsCreateOrConnectWithoutUsersInput | collectionsCreateOrConnectWithoutUsersInput[]
@@ -12654,6 +14102,13 @@ export namespace Prisma {
     connectOrCreate?: uploaded_filesCreateOrConnectWithoutUsersInput | uploaded_filesCreateOrConnectWithoutUsersInput[]
     createMany?: uploaded_filesCreateManyUsersInputEnvelope
     connect?: uploaded_filesWhereUniqueInput | uploaded_filesWhereUniqueInput[]
+  }
+
+  export type report_foldersUncheckedCreateNestedManyWithoutCreatorInput = {
+    create?: XOR<report_foldersCreateWithoutCreatorInput, report_foldersUncheckedCreateWithoutCreatorInput> | report_foldersCreateWithoutCreatorInput[] | report_foldersUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCreatorInput | report_foldersCreateOrConnectWithoutCreatorInput[]
+    createMany?: report_foldersCreateManyCreatorInputEnvelope
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
   }
 
   export type EnumRoleFieldUpdateOperationsInput = {
@@ -12758,6 +14213,20 @@ export namespace Prisma {
     deleteMany?: uploaded_filesScalarWhereInput | uploaded_filesScalarWhereInput[]
   }
 
+  export type report_foldersUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<report_foldersCreateWithoutCreatorInput, report_foldersUncheckedCreateWithoutCreatorInput> | report_foldersCreateWithoutCreatorInput[] | report_foldersUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCreatorInput | report_foldersCreateOrConnectWithoutCreatorInput[]
+    upsert?: report_foldersUpsertWithWhereUniqueWithoutCreatorInput | report_foldersUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: report_foldersCreateManyCreatorInputEnvelope
+    set?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    disconnect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    delete?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    update?: report_foldersUpdateWithWhereUniqueWithoutCreatorInput | report_foldersUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: report_foldersUpdateManyWithWhereWithoutCreatorInput | report_foldersUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+  }
+
   export type collectionsUncheckedUpdateManyWithoutUsersNestedInput = {
     create?: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput> | collectionsCreateWithoutUsersInput[] | collectionsUncheckedCreateWithoutUsersInput[]
     connectOrCreate?: collectionsCreateOrConnectWithoutUsersInput | collectionsCreateOrConnectWithoutUsersInput[]
@@ -12854,6 +14323,34 @@ export namespace Prisma {
     update?: uploaded_filesUpdateWithWhereUniqueWithoutUsersInput | uploaded_filesUpdateWithWhereUniqueWithoutUsersInput[]
     updateMany?: uploaded_filesUpdateManyWithWhereWithoutUsersInput | uploaded_filesUpdateManyWithWhereWithoutUsersInput[]
     deleteMany?: uploaded_filesScalarWhereInput | uploaded_filesScalarWhereInput[]
+  }
+
+  export type report_foldersUncheckedUpdateManyWithoutCreatorNestedInput = {
+    create?: XOR<report_foldersCreateWithoutCreatorInput, report_foldersUncheckedCreateWithoutCreatorInput> | report_foldersCreateWithoutCreatorInput[] | report_foldersUncheckedCreateWithoutCreatorInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCreatorInput | report_foldersCreateOrConnectWithoutCreatorInput[]
+    upsert?: report_foldersUpsertWithWhereUniqueWithoutCreatorInput | report_foldersUpsertWithWhereUniqueWithoutCreatorInput[]
+    createMany?: report_foldersCreateManyCreatorInputEnvelope
+    set?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    disconnect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    delete?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    update?: report_foldersUpdateWithWhereUniqueWithoutCreatorInput | report_foldersUpdateWithWhereUniqueWithoutCreatorInput[]
+    updateMany?: report_foldersUpdateManyWithWhereWithoutCreatorInput | report_foldersUpdateManyWithWhereWithoutCreatorInput[]
+    deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+  }
+
+  export type usersCreateNestedOneWithoutCreated_foldersInput = {
+    create?: XOR<usersCreateWithoutCreated_foldersInput, usersUncheckedCreateWithoutCreated_foldersInput>
+    connectOrCreate?: usersCreateOrConnectWithoutCreated_foldersInput
+    connect?: usersWhereUniqueInput
+  }
+
+  export type usersUpdateOneRequiredWithoutCreated_foldersNestedInput = {
+    create?: XOR<usersCreateWithoutCreated_foldersInput, usersUncheckedCreateWithoutCreated_foldersInput>
+    connectOrCreate?: usersCreateOrConnectWithoutCreated_foldersInput
+    upsert?: usersUpsertWithoutCreated_foldersInput
+    connect?: usersWhereUniqueInput
+    update?: XOR<XOR<usersUpdateToOneWithWhereWithoutCreated_foldersInput, usersUpdateWithoutCreated_foldersInput>, usersUncheckedUpdateWithoutCreated_foldersInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -13127,6 +14624,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateWithoutCollectionsInput = {
@@ -13148,6 +14646,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersCreateOrConnectWithoutCollectionsInput = {
@@ -13185,6 +14684,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateWithoutCollectionsInput = {
@@ -13206,6 +14706,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersCreateWithoutVisitor_analyticsInput = {
@@ -13227,6 +14728,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateWithoutVisitor_analyticsInput = {
@@ -13248,6 +14750,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersCreateOrConnectWithoutVisitor_analyticsInput = {
@@ -13285,6 +14788,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateWithoutVisitor_analyticsInput = {
@@ -13306,6 +14810,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersCreateWithoutGuestbook_entriesInput = {
@@ -13327,6 +14832,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateWithoutGuestbook_entriesInput = {
@@ -13348,6 +14854,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersCreateOrConnectWithoutGuestbook_entriesInput = {
@@ -13385,6 +14892,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateWithoutGuestbook_entriesInput = {
@@ -13406,6 +14914,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersCreateWithoutLimited_collectionsInput = {
@@ -13427,6 +14936,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateWithoutLimited_collectionsInput = {
@@ -13448,6 +14958,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersCreateOrConnectWithoutLimited_collectionsInput = {
@@ -13485,6 +14996,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateWithoutLimited_collectionsInput = {
@@ -13506,6 +15018,7 @@ export namespace Prisma {
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersCreateWithoutReports_reports_assignee_idTousersInput = {
@@ -13527,6 +15040,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateWithoutReports_reports_assignee_idTousersInput = {
@@ -13548,6 +15062,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersCreateOrConnectWithoutReports_reports_assignee_idTousersInput = {
@@ -13574,6 +15089,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateWithoutReports_reports_author_idTousersInput = {
@@ -13595,6 +15111,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersCreateOrConnectWithoutReports_reports_author_idTousersInput = {
@@ -13674,6 +15191,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateWithoutReports_reports_assignee_idTousersInput = {
@@ -13695,6 +15213,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUpsertWithoutReports_reports_author_idTousersInput = {
@@ -13727,6 +15246,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateWithoutReports_reports_author_idTousersInput = {
@@ -13748,6 +15268,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type uploaded_filesUpsertWithWhereUniqueWithoutReportsInput = {
@@ -13805,6 +15326,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
   }
 
   export type usersUncheckedCreateWithoutUploaded_filesInput = {
@@ -13826,6 +15348,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
   }
 
   export type usersCreateOrConnectWithoutUploaded_filesInput = {
@@ -13904,6 +15427,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
   }
 
   export type usersUncheckedUpdateWithoutUploaded_filesInput = {
@@ -13925,6 +15449,7 @@ export namespace Prisma {
     limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
   }
 
   export type reportsUpsertWithoutFilesInput = {
@@ -14248,6 +15773,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type report_foldersCreateWithoutCreatorInput = {
+    id?: string
+    year: string
+    batch: string
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type report_foldersUncheckedCreateWithoutCreatorInput = {
+    id?: string
+    year: string
+    batch: string
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type report_foldersCreateOrConnectWithoutCreatorInput = {
+    where: report_foldersWhereUniqueInput
+    create: XOR<report_foldersCreateWithoutCreatorInput, report_foldersUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type report_foldersCreateManyCreatorInputEnvelope = {
+    data: report_foldersCreateManyCreatorInput | report_foldersCreateManyCreatorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type collectionsUpsertWithWhereUniqueWithoutUsersInput = {
     where: collectionsWhereUniqueInput
     update: XOR<collectionsUpdateWithoutUsersInput, collectionsUncheckedUpdateWithoutUsersInput>
@@ -14447,6 +16002,140 @@ export namespace Prisma {
     data: XOR<uploaded_filesUpdateManyMutationInput, uploaded_filesUncheckedUpdateManyWithoutUsersInput>
   }
 
+  export type report_foldersUpsertWithWhereUniqueWithoutCreatorInput = {
+    where: report_foldersWhereUniqueInput
+    update: XOR<report_foldersUpdateWithoutCreatorInput, report_foldersUncheckedUpdateWithoutCreatorInput>
+    create: XOR<report_foldersCreateWithoutCreatorInput, report_foldersUncheckedCreateWithoutCreatorInput>
+  }
+
+  export type report_foldersUpdateWithWhereUniqueWithoutCreatorInput = {
+    where: report_foldersWhereUniqueInput
+    data: XOR<report_foldersUpdateWithoutCreatorInput, report_foldersUncheckedUpdateWithoutCreatorInput>
+  }
+
+  export type report_foldersUpdateManyWithWhereWithoutCreatorInput = {
+    where: report_foldersScalarWhereInput
+    data: XOR<report_foldersUpdateManyMutationInput, report_foldersUncheckedUpdateManyWithoutCreatorInput>
+  }
+
+  export type report_foldersScalarWhereInput = {
+    AND?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+    OR?: report_foldersScalarWhereInput[]
+    NOT?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+    id?: StringFilter<"report_folders"> | string
+    year?: StringFilter<"report_folders"> | string
+    batch?: StringFilter<"report_folders"> | string
+    description?: StringNullableFilter<"report_folders"> | string | null
+    created_by?: StringFilter<"report_folders"> | string
+    is_active?: BoolFilter<"report_folders"> | boolean
+    created_at?: DateTimeFilter<"report_folders"> | Date | string
+    updated_at?: DateTimeFilter<"report_folders"> | Date | string
+  }
+
+  export type usersCreateWithoutCreated_foldersInput = {
+    id: string
+    username: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    name?: string | null
+    avatar?: string | null
+    training?: string | null
+    angkatan?: string | null
+    phone?: string | null
+    created_at?: Date | string
+    updated_at: Date | string
+    collections?: collectionsCreateNestedManyWithoutUsersInput
+    visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
+    guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
+    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
+    reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
+    reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+  }
+
+  export type usersUncheckedCreateWithoutCreated_foldersInput = {
+    id: string
+    username: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    name?: string | null
+    avatar?: string | null
+    training?: string | null
+    angkatan?: string | null
+    phone?: string | null
+    created_at?: Date | string
+    updated_at: Date | string
+    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
+    visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
+    guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
+    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
+    reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
+    reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+  }
+
+  export type usersCreateOrConnectWithoutCreated_foldersInput = {
+    where: usersWhereUniqueInput
+    create: XOR<usersCreateWithoutCreated_foldersInput, usersUncheckedCreateWithoutCreated_foldersInput>
+  }
+
+  export type usersUpsertWithoutCreated_foldersInput = {
+    update: XOR<usersUpdateWithoutCreated_foldersInput, usersUncheckedUpdateWithoutCreated_foldersInput>
+    create: XOR<usersCreateWithoutCreated_foldersInput, usersUncheckedCreateWithoutCreated_foldersInput>
+    where?: usersWhereInput
+  }
+
+  export type usersUpdateToOneWithWhereWithoutCreated_foldersInput = {
+    where?: usersWhereInput
+    data: XOR<usersUpdateWithoutCreated_foldersInput, usersUncheckedUpdateWithoutCreated_foldersInput>
+  }
+
+  export type usersUpdateWithoutCreated_foldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    training?: NullableStringFieldUpdateOperationsInput | string | null
+    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    collections?: collectionsUpdateManyWithoutUsersNestedInput
+    visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
+    guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
+    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
+    reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
+    reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+  }
+
+  export type usersUncheckedUpdateWithoutCreated_foldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    training?: NullableStringFieldUpdateOperationsInput | string | null
+    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
+    visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
+    guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
+    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
+    reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
+    reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+  }
+
   export type uploaded_filesCreateManyReportsInput = {
     id: string
     filename: string
@@ -14609,6 +16298,16 @@ export namespace Prisma {
     report_id?: string | null
     created_at?: Date | string
     updated_at: Date | string
+  }
+
+  export type report_foldersCreateManyCreatorInput = {
+    id?: string
+    year: string
+    batch: string
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
   }
 
   export type collectionsUpdateWithoutUsersInput = {
@@ -14911,6 +16610,36 @@ export namespace Prisma {
     year?: NullableStringFieldUpdateOperationsInput | string | null
     batch?: NullableStringFieldUpdateOperationsInput | string | null
     report_id?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersUncheckedUpdateWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersUncheckedUpdateManyWithoutCreatorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }

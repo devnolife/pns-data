@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,12 +15,20 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useToast } from "@/hooks/use-toast"
 import { Upload, File, X, Loader2, Sparkles, Star, Zap, CloudUpload, FileText, CheckCircle, ImageIcon } from "lucide-react"
 import { createReportWithFilesAction } from "@/lib/actions/reports"
+import { getAvailableYearBatchCombinationsAction } from "@/lib/actions/report-folders"
 
 interface UploadedFile {
   id: string
   originalName: string
   fileSize: number
   mimeType: string
+}
+
+interface AvailableYearBatch {
+  yearBatchMap: Record<string, { batch: string; description?: string }[]>
+  years: string[]
+  availableBatches: string[]
+  folders: { year: string; batch: string; description?: string }[]
 }
 
 export default function UploadReportPage() {
@@ -43,6 +51,51 @@ export default function UploadReportPage() {
   const [dragging, setDragging] = useState(false)
   const [draggingCover, setDraggingCover] = useState(false)
   const [error, setError] = useState("")
+  const [availableYearBatch, setAvailableYearBatch] = useState<AvailableYearBatch | null>(null)
+  const [loadingYearBatch, setLoadingYearBatch] = useState(true)
+
+  // Load available year/batch combinations on component mount
+  useEffect(() => {
+    const loadAvailableYearBatch = async () => {
+      try {
+        setLoadingYearBatch(true)
+        const result = await getAvailableYearBatchCombinationsAction()
+        if (result.success) {
+          setAvailableYearBatch(result.data)
+        } else {
+          setError(result.error || 'Gagal memuat data folder laporan')
+        }
+      } catch (error) {
+        console.error('Error loading available year/batch:', error)
+        setError('Gagal memuat data folder laporan')
+      } finally {
+        setLoadingYearBatch(false)
+      }
+    }
+
+    if (isAuthenticated) {
+      loadAvailableYearBatch()
+    }
+  }, [isAuthenticated])
+
+  // Reset batch when year changes
+  const handleYearChange = (selectedYear: string) => {
+    setYear(selectedYear)
+    setBatch("") // Reset batch when year changes
+    setError("") // Clear any previous errors
+  }
+
+  // Validate batch selection
+  const handleBatchChange = (selectedBatch: string) => {
+    setBatch(selectedBatch)
+    setError("") // Clear any previous errors
+  }
+
+  // Get available batches for selected year
+  const getAvailableBatchesForYear = (selectedYear: string) => {
+    if (!availableYearBatch || !selectedYear) return []
+    return availableYearBatch.yearBatchMap[selectedYear] || []
+  }
 
   if (!isAuthenticated) {
     router.push("/login")
@@ -400,12 +453,27 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                     <Sparkles className="h-5 w-5 text-pink-300 animate-bounce" />
                   </div>
                 </div>
-              </CardHeader>
-
-              <CardContent className="p-6 space-y-6">
+              </CardHeader>              <CardContent className="p-6 space-y-6">
                 {error && (
                   <Alert className="border-red-200 bg-red-50/80 backdrop-blur-sm rounded-xl">
                     <AlertDescription className="text-red-700 font-medium">{error}</AlertDescription>
+                  </Alert>
+                )}
+
+                {loadingYearBatch && (
+                  <Alert className="border-blue-200 bg-blue-50/80 backdrop-blur-sm rounded-xl">
+                    <AlertDescription className="text-blue-700 font-medium flex items-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Memuat data folder laporan...
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {!loadingYearBatch && availableYearBatch && availableYearBatch.folders.length === 0 && (
+                  <Alert className="border-amber-200 bg-amber-50/80 backdrop-blur-sm rounded-xl">
+                    <AlertDescription className="text-amber-700 font-medium">
+                      ⚠️ Belum ada folder laporan yang tersedia. Silakan hubungi administrator untuk mengaktifkan folder tahun dan angkatan.
+                    </AlertDescription>
                   </Alert>
                 )}
 
@@ -440,43 +508,50 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                         <SelectItem value="Latsar CPNS">🎓 Latsar CPNS</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  <div className="space-y-2">
+                  </div>                  <div className="space-y-2">
                     <Label htmlFor="year" className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                       📅 Tahun Pelatihan
                     </Label>
-                    <Select value={year} onValueChange={setYear}>
+                    <Select value={year} onValueChange={handleYearChange} disabled={loadingYearBatch}>
                       <SelectTrigger id="year" className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md">
-                        <SelectValue placeholder="Pilih tahun..." />
+                        <SelectValue placeholder={loadingYearBatch ? "Memuat..." : "Pilih tahun..."} />
                       </SelectTrigger>
                       <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
-                        <SelectItem value="2024">2024</SelectItem>
-                        <SelectItem value="2023">2023</SelectItem>
-                        <SelectItem value="2022">2022</SelectItem>
-                        <SelectItem value="2021">2021</SelectItem>
+                        {availableYearBatch?.years.map((yearOption) => (
+                          <SelectItem key={yearOption} value={yearOption}>
+                            {yearOption}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-
-                {/* Batch Selection */}
+                </div>                {/* Batch Selection */}
                 <div className="space-y-2">
                   <Label htmlFor="batch" className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                     👥 Angkatan
                   </Label>
-                  <Select value={batch} onValueChange={setBatch}>
+                  <Select value={batch} onValueChange={handleBatchChange} disabled={!year || loadingYearBatch}>
                     <SelectTrigger id="batch" className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md">
-                      <SelectValue placeholder="Pilih angkatan..." />
+                      <SelectValue placeholder={
+                        !year ? "Pilih tahun terlebih dahulu..." : 
+                        loadingYearBatch ? "Memuat..." : 
+                        getAvailableBatchesForYear(year).length === 0 ? "Tidak ada angkatan tersedia" :
+                        "Pilih angkatan..."
+                      } />
                     </SelectTrigger>
                     <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
-                      <SelectItem value="I">Angkatan I</SelectItem>
-                      <SelectItem value="II">Angkatan II</SelectItem>
-                      <SelectItem value="III">Angkatan III</SelectItem>
-                      <SelectItem value="IV">Angkatan IV</SelectItem>
-                      <SelectItem value="V">Angkatan V</SelectItem>
+                      {getAvailableBatchesForYear(year).map((batchItem) => (
+                        <SelectItem key={batchItem.batch} value={batchItem.batch}>
+                          {batchItem.description || `Angkatan ${batchItem.batch}`}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
+                  {year && getAvailableBatchesForYear(year).length === 0 && (
+                    <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
+                      ⚠️ Belum ada folder angkatan aktif untuk tahun {year}
+                    </p>
+                  )}
                 </div>
 
                 {/* Description */}

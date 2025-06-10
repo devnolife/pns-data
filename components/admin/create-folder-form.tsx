@@ -121,14 +121,25 @@ export function CreateFolderForm({ onSubmit, onCancel, initialData, isEdit = fal
 
         <div className="space-y-2">
           <Label htmlFor="batch">Batch</Label>
-          <Input
-            id="batch"
-            name="batch"
-            placeholder="Enter batch number"
-            value={formData.batch}
-            onChange={handleInputChange}
-            required
-          />
+          <Select value={formData.batch} onValueChange={(value) => handleSelectChange("batch", value)} required>
+            <SelectTrigger id="batch">
+              <SelectValue placeholder="Select batch" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="I">I</SelectItem>
+              <SelectItem value="II">II</SelectItem>
+              <SelectItem value="III">III</SelectItem>
+              <SelectItem value="IV">IV</SelectItem>
+              <SelectItem value="V">V</SelectItem>
+              <SelectItem value="VI">VI</SelectItem>
+              <SelectItem value="VII">VII</SelectItem>
+              <SelectItem value="VIII">VIII</SelectItem>
+              <SelectItem value="IX">IX</SelectItem>
+              <SelectItem value="X">X</SelectItem>
+              <SelectItem value="XI">XI</SelectItem>
+              <SelectItem value="XII">XII</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 

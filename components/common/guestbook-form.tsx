@@ -12,6 +12,7 @@ import { toast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createGuestbookEntryAction } from "@/lib/actions/guestbook"
+import { usePublicAccess } from "@/hooks/use-public-access"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -39,6 +40,7 @@ interface GuestbookFormProps {
 
 export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const { grantAccess } = usePublicAccess()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,21 +76,9 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
         return
       }
 
-      // Improved session management dengan server validation
+      // Use the centralized access management
       if (typeof window !== 'undefined' && result.sessionToken) {
-        // Set session token with expiry
-        const sessionData = {
-          token: result.sessionToken,
-          timestamp: Date.now(),
-          name: values.name,
-          expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-        }
-
-        localStorage.setItem('guestbookSession', JSON.stringify(sessionData))
-        localStorage.setItem('hasFilledGuestbook', 'true') // Backward compatibility
-
-        // Set session cookie untuk server-side validation
-        document.cookie = `guest_session=${result.sessionToken}; path=/; max-age=${24 * 60 * 60}; SameSite=Lax`
+        grantAccess(result.sessionToken, values.name)
       }
 
       // Call the onSubmitSuccess callback if provided

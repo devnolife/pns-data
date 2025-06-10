@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,6 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useToast } from "@/hooks/use-toast"
 import { Upload, File, X, Loader2, ImageIcon } from "lucide-react"
+import { getAvailableYearBatchCombinationsAction } from "@/lib/actions/report-folders"
+
+interface AvailableYearBatch {
+  yearBatchMap: Record<string, { batch: string; description?: string }[]>
+  years: string[]
+  availableBatches: string[]
+  folders: { year: string; batch: string; description?: string }[]
+}
 
 export function UploadReportForm() {
   const router = useRouter()
@@ -22,7 +30,7 @@ export function UploadReportForm() {
     abstract: "",
     reportType: "",
     participants: "",
-    year: new Date().getFullYear().toString(),
+    year: "",
     batch: "",
   })
   const [coverImage, setCoverImage] = useState<File | null>(null)
@@ -31,6 +39,47 @@ export function UploadReportForm() {
   const [draggingReport, setDraggingReport] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState("")
+  const [availableYearBatch, setAvailableYearBatch] = useState<AvailableYearBatch | null>(null)
+  const [loadingYearBatch, setLoadingYearBatch] = useState(true)
+  // Load available year/batch combinations
+  useEffect(() => {
+    const loadAvailableYearBatch = async () => {
+      try {
+        setLoadingYearBatch(true)
+        const result = await getAvailableYearBatchCombinationsAction()
+        if (result.success && result.data) {
+          setAvailableYearBatch(result.data)
+        } else {
+          setError(result.error || 'Gagal memuat data folder laporan')
+        }
+      } catch (error) {
+        console.error('Error loading available year/batch:', error)
+        setError('Gagal memuat data folder laporan')
+      } finally {
+        setLoadingYearBatch(false)
+      }
+    }
+
+    loadAvailableYearBatch()
+  }, [])
+
+  // Get available batches for selected year
+  const getAvailableBatchesForYear = (selectedYear: string) => {
+    if (!availableYearBatch || !selectedYear) return []
+    return availableYearBatch.yearBatchMap[selectedYear] || []
+  }
+
+  // Handle year change and reset batch
+  const handleYearChange = (selectedYear: string) => {
+    setFormData(prev => ({ ...prev, year: selectedYear, batch: "" }))
+    setError("") // Clear any previous errors
+  }
+
+  // Handle batch change
+  const handleBatchChange = (selectedBatch: string) => {
+    setFormData(prev => ({ ...prev, batch: selectedBatch }))
+    setError("") // Clear any previous errors
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -151,15 +200,18 @@ export function UploadReportForm() {
     if (!formData.reportType) {
       setError("Please select a report type")
       return
-    }
-
-    if (!formData.participants) {
+    }    if (!formData.participants) {
       setError("Please select participants")
       return
     }
 
+    if (!formData.year) {
+      setError("Please select a year")
+      return
+    }
+
     if (!formData.batch) {
-      setError("Please enter a batch number")
+      setError("Please select a batch")
       return
     }
 
@@ -195,12 +247,9 @@ export function UploadReportForm() {
       setCoverImage(null)
       setReportFile(null)
 
-      // Redirect to dashboard
-      router.push("/dashboard/user")
+      // Redirect to dashboard      router.push("/dashboard/user")
     }, 2000)
   }
-
-  const years = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() - i).toString())
 
   return (
     <Card>
@@ -210,11 +259,27 @@ export function UploadReportForm() {
           <CardDescription>
             Fill in the details and upload your report. It will be verified by an administrator before being published.
           </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        </CardHeader>        <CardContent className="space-y-6">
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          {loadingYearBatch && (
+            <Alert>
+              <AlertDescription className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Memuat data folder laporan...
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {!loadingYearBatch && availableYearBatch && availableYearBatch.folders.length === 0 && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                ⚠️ Belum ada folder laporan yang tersedia. Silakan hubungi administrator untuk mengaktifkan folder tahun dan angkatan.
+              </AlertDescription>
             </Alert>
           )}
 
@@ -261,16 +326,14 @@ export function UploadReportForm() {
                   <SelectItem value="LATSAR">LATSAR CPNS</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
+            </div>            <div className="space-y-2">
               <Label htmlFor="year">Year</Label>
-              <Select value={formData.year} onValueChange={(value) => handleSelectChange("year", value)}>
+              <Select value={formData.year} onValueChange={handleYearChange} disabled={loadingYearBatch}>
                 <SelectTrigger id="year">
-                  <SelectValue placeholder="Select year" />
+                  <SelectValue placeholder={loadingYearBatch ? "Loading..." : "Select year"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {years.map((year) => (
+                  {availableYearBatch?.years.map((year) => (
                     <SelectItem key={year} value={year}>
                       {year}
                     </SelectItem>
@@ -281,13 +344,28 @@ export function UploadReportForm() {
 
             <div className="space-y-2">
               <Label htmlFor="batch">Batch</Label>
-              <Input
-                id="batch"
-                name="batch"
-                placeholder="Enter batch number"
-                value={formData.batch}
-                onChange={handleInputChange}
-              />
+              <Select value={formData.batch} onValueChange={handleBatchChange} disabled={!formData.year || loadingYearBatch}>
+                <SelectTrigger id="batch">
+                  <SelectValue placeholder={
+                    !formData.year ? "Select year first..." : 
+                    loadingYearBatch ? "Loading..." : 
+                    getAvailableBatchesForYear(formData.year).length === 0 ? "No batches available" :
+                    "Select batch"
+                  } />
+                </SelectTrigger>
+                <SelectContent>
+                  {getAvailableBatchesForYear(formData.year).map((batchItem) => (
+                    <SelectItem key={batchItem.batch} value={batchItem.batch}>
+                      {batchItem.description || `Batch ${batchItem.batch}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formData.year && getAvailableBatchesForYear(formData.year).length === 0 && (
+                <p className="text-sm text-amber-600 bg-amber-50 px-3 py-2 rounded-lg">
+                  ⚠️ No active batch folders available for year {formData.year}
+                </p>
+              )}
             </div>
           </div>
 
