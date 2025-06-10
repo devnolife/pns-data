@@ -25,7 +25,16 @@ import {
   Users,
   CheckCircle,
   XCircle,
-  BarChart3
+  BarChart3,
+  Sparkles,
+  Star,
+  Zap,
+  Rocket,
+  Filter,
+  Plus,
+  Settings,
+  TrendingUp,
+  Activity
 } from "lucide-react"
 import Link from "next/link"
 import {
@@ -76,9 +85,9 @@ export default function ReportFoldersPage() {
 
   const { toast } = useToast()
 
-  // Generate year options (current year and previous 10 years)
+  // Generate year options (current year and next 2 years, plus previous 8 years)
   const currentYear = new Date().getFullYear()
-  const yearOptions = Array.from({ length: 11 }, (_, i) => (currentYear - i).toString())
+  const yearOptions = Array.from({ length: 11 }, (_, i) => (currentYear + 2 - i).toString())
 
   // Batch options
   const batchOptions = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
@@ -90,7 +99,7 @@ export default function ReportFoldersPage() {
         setFolders(result.data as any)
       } else {
         toast({
-          title: "Error",
+          title: "❌ Waduh!",
           description: result.error,
           variant: "destructive"
         })
@@ -98,7 +107,7 @@ export default function ReportFoldersPage() {
     } catch (error) {
       console.error("Error loading folders:", error)
       toast({
-        title: "Error",
+        title: "❌ Ada yang salah nih",
         description: "Gagal memuat data folder",
         variant: "destructive"
       })
@@ -128,8 +137,8 @@ export default function ReportFoldersPage() {
   const handleCreateFolder = async () => {
     if (!createFormData.reportType || !createFormData.year || !createFormData.batch) {
       toast({
-        title: "Error",
-        description: "Mohon lengkapi semua field yang wajib diisi",
+        title: "⚠️ Tunggu dulu!",
+        description: "Mohon lengkapi semua field yang wajib diisi ya bestie! 💫",
         variant: "destructive"
       })
       return
@@ -141,8 +150,9 @@ export default function ReportFoldersPage() {
 
       if (result.success) {
         toast({
-          title: "✅ Berhasil",
-          description: result.message
+          title: "🎉 Yeay! Berhasil!",
+          description: `${result.message} ✨`,
+          duration: 4000
         })
         setIsCreateDialogOpen(false)
         setCreateFormData({
@@ -155,7 +165,7 @@ export default function ReportFoldersPage() {
         await loadStats()
       } else {
         toast({
-          title: "Error",
+          title: "😅 Waduh!",
           description: result.error,
           variant: "destructive"
         })
@@ -163,8 +173,8 @@ export default function ReportFoldersPage() {
     } catch (error) {
       console.error("Create folder error:", error)
       toast({
-        title: "Error",
-        description: "Gagal membuat folder",
+        title: "💥 Error!",
+        description: "Gagal membuat folder, coba lagi ya!",
         variant: "destructive"
       })
     } finally {
@@ -185,8 +195,9 @@ export default function ReportFoldersPage() {
 
       if (result.success) {
         toast({
-          title: "✅ Berhasil",
-          description: result.message
+          title: "🔥 Berhasil diupdate!",
+          description: `${result.message} 🚀`,
+          duration: 4000
         })
         setIsEditDialogOpen(false)
         setSelectedFolder(null)
@@ -194,7 +205,7 @@ export default function ReportFoldersPage() {
         await loadStats()
       } else {
         toast({
-          title: "Error",
+          title: "😬 Hmm...",
           description: result.error,
           variant: "destructive"
         })
@@ -202,7 +213,7 @@ export default function ReportFoldersPage() {
     } catch (error) {
       console.error("Edit folder error:", error)
       toast({
-        title: "Error",
+        title: "💔 Error!",
         description: "Gagal memperbarui folder",
         variant: "destructive"
       })
@@ -212,7 +223,7 @@ export default function ReportFoldersPage() {
   }
 
   const handleDeleteFolder = async (folder: ReportFolderData) => {
-    if (!confirm(`Apakah Anda yakin ingin menghapus folder ${folder.year} - Angkatan ${folder.batch}?`)) {
+    if (!confirm(`🗑️ Yakin mau hapus folder ${folder.year} - Angkatan ${folder.batch}? Aksi ini gak bisa dibatalin lho bestie! 💀`)) {
       return
     }
 
@@ -222,14 +233,15 @@ export default function ReportFoldersPage() {
 
       if (result.success) {
         toast({
-          title: "✅ Berhasil",
-          description: result.message
+          title: "🗑️ Berhasil dihapus!",
+          description: `${result.message} 👋`,
+          duration: 4000
         })
         await loadFolders()
         await loadStats()
       } else {
         toast({
-          title: "Error",
+          title: "😵 Gagal!",
           description: result.error,
           variant: "destructive"
         })
@@ -237,7 +249,7 @@ export default function ReportFoldersPage() {
     } catch (error) {
       console.error("Delete folder error:", error)
       toast({
-        title: "Error",
+        title: "💥 Error!",
         description: "Gagal menghapus folder",
         variant: "destructive"
       })
@@ -263,417 +275,470 @@ export default function ReportFoldersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-6">
+        {/* Floating decorative elements */}
+        <div className="fixed top-20 left-10 h-20 w-20 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full animate-pulse blur-xl" />
+        <div className="fixed top-40 right-20 h-16 w-16 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full animate-pulse blur-xl" />
+        <div className="fixed bottom-40 left-20 h-24 w-24 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-full animate-pulse blur-xl" />
+
         <div className="flex items-center justify-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin" />
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-purple-500" />
+            <p className="text-gray-600 font-medium">Memuat folder keren... ✨</p>
+          </div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 p-6">
+      {/* Floating decorative elements */}
+      <div className="fixed top-20 left-10 h-20 w-20 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full animate-pulse blur-xl" />
+      <div className="fixed top-40 right-20 h-16 w-16 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full animate-pulse blur-xl" />
+      <div className="fixed bottom-40 left-20 h-24 w-24 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-full animate-pulse blur-xl" />
+
       {/* Header */}
-      <div className="mb-8 rounded-3xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-8 text-white shadow-2xl">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Kelola Folder Laporan 📁</h1>
-            <p className="mt-2 text-white/90">Atur folder laporan berdasarkan jenis, tahun, dan angkatan</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="rounded-full bg-white/20 p-4 backdrop-blur-sm">
-              <FolderPlus className="h-8 w-8 animate-bounce" />
-            </div>
-          </div>
+      <div className="mb-8 text-center">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-md rounded-full mb-4 shadow-lg border border-white/20">
+          <Archive className="h-4 w-4 text-purple-500 animate-pulse" />
+          <span className="text-purple-700 font-semibold text-sm">Pengelola Folder</span>
+          <Zap className="h-4 w-4 text-pink-500 animate-bounce" />
         </div>
+        <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+          Folder Laporan ✨
+        </h1>
+        <p className="text-gray-600 max-w-xl mx-auto">
+          Kelola folder laporan dengan gaya! Buat, edit, dan atur dengan mudah 🚀
+        </p>
       </div>
 
-      {/* Statistics Cards */}
-      {stats && (
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-0 shadow-lg shadow-blue-100/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Total Folder</p>
-                  <p className="text-2xl font-bold">{stats.totalFolders}</p>
-                </div>
-                <div className="rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 p-3">
-                  <Archive className="h-6 w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg shadow-green-100/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Folder Aktif</p>
-                  <p className="text-2xl font-bold">{stats.activeFolders}</p>
-                </div>
-                <div className="rounded-full bg-gradient-to-r from-green-500 to-emerald-500 p-3">
-                  <CheckCircle className="h-6 w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg shadow-orange-100/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Folder Nonaktif</p>
-                  <p className="text-2xl font-bold">{stats.inactiveFolders}</p>
-                </div>
-                <div className="rounded-full bg-gradient-to-r from-orange-500 to-red-500 p-3">
-                  <XCircle className="h-6 w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-0 shadow-lg shadow-purple-100/50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Tahun Terbaru</p>
-                  <p className="text-2xl font-bold">
-                    {stats.foldersByYear.length > 0 ? stats.foldersByYear[0].year : "-"}
-                  </p>
-                </div>
-                <div className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 p-3">
-                  <Calendar className="h-6 w-6 text-white" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Quick Actions */}
-      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="border-l-4 border-l-blue-500 bg-blue-50/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-blue-900">Buat Folder Baru</h3>
-                <p className="text-sm text-blue-700">Halaman khusus untuk membuat folder</p>
-              </div>
-              <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700">
-                <Link href="/dashboard/admin/folders/new">
-                  <FolderPlus className="h-4 w-4 mr-2" />
-                  Buat
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-orange-500 bg-orange-50/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-orange-900">Kelola Folder Lama</h3>
-                <p className="text-sm text-orange-700">Hapus folder yang sudah tidak terpakai</p>
-              </div>
-              <Button asChild size="sm" variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-50">
-                <Link href="/dashboard/admin/folders/manage">
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Kelola
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-l-4 border-l-purple-500 bg-purple-50/50">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-purple-900">Statistik Pengunjung</h3>
-                <p className="text-sm text-purple-700">Lihat analitik dan laporan</p>
-              </div>
-              <Button asChild size="sm" variant="outline" className="border-purple-300 text-purple-700 hover:bg-purple-50">
-                <Link href="/dashboard/admin/number-of-visitors">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Lihat
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Controls */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Cari berdasarkan tahun, angkatan, atau deskripsi..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-80 rounded-full pl-10"
-            />
-          </div>
-        </div>
-
-        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600">
-              <FolderPlus className="mr-2 h-4 w-4" />
-              Buat Folder Baru
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>✨ Buat Folder Laporan Baru</DialogTitle>
-              <DialogDescription>
-                Buat folder untuk mengorganisir laporan berdasarkan jenis, tahun, dan angkatan
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="reportType">Jenis Laporan *</Label>
-                <Select value={createFormData.reportType} onValueChange={(value) => setCreateFormData({ ...createFormData, reportType: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih jenis laporan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PKN">🏛️ PKN (Pelatihan Kepemimpinan Nasional)</SelectItem>
-                    <SelectItem value="PKP">🔍 PKP (Pelatihan Kepemimpinan Pengawas)</SelectItem>
-                    <SelectItem value="PKA">👔 PKA (Pelatihan Kepemimpinan Administrator)</SelectItem>
-                    <SelectItem value="LATSAR">🎓 Latsar CPNS</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="year">Tahun *</Label>
-                  <Select value={createFormData.year} onValueChange={(value) => setCreateFormData({ ...createFormData, year: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih tahun" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {yearOptions.map((year) => (
-                        <SelectItem key={year} value={year}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="batch">Angkatan *</Label>
-                  <Select value={createFormData.batch} onValueChange={(value) => setCreateFormData({ ...createFormData, batch: value })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pilih angkatan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {batchOptions.map((batch) => (
-                        <SelectItem key={batch} value={batch}>
-                          Angkatan {batch}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Deskripsi</Label>
-                <Textarea
-                  placeholder="Deskripsi folder (opsional)"
-                  value={createFormData.description}
-                  onChange={(e) => setCreateFormData({ ...createFormData, description: e.target.value })}
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setIsCreateDialogOpen(false)}
-                  className="flex-1"
-                >
-                  Batal
-                </Button>
-                <Button
-                  onClick={handleCreateFolder}
-                  disabled={formLoading}
-                  className="flex-1"
-                >
-                  {formLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Membuat...
-                    </>
-                  ) : (
-                    "Buat Folder"
-                  )}
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Folders Grid */}
-      {filteredFolders.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredFolders.map((folder) => (
-            <Card key={folder.id} className="group cursor-pointer border-0 shadow-lg transition-all hover:scale-105 hover:shadow-xl">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Stats Cards */}
+        {stats && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
               <CardContent className="p-6">
-                <div className="space-y-4">
-                  {/* Header */}
-                  <div className="flex items-start justify-between">
-                    <div className="rounded-2xl bg-gradient-to-r from-blue-500 to-purple-500 p-3 text-white shadow-lg">
-                      <Archive className="h-6 w-6" />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Badge variant={folder.is_active ? "default" : "secondary"} className="rounded-full">
-                        {folder.is_active ? "Aktif" : "Nonaktif"}
-                      </Badge>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 rounded-full p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                          >
-                            <MoreVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40">
-                          <DropdownMenuItem onClick={() => openEditDialog(folder)}>
-                            <Edit2 className="mr-2 h-4 w-4" />
-                            Edit
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => handleDeleteFolder(folder)}
-                            className="text-destructive focus:text-destructive"
-                            disabled={deleteLoading}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Hapus
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl text-white">
+                    <Archive className="h-6 w-6" />
                   </div>
-
-                  {/* Content */}
                   <div>
-                    <h3 className="text-lg font-semibold leading-tight">
-                      {folder.year} - Angkatan {folder.batch}
-                    </h3>
-                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
-                      {folder.description || `Folder laporan tahun ${folder.year} angkatan ${folder.batch}`}
-                    </p>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="space-y-2 text-xs text-muted-foreground">
-                    <div className="flex items-center justify-between">
-                      <span>Dibuat: {new Date(folder.created_at).toLocaleDateString('id-ID')}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-3 w-3" />
-                      <span className="truncate">{folder.creator.name || folder.creator.username}</span>
-                    </div>
+                    <p className="text-2xl font-bold text-gray-800">{stats.totalFolders}</p>
+                    <p className="text-sm text-gray-600">Total Folder</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      ) : (
-        <Card className="border-0 shadow-lg">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="rounded-full bg-muted p-6">
-              <FolderOpen className="h-12 w-12 text-muted-foreground" />
+
+            <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl text-white">
+                    <CheckCircle className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-800">{stats.activeFolders}</p>
+                    <p className="text-sm text-gray-600">Folder Aktif</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl text-white">
+                    <XCircle className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-800">{stats.inactiveFolders}</p>
+                    <p className="text-sm text-gray-600">Folder Nonaktif</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden hover:scale-105 transition-all duration-300">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white">
+                    <TrendingUp className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold text-gray-800">{stats.foldersByYear.length}</p>
+                    <p className="text-sm text-gray-600">Tahun Aktif</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Controls */}
+        <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                  <Search className="h-6 w-6" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl font-bold mb-1">Cari & Buat 🔍</CardTitle>
+                  <CardDescription className="text-indigo-100">
+                    Temukan folder atau buat yang baru! ✨
+                  </CardDescription>
+                </div>
+              </div>
+              <div className="flex gap-1">
+                <Star className="h-5 w-5 text-yellow-300 animate-pulse" />
+                <Sparkles className="h-5 w-5 text-pink-300 animate-bounce" />
+              </div>
             </div>
-            <h3 className="mt-4 text-lg font-semibold">Tidak ada folder ditemukan</h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {searchQuery ? "Coba sesuaikan kata kunci pencarian Anda" : "Buat folder pertama Anda untuk memulai!"}
-            </p>
-            {!searchQuery && (
-              <Button
-                onClick={() => setIsCreateDialogOpen(true)}
-                className="mt-4 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600"
-              >
-                <FolderPlus className="mr-2 h-4 w-4" />
-                Buat Folder
-              </Button>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Cari folder berdasarkan tahun, angkatan, atau deskripsi..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300"
+                />
+              </div>
+              <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Buat Folder ✨
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl w-full bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl fixed top-8 left-1/4 translate-x-0 translate-y-0">
+                  <DialogHeader className="text-center pb-4">
+                    <div className="mx-auto w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
+                      <FolderPlus className="h-6 w-6 text-white" />
+                    </div>
+                    <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      Buat Folder Baru 🚀
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-600">
+                      Yuk buat folder laporan yang keren! ✨
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="space-y-8 py-6">
+                    <div className="space-y-3">
+                      <Label htmlFor="reportType" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                        📋 Jenis Laporan Pelatihan
+                      </Label>
+                      <Select value={createFormData.reportType} onValueChange={(value) => setCreateFormData({ ...createFormData, reportType: value })}>
+                        <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
+                          <SelectValue placeholder="Pilih jenis laporan pelatihan..." />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
+                          <SelectItem value="PKN" className="text-base py-3">🎯 PKN (Pelatihan Kepemimpinan Nasional)</SelectItem>
+                          <SelectItem value="PKP" className="text-base py-3">👁️ PKP (Pengawas)</SelectItem>
+                          <SelectItem value="PKA" className="text-base py-3">⚙️ PKA (Administrator)</SelectItem>
+                          <SelectItem value="LATSAR" className="text-base py-3">🎓 Latsar CPNS</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-3">
+                        <Label htmlFor="year" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                          📅 Tahun Pelatihan
+                        </Label>
+                        <Select value={createFormData.year} onValueChange={(value) => setCreateFormData({ ...createFormData, year: value })}>
+                          <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
+                            <SelectValue placeholder="Pilih tahun pelatihan..." />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
+                            {yearOptions.map((year) => (
+                              <SelectItem key={year} value={year} className="text-base py-3">
+                                📅 Tahun {year}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="batch" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                          👥 Angkatan Pelatihan
+                        </Label>
+                        <Select value={createFormData.batch} onValueChange={(value) => setCreateFormData({ ...createFormData, batch: value })}>
+                          <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
+                            <SelectValue placeholder="Pilih angkatan pelatihan..." />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
+                            {batchOptions.map((batch) => (
+                              <SelectItem key={batch} value={batch} className="text-base py-3">
+                                👥 Angkatan {batch}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <Label htmlFor="description" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                        💭 Deskripsi Folder (Opsional)
+                      </Label>
+                      <Textarea
+                        placeholder="Tambahkan deskripsi keren untuk folder pelatihan ini... Misalnya: 'Folder khusus untuk laporan PKN batch terbaru dengan tema kepemimpinan digital' ✨"
+                        value={createFormData.description}
+                        onChange={(e) => setCreateFormData({ ...createFormData, description: e.target.value })}
+                        rows={4}
+                        className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300 resize-none text-base"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 pt-6">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsCreateDialogOpen(false)}
+                      className="flex-1 bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
+                      disabled={formLoading}
+                    >
+                      Batal 😔
+                    </Button>
+                    <Button
+                      onClick={handleCreateFolder}
+                      disabled={formLoading}
+                      className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
+                    >
+                      {formLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Membuat Folder...
+                        </>
+                      ) : (
+                        <>
+                          <Rocket className="mr-2 h-5 w-5" />
+                          Buat Folder Keren! 🚀
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Folders List */}
+        <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+          <CardHeader className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white p-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                <FolderOpen className="h-6 w-6" />
+              </div>
+              <div className="flex-1">
+                <CardTitle className="text-xl font-bold mb-1">Daftar Folder 📁</CardTitle>
+                <CardDescription className="text-emerald-100">
+                  {filteredFolders.length} folder ditemukan dari total {folders.length} folder 🎯
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {filteredFolders.length === 0 ? (
+              <div className="p-8 text-center">
+                <Archive className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">Tidak ada folder ditemukan</h3>
+                <p className="text-gray-600 mb-4">
+                  {searchQuery
+                    ? "Tidak ada folder yang sesuai dengan pencarian Anda"
+                    : "Belum ada folder yang dibuat"
+                  }
+                </p>
+                <Button
+                  onClick={() => setIsCreateDialogOpen(true)}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl px-6 py-2"
+                >
+                  Buat Folder Pertama 🚀
+                </Button>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-200/50">
+                {filteredFolders.map((folder) => (
+                  <div key={folder.id} className="p-6 hover:bg-white/30 transition-all duration-200">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className={`p-3 rounded-xl text-white ${folder.is_active
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                          : 'bg-gradient-to-r from-gray-400 to-gray-500'
+                          }`}>
+                          <Archive className="h-6 w-6" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="font-semibold text-gray-800 text-lg">
+                              {folder.year} - Angkatan {folder.batch}
+                            </h3>
+                            <Badge
+                              variant={folder.is_active ? "default" : "secondary"}
+                              className={`text-xs ${folder.is_active
+                                ? 'bg-green-100 text-green-800 border-green-200'
+                                : 'bg-gray-100 text-gray-600 border-gray-200'
+                                }`}
+                            >
+                              {folder.is_active ? '✅ Aktif' : '❌ Nonaktif'}
+                            </Badge>
+                          </div>
+                          {folder.description && (
+                            <p className="text-gray-600 text-sm mb-2">{folder.description}</p>
+                          )}
+                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              Dibuat: {new Date(folder.created_at).toLocaleDateString('id-ID')}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Users className="h-3 w-3" />
+                              Oleh: {folder.creator.name || folder.creator.username}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-9 w-9 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200"
+                            >
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
+                            <DropdownMenuItem onClick={() => openEditDialog(folder)}>
+                              <Edit2 className="mr-2 h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteFolder(folder)}
+                              className="text-red-600 focus:text-red-600"
+                              disabled={deleteLoading}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Hapus
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
-      )}
 
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>✏️ Edit Folder</DialogTitle>
-            <DialogDescription>
-              Edit deskripsi dan status folder {selectedFolder?.year} - Angkatan {selectedFolder?.batch}
-            </DialogDescription>
-          </DialogHeader>
+        {/* Edit Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogContent className="max-w-2xl w-full bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl  translate-x-0 translate-y-0">
+            <DialogHeader className="text-center pb-4">
+              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4">
+                <Settings className="h-6 w-6 text-white" />
+              </div>
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                Edit Folder 🔧
+              </DialogTitle>
+              <DialogDescription className="text-gray-600">
+                Perbarui pengaturan dan deskripsi folder ✨
+              </DialogDescription>
+            </DialogHeader>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="edit-description">Deskripsi</Label>
-              <Textarea
-                id="edit-description"
-                placeholder="Deskripsi folder"
-                value={editFormData.description}
-                onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                rows={3}
-              />
-            </div>
+            {selectedFolder && (
+              <div className="space-y-8 py-6">
+                <div className="p-6 bg-gray-50/70 backdrop-blur-sm rounded-xl border border-gray-200/50">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    📁 Informasi Folder
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-3 bg-white/50 rounded-lg">
+                      <p className="text-sm text-gray-500 mb-1">Tahun Pelatihan</p>
+                      <p className="text-base font-semibold text-gray-800">📅 {selectedFolder.year}</p>
+                    </div>
+                    <div className="p-3 bg-white/50 rounded-lg">
+                      <p className="text-sm text-gray-500 mb-1">Angkatan</p>
+                      <p className="text-base font-semibold text-gray-800">👥 Angkatan {selectedFolder.batch}</p>
+                    </div>
+                  </div>
+                </div>
 
-            <div className="flex items-center justify-between">
-              <Label htmlFor="edit-active">Status Aktif</Label>
-              <Switch
-                id="edit-active"
-                checked={editFormData.is_active}
-                onCheckedChange={(checked) => setEditFormData({ ...editFormData, is_active: checked })}
-              />
-            </div>
+                <div className="space-y-3">
+                  <Label htmlFor="edit-description" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                    💭 Deskripsi Folder
+                  </Label>
+                  <Textarea
+                    id="edit-description"
+                    placeholder="Perbarui deskripsi folder pelatihan... Tambahkan detail yang menarik! ✨"
+                    value={editFormData.description}
+                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                    rows={4}
+                    className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300 resize-none text-base"
+                  />
+                </div>
 
-            <div className="flex gap-2 pt-4">
+                <div className="flex items-center justify-between p-6 bg-gray-50/70 backdrop-blur-sm rounded-xl border border-gray-200/50">
+                  <div className="flex-1">
+                    <Label htmlFor="edit-active" className="text-base font-semibold text-gray-800 flex items-center gap-2 mb-2">
+                      ⚡ Status Folder
+                    </Label>
+                    <p className="text-sm text-gray-600">
+                      {editFormData.is_active ? '✅ Folder aktif dan dapat digunakan untuk upload laporan' : '❌ Folder nonaktif dan tersembunyi dari user'}
+                    </p>
+                  </div>
+                  <div className="ml-4">
+                    <Switch
+                      id="edit-active"
+                      checked={editFormData.is_active}
+                      onCheckedChange={(checked) => setEditFormData({ ...editFormData, is_active: checked })}
+                      className="scale-125"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-4 pt-6">
               <Button
-                type="button"
                 variant="outline"
                 onClick={() => setIsEditDialogOpen(false)}
-                className="flex-1"
+                className="flex-1 bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
+                disabled={formLoading}
               >
-                Batal
+                Batal 😔
               </Button>
               <Button
                 onClick={handleEditFolder}
                 disabled={formLoading}
-                className="flex-1"
+                className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-0 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
               >
                 {formLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Menyimpan...
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Memperbarui Folder...
                   </>
                 ) : (
-                  "Simpan"
+                  <>
+                    <Activity className="mr-2 h-5 w-5" />
+                    Perbarui Folder! 🔥
+                  </>
                 )}
               </Button>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   )
 }

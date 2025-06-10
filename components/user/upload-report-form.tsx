@@ -48,7 +48,16 @@ export function UploadReportForm() {
         setLoadingYearBatch(true)
         const result = await getAvailableYearBatchCombinationsAction()
         if (result.success && result.data) {
-          setAvailableYearBatch(result.data)
+          // Transform the data to match the AvailableYearBatch interface
+          const transformedData = {
+            ...result.data,
+            folders: result.data.folders.map(folder => ({
+              year: folder.year,
+              batch: folder.batch,
+              description: folder.description || undefined
+            }))
+          }
+          setAvailableYearBatch(transformedData)
         } else {
           setError(result.error || 'Gagal memuat data folder laporan')
         }

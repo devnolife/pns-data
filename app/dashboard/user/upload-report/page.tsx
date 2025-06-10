@@ -28,7 +28,7 @@ interface AvailableYearBatch {
   yearBatchMap: Record<string, { batch: string; description?: string }[]>
   years: string[]
   availableBatches: string[]
-  folders: { year: string; batch: string; description?: string }[]
+  folders: { year: string; batch: string; description: string | null }[]
 }
 
 export default function UploadReportPage() {
@@ -60,7 +60,7 @@ export default function UploadReportPage() {
       try {
         setLoadingYearBatch(true)
         const result = await getAvailableYearBatchCombinationsAction()
-        if (result.success) {
+        if (result.success && result.data) {
           setAvailableYearBatch(result.data)
         } else {
           setError(result.error || 'Gagal memuat data folder laporan')
@@ -94,7 +94,16 @@ export default function UploadReportPage() {
   // Get available batches for selected year
   const getAvailableBatchesForYear = (selectedYear: string) => {
     if (!availableYearBatch || !selectedYear) return []
-    return availableYearBatch.yearBatchMap[selectedYear] || []
+
+    // Transform folders data to match the expected format
+    const batchesForYear = availableYearBatch.folders
+      .filter(folder => folder.year === selectedYear)
+      .map(folder => ({
+        batch: folder.batch,
+        description: folder.description || null
+      }))
+
+    return batchesForYear
   }
 
   if (!isAuthenticated) {
@@ -335,7 +344,7 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
         year,
         batch,
         fileIds,
-        coverImageUrl
+        coverImageUrl: coverImageUrl || undefined
       })
 
       if (!result.success) {
@@ -533,16 +542,16 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                   <Select value={batch} onValueChange={handleBatchChange} disabled={!year || loadingYearBatch}>
                     <SelectTrigger id="batch" className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md">
                       <SelectValue placeholder={
-                        !year ? "Pilih tahun terlebih dahulu..." : 
-                        loadingYearBatch ? "Memuat..." : 
-                        getAvailableBatchesForYear(year).length === 0 ? "Tidak ada angkatan tersedia" :
-                        "Pilih angkatan..."
+                        !year ? "Pilih tahun terlebih dahulu..." :
+                          loadingYearBatch ? "Memuat..." :
+                            getAvailableBatchesForYear(year).length === 0 ? "Tidak ada angkatan tersedia" :
+                              "Pilih angkatan..."
                       } />
                     </SelectTrigger>
                     <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
                       {getAvailableBatchesForYear(year).map((batchItem) => (
                         <SelectItem key={batchItem.batch} value={batchItem.batch}>
-                          {batchItem.description || `Angkatan ${batchItem.batch}`}
+                          {batchItem.description ? `${batchItem.description} (Angkatan ${batchItem.batch})` : `Angkatan ${batchItem.batch}`}
                         </SelectItem>
                       ))}
                     </SelectContent>

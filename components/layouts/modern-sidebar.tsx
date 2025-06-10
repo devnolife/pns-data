@@ -186,7 +186,7 @@ export function ModernSidebar() {
     {
       icon: FolderPlus,
       label: "Kelola Folder",
-      href: "/dashboard/admin/manage-folders",
+      href: "/dashboard/admin/report-folders",
     },
     {
       icon: Users,

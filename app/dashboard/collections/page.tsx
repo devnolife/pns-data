@@ -1,305 +1,372 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/context/auth-context"
-import DashboardLayout from "@/components/layouts/dashboard-layout"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { FileText, Download, Eye, Search, Filter } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Search,
+  FileText,
+  Calendar,
+  User,
+  ArrowLeft,
+  BookOpen,
+  GraduationCap,
+  Users,
+  Eye,
+  Shield,
+  Clock,
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  Filter,
+  X
+} from 'lucide-react'
+import { format } from 'date-fns'
+import { id } from 'date-fns/locale'
+import { useAuth } from '@/hooks/use-auth'
+import { useCollectionSearch } from '@/hooks/use-collection-search'
+import { HighlightText } from '@/components/common/highlight-text'
+import { ModernLoadingState } from '@/components/common/loading-state'
+import { ModernErrorState } from '@/components/common/error-state'
+import { PDFPreview } from '@/components/common/pdf-preview'
 
-type Collection = {
+// Types
+interface ReportData {
   id: string
   title: string
-  category: string
-  type: string
-  date: string
-  size: string
-  downloads: number
+  description: string | null
+  content: string
+  cover_image_url?: string | null
+  status: string
+  category: string | null
+  priority: string
+  author_id: string
+  created_at: Date
+  updated_at: Date
+  author: {
+    name: string | null
+    username: string
+    training?: string | null
+    angkatan?: string | null
+  }
+}
+
+interface CollectionData {
+  id: string
+  title: string
+  description: string | null
+  content: string
+  image_url?: string | null
+  category: string | null
+  tags: string | null
+  is_public: boolean
+  author_id: string
+  created_at: Date
+  updated_at: Date
+  author: {
+    name: string | null
+    username: string
+  }
 }
 
 export default function CollectionsPage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, isAuthenticated, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [filteredCollections, setFilteredCollections] = useState<Collection[]>([])
-  const [categoryFilter, setCategoryFilter] = useState("all")
+  const [selectedDocument, setSelectedDocument] = useState<ReportData | CollectionData | null>(null)
+  const [documentViewerOpen, setDocumentViewerOpen] = useState(false)
 
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.push("/login")
-    }
-  }, [isAuthenticated, loading, router])
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    updateFilters,
+    resetFilters,
+    results,
+    loading: searchLoading,
+    error: searchError
+  } = useCollectionSearch()
 
-  useEffect(() => {
-    // Mock API call to fetch collections
-    const fetchCollections = async () => {
-      try {
-        // In a real app, this would be a fetch call to your API
-        const mockCollections: Collection[] = [
-          {
-            id: "1",
-            title: "CPNS Training Guidelines 2024",
-            category: "CPNS",
-            type: "PDF",
-            date: "2024-05-10",
-            size: "2.4 MB",
-            downloads: 156,
-          },
-          {
-            id: "2",
-            title: "PKP Module 3: Leadership Principles",
-            category: "PKP",
-            type: "PDF",
-            date: "2024-04-22",
-            size: "5.1 MB",
-            downloads: 89,
-          },
-          {
-            id: "3",
-            title: "PKA Presentation Templates",
-            category: "PKA",
-            type: "PPTX",
-            date: "2024-03-15",
-            size: "3.7 MB",
-            downloads: 124,
-          },
-          {
-            id: "4",
-            title: "PKN Research Methodology",
-            category: "PKN",
-            type: "PDF",
-            date: "2024-05-05",
-            size: "4.2 MB",
-            downloads: 67,
-          },
-          {
-            id: "5",
-            title: "CPNS Latsar Final Project Guidelines",
-            category: "CPNS",
-            type: "DOCX",
-            date: "2024-04-30",
-            size: "1.8 MB",
-            downloads: 112,
-          },
-          {
-            id: "6",
-            title: "PKP Assessment Criteria",
-            category: "PKP",
-            type: "PDF",
-            date: "2024-05-12",
-            size: "2.9 MB",
-            downloads: 45,
-          },
-          {
-            id: "7",
-            title: "PKA Workshop Materials",
-            category: "PKA",
-            type: "ZIP",
-            date: "2024-04-18",
-            size: "15.3 MB",
-            downloads: 78,
-          },
-          {
-            id: "8",
-            title: "PKN Data Analysis Templates",
-            category: "PKN",
-            type: "XLSX",
-            date: "2024-05-08",
-            size: "3.2 MB",
-            downloads: 56,
-          },
-        ]
+  // Redirect if not authenticated
+  if (!authLoading && !isAuthenticated) {
+    router.push("/login")
+    return null
+  }
 
-        setCollections(mockCollections)
-        setFilteredCollections(mockCollections)
-      } catch (error) {
-        console.error("Error fetching collections:", error)
-      }
-    }
+  const handleDocumentView = (document: ReportData | CollectionData) => {
+    setSelectedDocument(document)
+    setDocumentViewerOpen(true)
+  }
 
-    fetchCollections()
-  }, [])
+  const loading = authLoading || searchLoading
 
-  useEffect(() => {
-    // Filter collections based on search term and category
-    let filtered = collections
+  if (loading) {
+    return <ModernLoadingState message="Loading collections..." />
+  }
 
-    if (categoryFilter !== "all") {
-      filtered = filtered.filter((collection) => collection.category === categoryFilter)
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter((collection) => collection.title.toLowerCase().includes(searchTerm.toLowerCase()))
-    }
-
-    setFilteredCollections(filtered)
-  }, [searchTerm, categoryFilter, collections])
-
-  if (loading || !isAuthenticated) {
+  if (searchError) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
+      <ModernErrorState
+        message={searchError}
+        onRetry={() => {
+          // Retry search
+          updateFilters({ ...filters })
+        }}
+      />
     )
   }
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case "CPNS":
-        return "bg-blue-100 text-blue-800"
-      case "PKP":
-        return "bg-green-100 text-green-800"
-      case "PKA":
-        return "bg-purple-100 text-purple-800"
-      case "PKN":
-        return "bg-orange-100 text-orange-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getFileTypeIcon = (type: string) => {
-    return <FileText className="h-5 w-5" />
-  }
-
   return (
-    <DashboardLayout>
-      <div className="p-6">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Digital Collections</h1>
-          <p className="text-gray-600 mt-1">Browse and access all available digital collections</p>
-        </div>
+    <div className="container mx-auto py-8 space-y-8">
+      {/* Header */}
+      <div className="flex flex-col gap-4">
+        <h1 className="text-3xl font-bold">Digital Collections</h1>
+        <p className="text-muted-foreground">
+          Browse and search through our digital collection of reports and documents
+        </p>
+      </div>
 
-        <div className="mb-6 flex flex-col md:flex-row gap-4">
+      {/* Search and Filters */}
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search collections..."
-              className="pl-10"
+              placeholder="Search by title, type, year, or batch..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
             />
           </div>
-          <div className="flex gap-2">
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="CPNS">CPNS</SelectItem>
-                <SelectItem value="PKP">PKP</SelectItem>
-                <SelectItem value="PKA">PKA</SelectItem>
-                <SelectItem value="PKN">PKN</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Button
+            variant="outline"
+            onClick={resetFilters}
+            className="flex items-center gap-2"
+          >
+            <X className="h-4 w-4" />
+            Reset
+          </Button>
         </div>
 
-        <Tabs defaultValue="grid" className="space-y-6">
-          <div className="flex justify-between items-center">
-            <TabsList>
-              <TabsTrigger value="grid">Grid View</TabsTrigger>
-              <TabsTrigger value="list">List View</TabsTrigger>
-            </TabsList>
-            <div className="text-sm text-gray-500">
-              Showing {filteredCollections.length} of {collections.length} collections
-            </div>
-          </div>
+        <div className="flex flex-wrap gap-4">
+          <Select
+            value={filters.type}
+            onValueChange={(value) => updateFilters({ type: value as any })}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Document Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Documents</SelectItem>
+              <SelectItem value="reports">Reports Only</SelectItem>
+              <SelectItem value="collections">Collections Only</SelectItem>
+            </SelectContent>
+          </Select>
 
-          <TabsContent value="grid" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCollections.map((collection) => (
-                <Card key={collection.id} className="overflow-hidden">
-                  <CardHeader className="pb-2">
-                    <div className="flex justify-between items-start">
-                      <Badge className={getCategoryColor(collection.category)}>{collection.category}</Badge>
-                      <Badge variant="outline">{collection.type}</Badge>
-                    </div>
-                    <CardTitle className="mt-2 text-lg">{collection.title}</CardTitle>
-                    <CardDescription>Added on {new Date(collection.date).toLocaleDateString()}</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pb-2">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <span>Size: {collection.size}</span>
-                      <span className="mx-2">•</span>
-                      <span>Downloads: {collection.downloads}</span>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Eye className="h-4 w-4 mr-2" />
-                      View
-                    </Button>
-                    <Button size="sm" className="flex-1">
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
-                    </Button>
-                  </CardFooter>
-                </Card>
+          <Select
+            value={filters.category || ''}
+            onValueChange={(value) => updateFilters({ category: value })}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Categories</SelectItem>
+              <SelectItem value="PKN">PKN</SelectItem>
+              <SelectItem value="PKP">PKP</SelectItem>
+              <SelectItem value="PKA">PKA</SelectItem>
+              <SelectItem value="LATSAR">LATSAR CPNS</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.year || ''}
+            onValueChange={(value) => updateFilters({ year: value })}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Years</SelectItem>
+              {Array.from({ length: 5 }, (_, i) => {
+                const year = new Date().getFullYear() - i
+                return (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                )
+              })}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={filters.batch || ''}
+            onValueChange={(value) => updateFilters({ batch: value })}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Batch" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="">All Batches</SelectItem>
+              {Array.from({ length: 12 }, (_, i) => (
+                <SelectItem key={i + 1} value={(i + 1).toString()}>
+                  Batch {i + 1}
+                </SelectItem>
               ))}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="list">
-            <Card>
-              <CardContent className="p-0">
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-4">Title</th>
-                        <th className="text-left p-4">Category</th>
-                        <th className="text-left p-4">Type</th>
-                        <th className="text-left p-4">Date</th>
-                        <th className="text-left p-4">Size</th>
-                        <th className="text-left p-4">Downloads</th>
-                        <th className="text-right p-4">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredCollections.map((collection) => (
-                        <tr key={collection.id} className="border-b hover:bg-gray-50">
-                          <td className="p-4">
-                            <div className="flex items-center">
-                              {getFileTypeIcon(collection.type)}
-                              <span className="ml-2 font-medium">{collection.title}</span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <Badge className={getCategoryColor(collection.category)}>{collection.category}</Badge>
-                          </td>
-                          <td className="p-4">{collection.type}</td>
-                          <td className="p-4">{new Date(collection.date).toLocaleDateString()}</td>
-                          <td className="p-4">{collection.size}</td>
-                          <td className="p-4">{collection.downloads}</td>
-                          <td className="p-4 text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button variant="ghost" size="icon">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="icon">
-                                <Download className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-    </DashboardLayout>
+
+      {/* Results */}
+      <div className="space-y-6">
+        {results ? (
+          <>
+            {/* Reports Section */}
+            {results.reports.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Reports</h2>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {results.reports.map((report) => (
+                    <Card
+                      key={report.id}
+                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      onClick={() => handleDocumentView(report)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-medium">
+                              <HighlightText
+                                text={report.title}
+                                highlight={searchTerm}
+                              />
+                            </h3>
+                            {report.description && (
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                <HighlightText
+                                  text={report.description}
+                                  highlight={searchTerm}
+                                />
+                              </p>
+                            )}
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge variant="outline">{report.category}</Badge>
+                              <Badge variant="secondary">
+                                {format(new Date(report.created_at), 'yyyy', { locale: id })}
+                              </Badge>
+                              <Badge variant="secondary">
+                                Batch {report.batch}
+                              </Badge>
+                            </div>
+                          </div>
+                          <Eye className="h-4 w-4 text-gray-400" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Collections Section */}
+            {results.collections.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Collections</h2>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {results.collections.map((collection) => (
+                    <Card
+                      key={collection.id}
+                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      onClick={() => handleDocumentView(collection)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-medium">
+                              <HighlightText
+                                text={collection.title}
+                                highlight={searchTerm}
+                              />
+                            </h3>
+                            {collection.description && (
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                <HighlightText
+                                  text={collection.description}
+                                  highlight={searchTerm}
+                                />
+                              </p>
+                            )}
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge variant={collection.is_public ? 'default' : 'secondary'}>
+                                {collection.is_public ? 'Public' : 'Private'}
+                              </Badge>
+                              <Badge variant="outline">{collection.category}</Badge>
+                              <span className="text-xs text-gray-500">
+                                {format(new Date(collection.created_at), 'dd MMM yyyy', { locale: id })}
+                              </span>
+                            </div>
+                          </div>
+                          <BookOpen className="h-4 w-4 text-gray-400" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* No Results */}
+            {results.reports.length === 0 && results.collections.length === 0 && (
+              <div className="text-center py-12">
+                <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900">No results found</h3>
+                <p className="text-gray-500 mt-2">
+                  Try adjusting your search or filters to find what you're looking for
+                </p>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900">Start searching</h3>
+            <p className="text-gray-500 mt-2">
+              Use the search bar above to find reports and collections
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Document Viewer Dialog */}
+      <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{selectedDocument?.title}</DialogTitle>
+            <DialogDescription>
+              {selectedDocument?.description}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4">
+            {selectedDocument && (
+              <PDFPreview
+                url={`/api/documents/${selectedDocument.id}/preview`}
+                token={user?.id} // Use user ID as token for authentication
+                onError={(error) => {
+                  console.error('PDF preview error:', error)
+                  // You could show a toast notification here
+                }}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   )
 }
