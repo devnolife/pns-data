@@ -1337,3 +1337,299 @@ export async function getReportPDFFiles(reportId: string, token: string) {
     }
   }
 }
+
+// Get public reports organized hierarchically by category → year → batch (NO AUTH REQUIRED)
+export async function getPublicReportsHierarchicalAction() {
+  try {
+    // Define default categories
+    const defaultCategories = [
+      { key: 'pkn', name: 'PKN (Pelatihan Kepemimpinan Nasional)', description: 'Laporan pelatihan kepemimpinan tingkat nasional yang sudah diverifikasi! 🔥' },
+      { key: 'pka', name: 'PKA (Administrator)', description: 'Laporan pelatihan untuk jabatan administrator yang sudah diverifikasi! 🚀' },
+      { key: 'pkp', name: 'PKP (Pengawas)', description: 'Laporan pelatihan untuk jabatan pengawas yang sudah diverifikasi! ✨' },
+      { key: 'latsar', name: 'Latsar CPNS', description: 'Laporan Pelatihan Dasar CPNS yang sudah diverifikasi! 💫' }
+    ]
+
+    // Get all completed reports from all users (NO AUTH CHECK)
+    const reports = await prisma.reports.findMany({
+      where: {
+        status: 'COMPLETED' // Only verified/completed reports
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        content: true,
+        cover_image_url: true,
+        status: true,
+        category: true,
+        priority: true,
+        author_id: true,
+        created_at: true,
+        updated_at: true,
+        users_reports_author_idTousers: {
+          select: {
+            name: true,
+            username: true,
+            training: true,
+            angkatan: true
+          }
+        },
+        files: {
+          select: {
+            id: true,
+            filename: true,
+            original_name: true,
+            file_size: true,
+            mime_type: true,
+            file_type: true,
+            category: true,
+            year: true,
+            batch: true,
+            created_at: true
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    console.log(`📊 Found ${reports.length} completed public reports for hierarchical view`)
+
+    // Group reports by category → year → angkatan based on FILE data
+    const categorizedReports = reports.reduce((acc, report) => {
+      // Normalize category name to match default categories
+      let categoryKey = 'other'
+      const categoryLower = (report.category || '').toLowerCase()
+
+      if (categoryLower.includes('pkn') || categoryLower.includes('kepemimpinan nasional')) {
+        categoryKey = 'pkn'
+      } else if (categoryLower.includes('pka') || categoryLower.includes('administrator')) {
+        categoryKey = 'pka'
+      } else if (categoryLower.includes('pkp') || categoryLower.includes('pengawas')) {
+        categoryKey = 'pkp'
+      } else if (categoryLower.includes('latsar') || categoryLower.includes('cpns')) {
+        categoryKey = 'latsar'
+      }
+
+      // Use data from file for year and batch, not from user profile
+      const firstFile = report.files[0]
+      const year = firstFile?.year || new Date(report.created_at).getFullYear().toString()
+      const angkatan = firstFile?.batch || report.users_reports_author_idTousers?.angkatan || 'I'
+
+      if (!acc[categoryKey]) {
+        acc[categoryKey] = {}
+      }
+      if (!acc[categoryKey][year]) {
+        acc[categoryKey][year] = {}
+      }
+      if (!acc[categoryKey][year][angkatan]) {
+        acc[categoryKey][year][angkatan] = []
+      }
+
+      acc[categoryKey][year][angkatan].push({
+        id: report.id,
+        title: report.title,
+        description: report.description,
+        content: report.content,
+        cover_image_url: report.cover_image_url,
+        status: report.status,
+        category: report.category,
+        priority: report.priority,
+        author_id: report.author_id,
+        created_at: report.created_at,
+        updated_at: report.updated_at,
+        author: report.users_reports_author_idTousers,
+        files: report.files,
+        isPublicReport: true
+      })
+      return acc
+    }, {} as Record<string, Record<string, Record<string, any[]>>>)
+
+    // Create categories array with default categories always present
+    const categories = defaultCategories.map(defaultCat => {
+      const categoryReports = categorizedReports[defaultCat.key] || {}
+
+      const years = Object.keys(categoryReports).map(year => {
+        const yearReports = categoryReports[year]
+        const angkatanList = Object.keys(yearReports).map(angkatan => ({
+          id: `${defaultCat.key}-${year}-${angkatan}`,
+          angkatan: angkatan,
+          reports: yearReports[angkatan],
+          totalReports: yearReports[angkatan].length
+        })).sort((a, b) => a.angkatan.localeCompare(b.angkatan))
+
+        return {
+          id: `${defaultCat.key}-${year}`,
+          year: year,
+          angkatan: angkatanList,
+          totalReports: Object.values(yearReports).flat().length
+        }
+      }).sort((a, b) => parseInt(b.year) - parseInt(a.year))
+
+      return {
+        id: defaultCat.key,
+        name: defaultCat.name,
+        description: defaultCat.description,
+        years: years,
+        totalReports: Object.values(categoryReports).flat().map(yearData => Object.values(yearData).flat()).flat().length
+      }
+    })
+
+    // Add "Other" category if there are reports that don't match default categories
+    if (categorizedReports.other && Object.keys(categorizedReports.other).length > 0) {
+      const otherReports = categorizedReports.other
+      const otherYears = Object.keys(otherReports).map(year => {
+        const yearReports = otherReports[year]
+        const angkatanList = Object.keys(yearReports).map(angkatan => ({
+          id: `other-${year}-${angkatan}`,
+          angkatan: angkatan,
+          reports: yearReports[angkatan],
+          totalReports: yearReports[angkatan].length
+        })).sort((a, b) => a.angkatan.localeCompare(b.angkatan))
+
+        return {
+          id: `other-${year}`,
+          year: year,
+          angkatan: angkatanList,
+          totalReports: Object.values(yearReports).flat().length
+        }
+      }).sort((a, b) => parseInt(b.year) - parseInt(a.year))
+
+      categories.push({
+        id: 'other',
+        name: 'Lainnya',
+        description: 'Laporan dalam kategori lainnya yang sudah diverifikasi',
+        years: otherYears,
+        totalReports: Object.values(otherReports).flat().map(yearData => Object.values(yearData).flat()).flat().length
+      })
+    }
+
+    return {
+      success: true,
+      data: {
+        categories,
+        totalReports: reports.length,
+        isPublicView: true
+      }
+    }
+  } catch (error) {
+    console.error('Get public reports hierarchical error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil laporan publik'
+    }
+  }
+}
+
+// Get public reports by specific category, year, and batch (NO AUTH REQUIRED)
+export async function getPublicReportsByAngkatanAction(category: string, year: string, angkatan: string) {
+  try {
+    // Build category filter
+    let categoryFilter: any = {}
+    const categoryLower = category.toLowerCase()
+
+    if (categoryLower === 'pkn') {
+      categoryFilter = {
+        OR: [
+          { category: { contains: 'PKN', mode: 'insensitive' } },
+          { category: { contains: 'kepemimpinan nasional', mode: 'insensitive' } }
+        ]
+      }
+    } else if (categoryLower === 'pka') {
+      categoryFilter = {
+        OR: [
+          { category: { contains: 'PKA', mode: 'insensitive' } },
+          { category: { contains: 'administrator', mode: 'insensitive' } }
+        ]
+      }
+    } else if (categoryLower === 'pkp') {
+      categoryFilter = {
+        OR: [
+          { category: { contains: 'PKP', mode: 'insensitive' } },
+          { category: { contains: 'pengawas', mode: 'insensitive' } }
+        ]
+      }
+    } else if (categoryLower === 'latsar') {
+      categoryFilter = {
+        OR: [
+          { category: { contains: 'LATSAR', mode: 'insensitive' } },
+          { category: { contains: 'CPNS', mode: 'insensitive' } }
+        ]
+      }
+    }
+
+    // Get reports based on file data, not user profile (NO AUTH CHECK)
+    const reports = await prisma.reports.findMany({
+      where: {
+        status: 'COMPLETED', // Only verified reports
+        ...categoryFilter,
+        files: {
+          some: {
+            year: year,
+            batch: angkatan
+          }
+        }
+      },
+      include: {
+        users_reports_author_idTousers: {
+          select: {
+            name: true,
+            username: true,
+            training: true,
+            angkatan: true
+          }
+        },
+        files: {
+          select: {
+            id: true,
+            filename: true,
+            original_name: true,
+            file_size: true,
+            mime_type: true,
+            category: true,
+            year: true,
+            batch: true,
+            created_at: true
+          }
+        }
+      },
+      orderBy: { created_at: 'desc' }
+    })
+
+    console.log(`📊 Found ${reports.length} public reports for ${category}/${year}/${angkatan}`)
+
+    const formattedReports = reports.map(report => ({
+      id: report.id,
+      title: report.title,
+      description: report.description,
+      content: report.content,
+      cover_image_url: report.cover_image_url,
+      status: report.status,
+      category: report.category,
+      priority: report.priority,
+      author_id: report.author_id,
+      created_at: report.created_at,
+      updated_at: report.updated_at,
+      author: report.users_reports_author_idTousers,
+      files: report.files,
+      isPublicReport: true
+    }))
+
+    return {
+      success: true,
+      data: {
+        reports: formattedReports,
+        category,
+        year,
+        angkatan,
+        totalReports: formattedReports.length,
+        isPublicView: true
+      }
+    }
+  } catch (error) {
+    console.error('Get public reports by angkatan error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil laporan publik'
+    }
+  }
+}

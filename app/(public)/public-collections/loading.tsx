@@ -9,13 +9,18 @@ export default function Loading() {
         <div className="h-5 w-96 mx-auto bg-gradient-to-r from-gray-200 to-gray-300 rounded-full animate-pulse" />
       </div>
 
-      {/* Floating breadcrumb skeleton */}
+      {/* Breadcrumb skeleton */}
       <div className="mb-8">
-        <div className="flex items-center justify-center space-x-3">
-          <div className="h-8 w-24 bg-white/60 backdrop-blur-sm rounded-full animate-pulse shadow-lg" />
-          <div className="text-purple-400 animate-bounce">✨</div>
+        <div className="flex items-center space-x-2">
+          <div className="h-8 w-20 bg-white/60 backdrop-blur-sm rounded-full animate-pulse shadow-lg" />
+          <div className="h-4 w-4 bg-purple-200 rounded animate-pulse" />
           <div className="h-8 w-32 bg-white/60 backdrop-blur-sm rounded-full animate-pulse shadow-lg" />
         </div>
+      </div>
+
+      {/* Back button skeleton */}
+      <div className="mb-6">
+        <div className="h-10 w-24 bg-white/70 backdrop-blur-md rounded-xl animate-pulse shadow-lg" />
       </div>
 
       {/* Modern search skeleton */}
@@ -49,7 +54,7 @@ export default function Loading() {
                   <div className="h-4 w-4 bg-purple-200 rounded-lg animate-pulse" />
                   <div className="h-4 w-20 bg-gray-200 rounded-full animate-pulse" />
                 </div>
-                <div className="h-6 w-10 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full animate-pulse" />
+                <div className="h-6 w-16 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full animate-pulse" />
               </div>
             </CardContent>
 
