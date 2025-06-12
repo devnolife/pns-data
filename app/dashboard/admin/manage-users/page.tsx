@@ -882,7 +882,7 @@ export default function ManageUsersPage() {
 
         {/* User Statistics Dialog */}
         <Dialog open={statsDialogOpen} onOpenChange={setStatsDialogOpen}>
-          <DialogContent className="max-w-4xl">
+          <DialogContent className="max-w-4xl top-10 left-96">
             <DialogHeader>
               <DialogTitle>Statistik Pengguna</DialogTitle>
               <DialogDescription>

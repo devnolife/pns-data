@@ -51,13 +51,6 @@ export function UserLayout({ children }: UserLayoutProps) {
             <div className="h-8 w-px bg-gradient-to-b from-transparent via-blue-300/50 to-transparent mx-2"></div>
 
             <div className="ml-auto flex items-center gap-3">
-              {/* Notifications with blue theme */}
-              <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl hover:bg-blue-50/80 transition-all duration-200">
-                <Bell className="h-5 w-5 text-blue-600" />
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 text-[10px] font-bold text-white shadow-lg animate-pulse">
-                  2
-                </span>
-              </Button>
 
               {/* Decorative separator */}
               <div className="h-8 w-px bg-gradient-to-b from-transparent via-blue-300/50 to-transparent"></div>

@@ -463,7 +463,7 @@ export default function VerifyReportsPage() {
 
         {selectedReport && (
           <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto fixed top-4 left-1 transform-none w-[95vw] sm:w-full">
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto fixed top-4 left-1 transform-none w-[95vw] sm:w-full top-10 left-96">
               <DialogHeader>
                 <DialogTitle>{selectedReport.title}</DialogTitle>
                 <DialogDescription>

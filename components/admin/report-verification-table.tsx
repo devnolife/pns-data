@@ -255,7 +255,7 @@ export function ReportVerificationTable({ reports: initialReports, onVerify, onR
 
       {selectedReport && (
         <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-          <DialogContent className="max-w-3xl">
+          <DialogContent className="max-w-3xl top-10 left-96">
             <DialogHeader>
               <DialogTitle>{selectedReport.title}</DialogTitle>
               <DialogDescription>

@@ -51,15 +51,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             <div className="h-8 w-px bg-gradient-to-b from-transparent via-border to-transparent mx-2"></div>
 
             <div className="ml-auto flex items-center gap-3">
-              {/* Notifications with enhanced styling */}
-              <Button variant="ghost" size="icon" className="relative h-10 w-10 rounded-xl hover:bg-accent/50 transition-all duration-200">
-                <Bell className="h-5 w-5" />
-                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground shadow-sm animate-pulse">
-                  3
-                </span>
-              </Button>
-
-              {/* Vertical separator */}
               <div className="h-8 w-px bg-gradient-to-b from-transparent via-border to-transparent"></div>
 
               {/* User Navigation */}

@@ -643,7 +643,7 @@ export default function ReportFoldersPage() {
 
         {/* Edit Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="max-w-2xl w-full bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl  translate-x-0 translate-y-0">
+          <DialogContent className="max-w-2xl w-full bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl  translate-x-0 translate-y-0 top-10 left-96">
             <DialogHeader className="text-center pb-4">
               <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4">
                 <Settings className="h-6 w-6 text-white" />

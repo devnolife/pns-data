@@ -641,7 +641,7 @@ export default function PublicCollectionsPage() {
       {/* Report Detail Dialog */}
       {selectedReport && (
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white/90 backdrop-blur-md border-0 rounded-3xl">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white/90 backdrop-blur-md border-0 rounded-3xl top-10 left-96">
             <DialogHeader>
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">

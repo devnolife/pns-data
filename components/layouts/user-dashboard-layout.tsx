@@ -212,11 +212,6 @@ export default function UserDashboardLayout({ children }: UserDashboardLayoutPro
               </div>
 
               <div className="ml-auto flex items-center gap-3">
-                <Button variant="ghost" size="icon" className="relative rounded-xl hover:bg-blue-50/80 transition-all duration-200">
-                  <Bell className="h-5 w-5 text-blue-600" />
-                  <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
-                  <span className="sr-only">Notifikasi</span>
-                </Button>
 
                 {/* Vertical separator */}
                 <div className="h-8 w-px bg-gradient-to-b from-transparent via-blue-300/50 to-transparent"></div>

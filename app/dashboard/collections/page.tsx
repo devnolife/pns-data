@@ -346,7 +346,7 @@ export default function CollectionsPage() {
 
       {/* Document Viewer Dialog */}
       <Dialog open={documentViewerOpen} onOpenChange={setDocumentViewerOpen}>
-        <DialogContent className="max-w-4xl">
+        <DialogContent className="max-w-4xl top-10 left-96">
           <DialogHeader>
             <DialogTitle>{selectedDocument?.title}</DialogTitle>
             <DialogDescription>
