@@ -5,6 +5,13 @@ import { useRouter } from "next/navigation"
 import { GuestbookForm } from "@/components/common/guestbook-form"
 import { getGuestbookEntriesAction } from "@/lib/actions/guestbook"
 import { LoadingState } from "@/components/common/loading-state"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import {
+  Users,
+  Sparkles
+} from "lucide-react"
+import { motion } from "framer-motion"
 
 interface GuestbookEntry {
   id: string
@@ -49,16 +56,16 @@ export default function GuestbookPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
       {/* Header Section */}
-      <div className="bg-primary">
+      <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white">
         <div className="container mx-auto py-16 px-4 md:px-6">
-          <div className="text-center text-white">
+          <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Buku Tamu Digital
+              Buku Tamu Digital ✨
             </h1>
             <p className="text-lg opacity-90 max-w-2xl mx-auto">
-              Bagikan pemikiran dan tinggalkan jejak Anda di sini.
+              Bagikan pengalaman Anda dan tinggalkan jejak kunjungan
             </p>
           </div>
         </div>
@@ -68,23 +75,27 @@ export default function GuestbookPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Form Section */}
           <div className="order-2 lg:order-1">
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="bg-primary p-6">
-                <h2 className="text-2xl font-bold text-white">
+            <Card className="bg-white/90 backdrop-blur-md border-0 shadow-2xl rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6">
+                <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                  <Sparkles className="h-6 w-6" />
                   Isi Buku Tamu
-                </h2>
-                <p className="text-primary-foreground/80 mt-2">Ceritakan pengalaman Anda bersama kami.</p>
-              </div>
-              <div className="p-6">
+                </CardTitle>
+                <CardDescription className="text-purple-100">
+                  Ceritakan pengalaman Anda dan dapatkan akses koleksi digital
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
                 <GuestbookForm onSubmitSuccess={handleSubmitSuccess} />
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Entries Section */}
           <div className="order-1 lg:order-2">
             <div className="sticky top-8">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <Users className="h-6 w-6 text-purple-600" />
                 Pengunjung Terbaru
               </h2>
 
@@ -93,48 +104,54 @@ export default function GuestbookPage() {
               ) : (
                 <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
                   {recentEntries.length === 0 ? (
-                    <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                      <p className="text-gray-600 font-medium">Belum ada entri</p>
-                      <p className="text-sm text-gray-500 mt-1">Jadilah yang pertama berbagi cerita</p>
-                    </div>
+                    <Card className="text-center py-12 bg-white/70 backdrop-blur-md border-0 shadow-lg">
+                      <CardContent className="p-8">
+                        <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-600 font-medium">Belum ada entri</p>
+                        <p className="text-sm text-gray-500 mt-1">Jadilah yang pertama berbagi cerita</p>
+                      </CardContent>
+                    </Card>
                   ) : (
                     recentEntries.map((entry) => (
-                      <div
+                      <motion.div
                         key={entry.id}
-                        className="bg-white rounded-lg p-5 border border-gray-200 shadow-sm hover:shadow transition-all duration-300"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
                       >
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                {entry.name.charAt(0).toUpperCase()}
+                        <Card className="bg-white/90 backdrop-blur-md border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+                          <CardContent className="p-5">
+                            <div className="space-y-3">
+                              <div className="flex items-start justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                    {entry.name.charAt(0).toUpperCase()}
+                                  </div>
+                                  <div>
+                                    <h3 className="font-semibold text-gray-800">
+                                      {entry.name}
+                                    </h3>
+                                    {entry.email && (
+                                      <p className="text-xs text-gray-500">{entry.email}</p>
+                                    )}
+                                  </div>
+                                </div>
+                                <Badge variant="outline" className="text-xs">
+                                  {new Date(entry.createdAt).toLocaleDateString("id-ID", {
+                                    day: 'numeric',
+                                    month: 'short'
+                                  })}
+                                </Badge>
                               </div>
-                              <div>
-                                <h3 className="font-semibold text-gray-800">
-                                  {entry.name}
-                                </h3>
-                                {entry.email && (
-                                  <p className="text-xs text-gray-500">{entry.email}</p>
-                                )}
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <span className="inline-flex items-center text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                                {new Date(entry.createdAt).toLocaleDateString("id-ID", {
-                                  day: 'numeric',
-                                  month: 'short'
-                                })}
-                              </span>
-                            </div>
-                          </div>
 
-                          <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-primary">
-                            <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
-                              {entry.message}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                              <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 border-l-4 border-purple-500">
+                                <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+                                  {entry.message}
+                                </p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
                     ))
                   )}
                 </div>

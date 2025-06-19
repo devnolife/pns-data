@@ -457,7 +457,7 @@ export default function MyFilesPage() {
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => window.open(file.downloadUrl, '_blank')}
+                          onClick={() => router.push(`/dashboard/user/my-files/${file.id}`)}
                           className="h-9 w-9 rounded-xl hover:bg-green-50 hover:text-green-600 transition-all duration-200"
                           title="Lihat file"
                         >

@@ -8,9 +8,10 @@ import { Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Logo } from "@/components/common/logo"
+import { usePublicAccess } from "@/hooks/use-public-access"
 import { cn } from "@/lib/utils"
 
-const navItems = [
+const baseNavItems = [
   {
     title: "Beranda",
     href: "/",
@@ -26,19 +27,23 @@ const navItems = [
 export function Header() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  const [navItemsState, setNavItemsState] = useState(navItems)
+  const [navItemsState, setNavItemsState] = useState(baseNavItems)
+
+  // Use proper token validation
+  const { hasAccess, isLoading: accessLoading, sessionToken } = usePublicAccess()
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('guestbookSession')) {
-      setNavItemsState([...navItems, {
+    // Only show "Koleksi Digital" if user has valid access
+    if (hasAccess && sessionToken) {
+      setNavItemsState([...baseNavItems, {
         title: "Koleksi Digital",
         href: "/public-collections",
         icon: "📚"
       }])
     } else {
-      setNavItemsState(navItems)
+      setNavItemsState(baseNavItems)
     }
-  }, [])
+  }, [hasAccess, sessionToken])
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-purple-200/50 shadow-lg">
@@ -95,6 +100,14 @@ export function Header() {
               >
                 <span className="text-lg">{item.icon}</span>
                 <span>{item.title}</span>
+                {/* Show loading indicator for Koleksi Digital if still validating */}
+                {item.href === "/public-collections" && accessLoading && (
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse ml-1" />
+                )}
+                {/* Show access indicator for Koleksi Digital */}
+                {item.href === "/public-collections" && hasAccess && !accessLoading && (
+                  <div className="w-2 h-2 bg-green-400 rounded-full ml-1" />
+                )}
               </Link>
             ))}
           </nav>
@@ -162,6 +175,13 @@ export function Header() {
                   >
                     <span className="text-xl">{item.icon}</span>
                     <span>{item.title}</span>
+                    {/* Show access indicator for Koleksi Digital in mobile */}
+                    {item.href === "/public-collections" && hasAccess && !accessLoading && (
+                      <div className="w-2 h-2 bg-green-400 rounded-full ml-auto" />
+                    )}
+                    {item.href === "/public-collections" && accessLoading && (
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse ml-auto" />
+                    )}
                   </Link>
                 ))}
                 <div className="mt-6 flex flex-col gap-3">

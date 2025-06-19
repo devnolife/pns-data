@@ -602,6 +602,66 @@ export async function deleteUploadedFileAction(fileId: string) {
   }
 }
 
+// Get uploaded file by ID for the current user
+export async function getUserUploadedFileByIdAction(fileId: string) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return {
+        success: false,
+        error: 'Anda harus login terlebih dahulu'
+      }
+    }
+
+    const file = await prisma.uploaded_files.findFirst({
+      where: {
+        id: fileId,
+        author_id: currentUser.id
+      },
+      include: {
+        reports: {
+          select: {
+            id: true,
+            title: true,
+            status: true
+          }
+        }
+      }
+    })
+
+    if (!file) {
+      return {
+        success: false,
+        error: 'File tidak ditemukan atau Anda tidak memiliki akses'
+      }
+    }
+
+    return {
+      success: true,
+      data: {
+        id: file.id,
+        filename: file.filename,
+        original_name: file.original_name,
+        file_path: file.file_path,
+        file_size: file.file_size,
+        mime_type: file.mime_type,
+        category: file.category,
+        year: file.year,
+        batch: file.batch,
+        created_at: file.created_at,
+        downloadUrl: `/${file.file_path}`,
+        report: file.reports
+      }
+    }
+  } catch (error) {
+    console.error('Get uploaded file by ID error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Gagal mengambil file'
+    }
+  }
+}
+
 // Get file statistics for user
 export async function getUserFileStatsAction() {
   try {
@@ -1631,5 +1691,128 @@ export async function getPublicReportsByAngkatanAction(category: string, year: s
       success: false,
       error: error instanceof Error ? error.message : 'Gagal mengambil laporan publik'
     }
+  }
+}
+
+// New function to get report details for secure viewing
+export async function getSecureReportDetailsAction(reportId: string) {
+  try {
+    const currentUser = await getCurrentUser()
+    if (!currentUser) {
+      return { success: false, error: 'Unauthorized' }
+    }
+
+    const report = await prisma.reports.findFirst({
+      where: {
+        id: reportId,
+        status: 'COMPLETED',
+      },
+      include: {
+        users_reports_author_idTousers: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            training: true,
+            angkatan: true,
+          }
+        },
+        files: {
+          orderBy: { created_at: 'desc' }
+        }
+      }
+    })
+
+    if (!report) {
+      return { success: false, error: 'Report not found or not verified' }
+    }
+
+    const formattedReport = {
+      id: report.id,
+      title: report.title,
+      description: report.description,
+      content: report.content,
+      category: report.category,
+      created_at: report.created_at,
+      author: {
+        name: report.users_reports_author_idTousers?.name || null,
+        username: report.users_reports_author_idTousers?.username || 'unknown',
+        training: report.users_reports_author_idTousers?.training || null,
+        angkatan: report.users_reports_author_idTousers?.angkatan || null,
+      },
+      files: report.files.map(file => ({
+        id: file.id,
+        filename: file.filename,
+        original_name: file.original_name,
+        file_path: file.file_path,
+        file_size: file.file_size,
+        mime_type: file.mime_type,
+        created_at: file.created_at,
+      })),
+    }
+
+    return { success: true, data: formattedReport }
+  } catch (error) {
+    console.error('Error fetching secure report details:', error)
+    return { success: false, error: 'Failed to fetch report details' }
+  }
+}
+
+export async function getPublicReportByIdAction(reportId: string) {
+  try {
+    const report = await prisma.reports.findFirst({
+      where: {
+        id: reportId,
+        status: 'COMPLETED',
+      },
+      include: {
+        users_reports_author_idTousers: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            training: true,
+            angkatan: true,
+          }
+        },
+        files: {
+          orderBy: { created_at: 'desc' }
+        }
+      }
+    })
+
+    if (!report) {
+      return { success: false, error: 'Report not found or not verified' }
+    }
+
+    const formattedReport = {
+      id: report.id,
+      title: report.title,
+      description: report.description,
+      content: report.content,
+      category: report.category,
+      cover_image_url: report.cover_image_url,
+      created_at: report.created_at,
+      author: {
+        name: report.users_reports_author_idTousers?.name || null,
+        username: report.users_reports_author_idTousers?.username || 'unknown',
+        training: report.users_reports_author_idTousers?.training || null,
+        angkatan: report.users_reports_author_idTousers?.angkatan || null,
+      },
+      files: report.files.map(file => ({
+        id: file.id,
+        filename: file.filename,
+        original_name: file.original_name,
+        file_path: file.file_path,
+        file_size: file.file_size,
+        mime_type: file.mime_type,
+        created_at: file.created_at,
+      })),
+    }
+
+    return { success: true, data: formattedReport }
+  } catch (error) {
+    console.error('Error fetching public report by ID:', error)
+    return { success: false, error: 'Failed to fetch report details' }
   }
 }

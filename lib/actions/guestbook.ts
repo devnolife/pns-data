@@ -196,7 +196,7 @@ export async function validatePublicAccessAction(sessionToken?: string) {
       return { hasAccess: false, reason: 'Invalid session token format' }
     }
 
-    // Extract timestamp dari session token untuk validasi expiry (24 jam)
+    // Extract timestamp dari session token untuk validasi expiry (3 jam)
     const parts = sessionToken.split('_')
     if (parts.length !== 3) {
       return { hasAccess: false, reason: 'Malformed session token' }
@@ -207,10 +207,10 @@ export async function validatePublicAccessAction(sessionToken?: string) {
       return { hasAccess: false, reason: 'Invalid timestamp in session token' }
     }
 
-    // Check if session is expired (24 hours)
+    // Check if session is expired (3 hours)
     const now = Date.now()
     const sessionAge = now - timestamp
-    const maxAge = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+    const maxAge = 3 * 60 * 60 * 1000 // 3 hours in milliseconds
 
     if (sessionAge > maxAge) {
       return { hasAccess: false, reason: 'Session expired. Please fill guestbook again.' }

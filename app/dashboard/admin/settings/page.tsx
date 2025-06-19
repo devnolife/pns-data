@@ -380,8 +380,8 @@ export default function SettingsPage() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="1">1 hour</SelectItem>
+                            <SelectItem value="3">3 hours</SelectItem>
                             <SelectItem value="8">8 hours</SelectItem>
-                            <SelectItem value="24">24 hours</SelectItem>
                             <SelectItem value="168">1 week</SelectItem>
                           </SelectContent>
                         </Select>

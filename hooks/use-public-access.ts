@@ -101,14 +101,14 @@ export function usePublicAccess() {
       token: sessionToken,
       timestamp: Date.now(),
       name: userName,
-      expires: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+      expires: Date.now() + (3 * 60 * 60 * 1000) // 3 hours
     }
 
     localStorage.setItem('guestbookSession', JSON.stringify(sessionData))
     localStorage.setItem('hasFilledGuestbook', 'true') // Backward compatibility
 
     // Set session cookie
-    document.cookie = `guest_session=${sessionToken}; path=/; max-age=${24 * 60 * 60}; SameSite=Lax`
+    document.cookie = `guest_session=${sessionToken}; path=/; max-age=${3 * 60 * 60}; SameSite=Lax`
 
     // Update state
     setState(prev => ({
@@ -116,7 +116,7 @@ export function usePublicAccess() {
       hasAccess: true,
       sessionToken,
       error: null,
-      expiresIn: 24 // 24 hours
+      expiresIn: 3 // 3 hours
     }))
   }
 

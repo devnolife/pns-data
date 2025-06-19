@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import {
   FolderOpen,
   FileText,
@@ -15,20 +14,13 @@ import {
   Calendar,
   Users,
   BookOpen,
-  Eye,
-  Sparkles,
-  Star,
-  Zap,
-  Download,
   User,
-  AlertCircle,
-  Clock,
   ChevronRight,
   Home,
   Folder
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { generatePDFViewToken, getPublicReportsHierarchicalAction, getPublicReportsByAngkatanAction } from "@/lib/actions/reports"
+import { getPublicReportsHierarchicalAction, getPublicReportsByAngkatanAction } from "@/lib/actions/reports"
 import { usePublicAccess } from "@/hooks/use-public-access"
 import { ModernLoadingState } from "@/components/common/loading-state"
 import { ModernErrorState } from "@/components/common/error-state"
@@ -39,9 +31,10 @@ interface ReportItem {
   title: string
   description: string | null
   cover_image_url: string | null
+  category?: string | null
   created_at: Date
   author?: {
-    name: string
+    name: string | null
     username: string
   }
   files?: any[]
@@ -71,17 +64,9 @@ interface CategoryData {
 
 type ViewMode = 'categories' | 'years' | 'angkatan' | 'reports'
 
-interface PDFViewerState {
-  reportId: string | null
-  token: string | null
-  expiryTime: number | null
-}
-
 export default function PublicCollectionsPage() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedReport, setSelectedReport] = useState<ReportItem | null>(null)
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   // Navigation state
   const [viewMode, setViewMode] = useState<ViewMode>('categories')
@@ -95,12 +80,6 @@ export default function PublicCollectionsPage() {
   const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [reportsLoading, setReportsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  const [pdfViewer, setPdfViewer] = useState<PDFViewerState>({
-    reportId: null,
-    token: null,
-    expiryTime: null
-  })
 
   // Use centralized access control
   const { hasAccess, isLoading: accessLoading, error: accessError, refresh: refreshAccess } = usePublicAccess()
@@ -139,7 +118,12 @@ export default function PublicCollectionsPage() {
       const result = await getPublicReportsByAngkatanAction(category, year, angkatan)
 
       if (result.success && result.data) {
-        setReports(result.data.reports)
+        // Ensure files are included in the report data
+        const reportsWithFiles = result.data.reports.map(report => ({
+          ...report,
+          files: report.files || [] // Ensure files array exists
+        }))
+        setReports(reportsWithFiles as ReportItem[])
       } else {
         setError(result.error || 'Failed to load reports')
       }
@@ -187,27 +171,8 @@ export default function PublicCollectionsPage() {
   }
 
   const handleReportClick = (report: ReportItem) => {
-    setSelectedReport(report)
-    setDialogOpen(true)
-  }
-
-  const handleViewPDF = async (reportId: string) => {
-    try {
-      const tokenResult = await generatePDFViewToken(reportId)
-      if (tokenResult.success) {
-        setPdfViewer({
-          reportId,
-          token: tokenResult.token!,
-          expiryTime: tokenResult.expiryTime!
-        })
-        window.open(`/pdf-viewer?token=${tokenResult.token}&reportId=${reportId}`, '_blank')
-      } else {
-        setError('Gagal membuat akses PDF')
-      }
-    } catch (error) {
-      console.error('Error generating PDF view token:', error)
-      setError('Gagal mengakses PDF')
-    }
+    // Navigate to detail page instead of opening dialog
+    router.push(`/public-collections/${report.id}`)
   }
 
   // Filter function for search
@@ -457,7 +422,7 @@ export default function PublicCollectionsPage() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {/* Categories View */}
-            {viewMode === 'categories' && currentItems.map((category: CategoryData, index) => (
+            {viewMode === 'categories' && (currentItems as CategoryData[]).map((category, index) => (
               <motion.div
                 key={category.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -499,7 +464,7 @@ export default function PublicCollectionsPage() {
             ))}
 
             {/* Years View */}
-            {viewMode === 'years' && currentItems.map((year: YearData, index) => (
+            {viewMode === 'years' && (currentItems as YearData[]).map((year, index) => (
               <motion.div
                 key={year.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -541,7 +506,7 @@ export default function PublicCollectionsPage() {
             ))}
 
             {/* Angkatan View */}
-            {viewMode === 'angkatan' && currentItems.map((angkatan: AngkatanData, index) => (
+            {viewMode === 'angkatan' && (currentItems as AngkatanData[]).map((angkatan, index) => (
               <motion.div
                 key={angkatan.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -583,7 +548,7 @@ export default function PublicCollectionsPage() {
             ))}
 
             {/* Reports View */}
-            {viewMode === 'reports' && currentItems.map((report: ReportItem, index) => (
+            {viewMode === 'reports' && (currentItems as ReportItem[]).map((report, index) => (
               <motion.div
                 key={report.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -594,15 +559,30 @@ export default function PublicCollectionsPage() {
                   className="group cursor-pointer overflow-hidden bg-white/60 backdrop-blur-md border-0 shadow-xl hover:shadow-2xl transition-all duration-500 rounded-3xl hover:scale-105"
                   onClick={() => handleReportClick(report)}
                 >
-                  {report.cover_image_url && (
-                    <div className="h-48 overflow-hidden">
+                  {/* Enhanced Cover Image with Fallback */}
+                  <div className="h-48 overflow-hidden bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+                    {report.cover_image_url ? (
                       <img
                         src={report.cover_image_url}
                         alt={`Cover of ${report.title}`}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none'
+                          const fallback = e.currentTarget.nextElementSibling as HTMLElement
+                          if (fallback) fallback.classList.remove('hidden')
+                        }}
                       />
+                    ) : null}
+                    <div className={`${report.cover_image_url ? 'hidden' : ''} w-full h-full flex items-center justify-center text-center p-6`}>
+                      <div>
+                        <BookOpen className="h-16 w-16 text-purple-400 mx-auto mb-3" />
+                        <div className="text-sm font-semibold text-purple-700 mb-1">
+                          {report.title.length > 30 ? report.title.substring(0, 30) + '...' : report.title}
+                        </div>
+                        <div className="text-xs text-purple-500">{report.category}</div>
+                      </div>
                     </div>
-                  )}
+                  </div>
                   <CardHeader className="pb-3 p-6">
                     <div className="flex items-start gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-400 via-purple-400 to-pink-400 flex items-center justify-center shadow-lg flex-shrink-0">
@@ -637,93 +617,6 @@ export default function PublicCollectionsPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Report Detail Dialog */}
-      {selectedReport && (
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-white/90 backdrop-blur-md border-0 rounded-3xl top-10 left-96">
-            <DialogHeader>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="p-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500">
-                  <BookOpen className="h-6 w-6 text-white" />
-                </div>
-                <div className="flex-1">
-                  <DialogTitle className="text-xl font-bold text-gray-800 leading-tight">
-                    {selectedReport.title}
-                  </DialogTitle>
-                  <DialogDescription className="text-gray-600 text-sm mt-1">
-                    Dipublikasikan pada {new Date(selectedReport.created_at).toLocaleDateString('id-ID')} ✨
-                  </DialogDescription>
-                </div>
-                <div className="flex gap-1">
-                  <Star className="h-5 w-5 text-yellow-400 animate-pulse" />
-                  <Sparkles className="h-5 w-5 text-pink-400 animate-bounce" />
-                </div>
-              </div>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              {/* Cover Image in Dialog */}
-              {selectedReport.cover_image_url && (
-                <div className="mb-4">
-                  <img
-                    src={selectedReport.cover_image_url}
-                    alt={`Cover of ${selectedReport.title}`}
-                    className="w-full max-h-64 object-cover rounded-xl shadow-lg"
-                  />
-                </div>
-              )}
-
-              <div className="p-4 rounded-xl border bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-                <h3 className="font-bold mb-2 text-base flex items-center gap-2 text-purple-800">
-                  <BookOpen className="h-4 w-4" />
-                  Deskripsi Laporan 📖
-                </h3>
-                <p className="text-gray-700 leading-relaxed text-sm">
-                  {selectedReport.description || 'Deskripsi tidak tersedia untuk laporan ini.'}
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-6 h-6 text-purple-500" />
-                    <div>
-                      <p className="font-bold text-gray-800 text-base">Laporan PDF 📄</p>
-                      <p className="text-xs text-gray-600">
-                        Laporan terverifikasi dan dipublikasikan
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      className="rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                      onClick={() => handleViewPDF(selectedReport.id)}
-                    >
-                      <Eye className="w-3 h-3 mr-1" />
-                      Lihat PDF 🚀
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl border border-blue-200">
-                  <div className="flex items-center justify-center gap-2 mb-1">
-                    <Clock className="h-4 w-4 text-blue-600" />
-                    <p className="text-xs text-blue-800 font-bold">
-                      Akses PDF Terbatas Waktu ⏰
-                    </p>
-                  </div>
-                  <p className="text-xs text-blue-700">
-                    Akses PDF berlaku selama 6 jam. Tidak dapat diunduh atau dicetak. Stay respectful! 😎
-                  </p>
-                </div>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   )
 }

@@ -88,7 +88,7 @@ export function GuestbookForm({ onSubmitSuccess }: GuestbookFormProps) {
 
       toast({
         title: "🎉 Terima kasih telah mengisi buku tamu!",
-        description: "Pesan Anda telah tercatat. Sekarang Anda dapat mengakses koleksi digital selama 24 jam! ⏰",
+        description: "Pesan Anda telah tercatat. Sekarang Anda dapat mengakses koleksi digital selama 3 jam! ⏰",
         duration: 6000,
       })
       form.reset()

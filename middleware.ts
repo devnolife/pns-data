@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { FileProtectionMiddleware } from "./lib/security/file-protection"
 
 // Define the routes that don't require authentication
 const publicRoutes = ["/", "/login", "/register", "/guestbook", "/public-collections"]
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // SECURITY: Enhanced file protection with logging and rate limiting
+  if (pathname.startsWith("/uploads/")) {
+    const protectionResponse = await FileProtectionMiddleware.protectFileAccess(request)
+    if (protectionResponse) {
+      return protectionResponse
+    }
+  }
 
   // Check if the route is public
   const isPublicRoute = publicRoutes.some((route) => pathname === route || pathname.startsWith(`${route}/`))
