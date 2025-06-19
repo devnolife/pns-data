@@ -186,7 +186,6 @@ function generateSecurePDFViewer(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure PDF Viewer - ${filename}</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -311,6 +310,7 @@ function generateSecurePDFViewer(
             align-items: center;
             padding: 20px;
             background: white;
+            min-height: 400px;
         }
         
         #pdf-canvas {
@@ -321,6 +321,7 @@ function generateSecurePDFViewer(
         
         .loading-spinner {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 60px 20px;
@@ -329,6 +330,7 @@ function generateSecurePDFViewer(
         
         .error-message {
             display: none;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 60px 20px;
@@ -360,6 +362,21 @@ function generateSecurePDFViewer(
             z-index: 1000;
             font-size: 24px;
             font-weight: bold;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #3b82f6;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
         @media print {
@@ -414,10 +431,13 @@ function generateSecurePDFViewer(
             
             <div class="canvas-container">
                 <div class="loading-spinner" id="loading">
-                    🔄 Memuat PDF yang aman...
+                    <div class="spinner"></div>
+                    <div>Memuat PDF yang aman...</div>
+                    <small>Harap tunggu beberapa saat</small>
                 </div>
                 <div class="error-message" id="error-message">
-                    ❌ Gagal memuat PDF<br>
+                    <div style="font-size: 48px; margin-bottom: 20px;">❌</div>
+                    <div style="font-size: 18px; margin-bottom: 10px;">Gagal memuat PDF</div>
                     <small>Silakan coba refresh halaman atau hubungi administrator</small>
                 </div>
                 <canvas id="pdf-canvas" style="display: none;"></canvas>
@@ -425,45 +445,48 @@ function generateSecurePDFViewer(
         </div>
     </div>
 
+    <!-- Load PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>
         console.log('🚀 PDF Viewer script starting...');
-        
-        // Security configurations
-        const SECURITY_CONFIG = {
-            disableRightClick: true,
-            disableTextSelection: true,
-            disableKeyboardShortcuts: true,
-            disablePrint: true,
-            disableScreenshot: true,
-            watermarkEnabled: true
-        };
-        
-        // Check if PDF.js is loaded
-        if (typeof pdfjsLib === 'undefined') {
-            console.error('❌ PDF.js library not loaded');
-            showError('PDF.js library gagal dimuat');
-        } else {
-            console.log('✅ PDF.js library loaded successfully');
-            // PDF.js configuration
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
         
         // PDF viewer state
         let pdfDocument = null;
         let currentPage = 1;
         let totalPages = 0;
         let currentZoom = 1.0;
+        
+        // Get DOM elements
         const canvas = document.getElementById('pdf-canvas');
+        const loadingDiv = document.getElementById('loading');
+        const errorDiv = document.getElementById('error-message');
+        const pageInfo = document.getElementById('page-info');
+        const zoomInfo = document.getElementById('zoom-info');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const zoomInBtn = document.getElementById('zoom-in-btn');
+        const zoomOutBtn = document.getElementById('zoom-out-btn');
+        
         const ctx = canvas ? canvas.getContext('2d') : null;
         
         function showError(message) {
             console.error('❌ Error:', message);
-            document.getElementById('loading').style.display = 'none';
-            const errorDiv = document.getElementById('error-message');
+            if (loadingDiv) loadingDiv.style.display = 'none';
             if (errorDiv) {
                 errorDiv.style.display = 'flex';
-                errorDiv.innerHTML = \`❌ \${message}<br><small>Silakan coba refresh halaman atau hubungi administrator</small>\`;
+                const messageDiv = errorDiv.querySelector('div:nth-child(2)');
+                if (messageDiv) messageDiv.textContent = message;
             }
+        }
+        
+        function showLoading() {
+            if (loadingDiv) loadingDiv.style.display = 'flex';
+            if (errorDiv) errorDiv.style.display = 'none';
+            if (canvas) canvas.style.display = 'none';
+        }
+        
+        function hideLoading() {
+            if (loadingDiv) loadingDiv.style.display = 'none';
         }
         
         // Initialize watermark
@@ -488,6 +511,7 @@ function generateSecurePDFViewer(
         function showSecurityBlock(message) {
             const overlay = document.getElementById('disabled-overlay');
             if (overlay) {
+                overlay.textContent = \`⚠️ \${message}\`;
                 overlay.style.display = 'flex';
                 setTimeout(() => {
                     overlay.style.display = 'none';
@@ -496,20 +520,17 @@ function generateSecurePDFViewer(
         }
         
         function initSecurity() {
-            // Disable right-click
             document.addEventListener('contextmenu', (e) => {
                 e.preventDefault();
                 showSecurityBlock('Right-click dinonaktifkan');
                 return false;
             });
             
-            // Disable text selection
             document.addEventListener('selectstart', (e) => {
                 e.preventDefault();
                 return false;
             });
             
-            // Disable keyboard shortcuts
             document.addEventListener('keydown', (e) => {
                 const blockedKeys = [
                     'F12', 'PrintScreen',
@@ -523,13 +544,11 @@ function generateSecurePDFViewer(
                 }
             });
             
-            // Disable drag and drop
             document.addEventListener('dragstart', (e) => {
                 e.preventDefault();
                 return false;
             });
             
-            // Monitor for print attempts
             window.addEventListener('beforeprint', (e) => {
                 e.preventDefault();
                 showSecurityBlock('Print dinonaktifkan');
@@ -546,6 +565,8 @@ function generateSecurePDFViewer(
             
             try {
                 console.log(\`📄 Rendering page \${pageNum} of \${totalPages}\`);
+                showLoading();
+                
                 const page = await pdfDocument.getPage(pageNum);
                 const viewport = page.getViewport({ scale: currentZoom });
                 
@@ -560,34 +581,47 @@ function generateSecurePDFViewer(
                 await page.render(renderContext).promise;
                 
                 // Update UI
-                document.getElementById('page-info').textContent = \`Halaman \${pageNum} dari \${totalPages}\`;
-                document.getElementById('prev-btn').disabled = pageNum <= 1;
-                document.getElementById('next-btn').disabled = pageNum >= totalPages;
+                if (pageInfo) pageInfo.textContent = \`Halaman \${pageNum} dari \${totalPages}\`;
+                if (prevBtn) prevBtn.disabled = pageNum <= 1;
+                if (nextBtn) nextBtn.disabled = pageNum >= totalPages;
                 
                 canvas.style.display = 'block';
-                document.getElementById('loading').style.display = 'none';
+                hideLoading();
                 
                 console.log(\`✅ Page \${pageNum} rendered successfully\`);
                 
             } catch (error) {
                 console.error('❌ Error rendering page:', error);
-                showError(\`Gagal merender halaman \${pageNum}: \${error.message}\`);
+                showError(\`Gagal merender halaman \${pageNum}\`);
             }
         }
         
         // Load PDF
         async function loadPDF() {
-            if (typeof pdfjsLib === 'undefined') {
-                showError('PDF.js library tidak tersedia');
-                return;
-            }
-            
             try {
                 console.log('📥 Loading PDF document...');
+                
+                // Check if PDF.js is loaded
+                if (typeof pdfjsLib === 'undefined') {
+                    throw new Error('PDF.js library tidak dimuat');
+                }
+                
+                // Configure PDF.js worker
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+                
                 const pdfData = 'data:application/pdf;base64,${pdfBase64}';
                 console.log('📏 PDF data size:', pdfData.length, 'characters');
                 
-                const loadingTask = pdfjsLib.getDocument(pdfData);
+                // Validate base64 PDF data
+                if (!pdfData.startsWith('data:application/pdf;base64,') || pdfData.length < 100) {
+                    throw new Error('Invalid PDF data format');
+                }
+                
+                const loadingTask = pdfjsLib.getDocument({
+                    data: pdfData,
+                    verbosity: 0 // Disable verbose logging
+                });
+                
                 pdfDocument = await loadingTask.promise;
                 totalPages = pdfDocument.numPages;
                 
@@ -597,65 +631,93 @@ function generateSecurePDFViewer(
                 
             } catch (error) {
                 console.error('❌ Error loading PDF:', error);
-                showError(\`Gagal memuat PDF: \${error.message}\`);
+                showError(\`Gagal memuat PDF: \${error.message || error}\`);
             }
         }
         
         // Event listeners
-        document.getElementById('prev-btn')?.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderPage(currentPage);
-            }
-        });
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            });
+        }
         
-        document.getElementById('next-btn')?.addEventListener('click', () => {
-            if (currentPage < totalPages) {
-                currentPage++;
-                renderPage(currentPage);
-            }
-        });
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
+            });
+        }
         
-        document.getElementById('zoom-in-btn')?.addEventListener('click', () => {
-            if (currentZoom < 3.0) {
-                currentZoom += 0.25;
-                document.getElementById('zoom-info').textContent = \`\${Math.round(currentZoom * 100)}%\`;
-                renderPage(currentPage);
-            }
-        });
+        if (zoomInBtn) {
+            zoomInBtn.addEventListener('click', () => {
+                if (currentZoom < 3.0) {
+                    currentZoom += 0.25;
+                    if (zoomInfo) zoomInfo.textContent = \`\${Math.round(currentZoom * 100)}%\`;
+                    renderPage(currentPage);
+                }
+            });
+        }
         
-        document.getElementById('zoom-out-btn')?.addEventListener('click', () => {
-            if (currentZoom > 0.5) {
-                currentZoom -= 0.25;
-                document.getElementById('zoom-info').textContent = \`\${Math.round(currentZoom * 100)}%\`;
-                renderPage(currentPage);
-            }
-        });
+        if (zoomOutBtn) {
+            zoomOutBtn.addEventListener('click', () => {
+                if (currentZoom > 0.5) {
+                    currentZoom -= 0.25;
+                    if (zoomInfo) zoomInfo.textContent = \`\${Math.round(currentZoom * 100)}%\`;
+                    renderPage(currentPage);
+                }
+            });
+        }
         
-        // Initialize everything
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('🎬 DOM Content Loaded - Initializing...');
+        // Initialize everything when page loads
+        function initViewer() {
+            console.log('🎬 Initializing PDF viewer...');
             initSecurity();
             initWatermark();
             
-            // Add a small delay to ensure everything is ready
+            // Small delay to ensure DOM is ready
             setTimeout(() => {
                 loadPDF();
-            }, 100);
+            }, 500);
+        }
+        
+        // Multiple initialization triggers
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initViewer);
+        } else {
+            initViewer();
+        }
+        
+        // Fallback initialization
+        window.addEventListener('load', () => {
+            if (!pdfDocument) {
+                console.log('🔄 Fallback initialization...');
+                initViewer();
+            }
         });
         
         // Error handling for PDF.js worker
         window.addEventListener('error', (e) => {
-            console.error('❌ Global error:', e.error);
+            console.error('❌ Global error:', e.error, e.message);
             if (e.error?.name === 'UnexpectedResponseError' || e.message?.includes('pdf.worker')) {
                 showError('PDF worker gagal dimuat. Coba refresh halaman.');
             }
         });
         
-        // Prevent page unload detection
-        window.addEventListener('beforeunload', (e) => {
-            console.log('🚪 Page unload detected');
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('❌ Unhandled promise rejection:', e.reason);
+            if (e.reason?.message?.includes('pdf') || e.reason?.message?.includes('PDF')) {
+                showError('Gagal memproses PDF. Coba refresh halaman.');
+            }
         });
+        
+        console.log('📄 PDF viewer script loaded successfully');
     </script>
 </body>
 </html>
