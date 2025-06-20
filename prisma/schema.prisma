@@ -8,21 +8,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model collections {
-  id          String   @id
-  title       String
-  description String?
-  content     String
-  image_url   String?
-  category    String?
-  tags        String?
-  is_public   Boolean  @default(true)
-  author_id   String
-  created_at  DateTime @default(now())
-  updated_at  DateTime
-  users       users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
-}
-
 model visitor_analytics {
   id             String   @id
   ip_address     String?
@@ -53,23 +38,6 @@ model guestbook_entries {
   users       users?   @relation(fields: [author_id], references: [id])
 }
 
-model limited_collections {
-  id             String   @id
-  title          String
-  description    String?
-  content        String
-  image_url      String?
-  category       String?
-  tags           String?
-  max_access     Int      @default(100)
-  current_access Int      @default(0)
-  is_active      Boolean  @default(true)
-  author_id      String
-  created_at     DateTime @default(now())
-  updated_at     DateTime
-  users          users    @relation(fields: [author_id], references: [id], onDelete: Cascade)
-}
-
 model reports {
   id                               String       @id
   title                            String
@@ -79,6 +47,10 @@ model reports {
   status                           ReportStatus @default(PENDING)
   category                         String?
   priority                         Priority     @default(MEDIUM)
+  is_public                        Boolean      @default(false)  // Apakah bisa diakses publik
+  max_access                       Int?         // Batas maksimal akses (untuk limited collections)
+  current_access                   Int?         @default(0)      // Akses saat ini
+  tags                             String?      // Tags untuk kategorisasi
   author_id                        String
   assignee_id                      String?
   feedback                         String?
@@ -120,34 +92,99 @@ model users {
   avatar                             String?
   training                           String?
   angkatan                           String?
+  training_program_id                String?               // Link ke program pelatihan
   phone                              String?
   created_at                         DateTime              @default(now())
   updated_at                         DateTime
-  collections                        collections[]
   visitor_analytics                  visitor_analytics[]
   guestbook_entries                  guestbook_entries[]
-  limited_collections                limited_collections[]
   reports_reports_assignee_idTousers reports[]             @relation("reports_assignee_idTousers")
   reports_reports_author_idTousers   reports[]             @relation("reports_author_idTousers")
   uploaded_files                     uploaded_files[]
   created_folders                    report_folders[]      @relation("folder_creator")
+  training_program                   training_programs?    @relation(fields: [training_program_id], references: [id])
+  cohort_memberships                 cohort_members[]
 }
 
 model report_folders {
-  id          String   @id @default(uuid())
-  year        String
-  batch       String
-  description String?
-  created_by  String
-  is_active   Boolean  @default(true)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id                  String             @id @default(uuid())
+  year                String
+  batch               String
+  report_type         String             // PKN, PKP, PKA, LATSAR
+  description         String?
+  created_by          String
+  training_program_id String?            // Link ke program pelatihan
+  cohort_id           String?            // Link ke angkatan
+  is_active           Boolean            @default(true)
+  created_at          DateTime           @default(now())
+  updated_at          DateTime           @updatedAt
 
-  creator     users    @relation("folder_creator", fields: [created_by], references: [id], onDelete: Cascade)
+  creator             users              @relation("folder_creator", fields: [created_by], references: [id], onDelete: Cascade)
+  training_program    training_programs? @relation(fields: [training_program_id], references: [id])
+  cohort              training_cohorts?  @relation(fields: [cohort_id], references: [id])
 
-  @@unique([year, batch])
+  @@unique([year, batch, report_type])
   @@index([year])
   @@index([batch])
+  @@index([report_type])
+}
+
+// Model untuk Program Pelatihan (PKN, PKP, PKA, LATSAR)
+model training_programs {
+  id            String   @id @default(uuid())
+  name          String   // PKN, PKP, PKA, LATSAR
+  full_name     String   // Nama lengkap program
+  description   String?
+  duration_days Int?     // Durasi pelatihan dalam hari
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  users         users[]
+  cohorts       training_cohorts[]
+  folders       report_folders[]
+
+  @@unique([name])
+}
+
+// Model untuk Angkatan Pelatihan
+model training_cohorts {
+  id                  String   @id @default(uuid())
+  name                String   // Angkatan I, II, III, dst
+  training_program_id String
+  year                String
+  start_date          DateTime?
+  end_date            DateTime?
+  max_participants    Int?
+  current_participants Int     @default(0)
+  status              CohortStatus @default(PLANNING)
+  description         String?
+  is_active           Boolean  @default(true)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  training_program    training_programs @relation(fields: [training_program_id], references: [id], onDelete: Cascade)
+  members             cohort_members[]
+  folders             report_folders[]
+
+  @@unique([training_program_id, name, year])
+  @@index([year])
+}
+
+// Model untuk anggota angkatan
+model cohort_members {
+  id          String   @id @default(uuid())
+  user_id     String
+  cohort_id   String
+  joined_at   DateTime @default(now())
+  status      MemberStatus @default(ACTIVE)
+  notes       String?
+
+  user        users            @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cohort      training_cohorts @relation(fields: [cohort_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, cohort_id])
+  @@index([cohort_id])
 }
 
 enum Priority {
@@ -168,4 +205,40 @@ enum Role {
   USER
   ADMIN
   MODERATOR
+}
+
+enum CohortStatus {
+  PLANNING      // Tahap perencanaan
+  REGISTRATION  // Tahap pendaftaran
+  ONGOING       // Sedang berlangsung
+  COMPLETED     // Selesai
+  CANCELLED     // Dibatalkan
+}
+
+// Master data untuk tahun dan angkatan
+model master_years {
+  id         String   @id @default(uuid())
+  year       String   @unique
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([year])
+}
+
+model master_cohorts {
+  id         String   @id @default(uuid())
+  name       String   @unique // I, II, III, IV, V
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([name])
+}
+
+enum MemberStatus {
+  ACTIVE        // Aktif mengikuti pelatihan
+  INACTIVE      // Tidak aktif
+  GRADUATED     // Lulus
+  DROPPED       // Keluar/mengundurkan diri
 }

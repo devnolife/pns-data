@@ -136,6 +136,22 @@ export async function GET(
     try {
       fileBuffer = await readFile(filePath)
       console.log('✅ PDF file read successfully. Size:', fileBuffer.length, 'bytes')
+
+      // Validate PDF file structure
+      if (fileBuffer.length < 1024) {
+        console.log('❌ PDF file too small:', fileBuffer.length, 'bytes')
+        return new NextResponse('PDF file appears to be corrupted or too small', { status: 400 })
+      }
+
+      // Check PDF magic number
+      const pdfHeader = fileBuffer.toString('ascii', 0, 4)
+      if (pdfHeader !== '%PDF') {
+        console.log('❌ Invalid PDF header:', pdfHeader)
+        return new NextResponse('File is not a valid PDF', { status: 400 })
+      }
+
+      console.log('✅ PDF validation passed')
+
     } catch (error: any) {
       console.log('❌ Error reading PDF file:', error)
       return new NextResponse('Error reading PDF file', { status: 500 })
@@ -609,16 +625,26 @@ function generateSecurePDFViewer(
                 // Configure PDF.js worker
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
                 
-                const pdfData = 'data:application/pdf;base64,${pdfBase64}';
-                console.log('📏 PDF data size:', pdfData.length, 'characters');
+                // Convert base64 to Uint8Array for PDF.js
+                const base64Data = '${pdfBase64}';
+                console.log('📏 Base64 data size:', base64Data.length, 'characters');
                 
                 // Validate base64 PDF data
-                if (!pdfData.startsWith('data:application/pdf;base64,') || pdfData.length < 100) {
+                if (!base64Data || base64Data.length < 100) {
                     throw new Error('Invalid PDF data format');
                 }
                 
+                // Convert base64 to binary data
+                const binaryString = atob(base64Data);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                console.log('📄 Converted to Uint8Array, size:', bytes.length, 'bytes');
+                
                 const loadingTask = pdfjsLib.getDocument({
-                    data: pdfData,
+                    data: bytes,
                     verbosity: 0 // Disable verbose logging
                 });
                 
@@ -631,7 +657,24 @@ function generateSecurePDFViewer(
                 
             } catch (error) {
                 console.error('❌ Error loading PDF:', error);
-                showError(\`Gagal memuat PDF: \${error.message || error}\`);
+                
+                // More specific error messages
+                let errorMessage = 'Gagal memuat PDF';
+                if (error.message) {
+                    if (error.message.includes('Invalid PDF structure')) {
+                        errorMessage = 'Gagal memuat PDF: Struktur PDF tidak valid';
+                    } else if (error.message.includes('Password')) {
+                        errorMessage = 'PDF memerlukan password';
+                    } else if (error.message.includes('corrupted')) {
+                        errorMessage = 'File PDF rusak atau korup';
+                    } else if (error.message.includes('worker')) {
+                        errorMessage = 'Gagal memuat PDF worker. Coba refresh halaman.';
+                    } else {
+                        errorMessage = \`Gagal memuat PDF: \${error.message}\`;
+                    }
+                }
+                
+                showError(errorMessage);
             }
         }
         

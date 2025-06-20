@@ -34,7 +34,12 @@ import {
   Plus,
   Settings,
   TrendingUp,
-  Activity
+  Activity,
+  GraduationCap,
+  UserPlus,
+  Clock,
+  BookOpen,
+  RefreshCw
 } from "lucide-react"
 import Link from "next/link"
 import {
@@ -45,12 +50,53 @@ import {
   getReportFolderStatsAction,
   type ReportFolderData
 } from "@/lib/actions/report-folders"
+import {
+  getTrainingProgramsAction,
+  getTrainingCohortsAction,
+  createTrainingCohortAction,
+  getMasterYearsAction,
+  getMasterCohortsAction,
+  createMasterYearAction,
+  createMasterCohortAction,
+  deleteMasterYearAction,
+  deleteMasterCohortAction,
+  type TrainingProgramData,
+  type TrainingCohortData
+} from "@/lib/actions/training"
 
 interface CreateFolderData {
   reportType: string
   year: string
   batch: string
   description: string
+  training_program_id?: string
+  cohort_id?: string
+}
+
+interface CreateCohortData {
+  name: string
+  training_program_id: string
+  year: string
+  start_date?: Date
+  end_date?: Date
+  max_participants?: number
+  description: string
+}
+
+interface MasterYear {
+  id: string
+  year: string
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
+}
+
+interface MasterCohort {
+  id: string
+  name: string
+  is_active: boolean
+  created_at: Date
+  updated_at: Date
 }
 
 interface FolderStats {
@@ -63,10 +109,16 @@ interface FolderStats {
 export default function ReportFoldersPage() {
   const [folders, setFolders] = useState<ReportFolderData[]>([])
   const [stats, setStats] = useState<FolderStats | null>(null)
+  const [trainingPrograms, setTrainingPrograms] = useState<TrainingProgramData[]>([])
+  const [trainingCohorts, setTrainingCohorts] = useState<TrainingCohortData[]>([])
+  const [masterYears, setMasterYears] = useState<MasterYear[]>([])
+  const [masterCohorts, setMasterCohorts] = useState<MasterCohort[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isCreateCohortDialogOpen, setIsCreateCohortDialogOpen] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<ReportFolderData | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
@@ -77,6 +129,16 @@ export default function ReportFoldersPage() {
     batch: "",
     description: ""
   })
+
+  const [createCohortData, setCreateCohortData] = useState<CreateCohortData>({
+    name: "",
+    training_program_id: "",
+    year: "",
+    description: ""
+  })
+
+  const [newYear, setNewYear] = useState("")
+  const [newCohortName, setNewCohortName] = useState("")
 
   const [editFormData, setEditFormData] = useState({
     description: "",
@@ -92,47 +154,100 @@ export default function ReportFoldersPage() {
   // Batch options
   const batchOptions = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 
-  const loadFolders = async () => {
+  const loadAllData = async (showLoading = true) => {
+    if (showLoading) {
+      setLoading(true)
+    }
     try {
-      const result = await getReportFoldersAction(1, 50, searchQuery)
-      if (result.success) {
-        setFolders(result.data as any)
-      } else {
+      console.log('🔄 Loading all data...')
+      const results = await Promise.all([
+        getReportFoldersAction(1, 50, searchQuery),
+        getReportFolderStatsAction(),
+        getTrainingProgramsAction(),
+        getTrainingCohortsAction(),
+        getMasterYearsAction(),
+        getMasterCohortsAction()
+      ])
+
+      const [foldersResult, statsResult, programsResult, cohortsResult, yearsResult, masterCohortsResult] = results
+
+      if (foldersResult.success) {
+        setFolders(foldersResult.data as any)
+        console.log('✅ Folders loaded:', foldersResult.data?.length || 0)
+      }
+
+      if (statsResult.success) {
+        setStats(statsResult.data as any)
+        console.log('✅ Stats loaded')
+      }
+
+      if (programsResult.success) {
+        setTrainingPrograms(programsResult.data as TrainingProgramData[])
+        console.log('✅ Training programs loaded:', programsResult.data?.length || 0)
+      }
+
+      if (cohortsResult.success) {
+        setTrainingCohorts(cohortsResult.data as TrainingCohortData[])
+        console.log('✅ Training cohorts loaded:', cohortsResult.data?.length || 0)
+      }
+
+      if (yearsResult.success) {
+        setMasterYears(yearsResult.data as MasterYear[])
+        console.log('✅ Master years loaded:', yearsResult.data?.length || 0)
+      }
+
+      if (masterCohortsResult.success) {
+        setMasterCohorts(masterCohortsResult.data as MasterCohort[])
+        console.log('✅ Master cohorts loaded:', masterCohortsResult.data?.length || 0)
+      }
+
+      // Show toast if any data failed to load
+      const failedResults = results.filter(r => !r.success)
+      if (failedResults.length > 0) {
+        console.error('❌ Some data failed to load:', failedResults)
         toast({
-          title: "❌ Waduh!",
-          description: result.error,
+          title: "⚠️ Ada masalah nih",
+          description: "Beberapa data gagal dimuat, coba refresh lagi ya!",
           variant: "destructive"
         })
       }
+
     } catch (error) {
-      console.error("Error loading folders:", error)
+      console.error("Error loading data:", error)
       toast({
-        title: "❌ Ada yang salah nih",
-        description: "Gagal memuat data folder",
+        title: "❌ Error!",
+        description: "Gagal memuat data, coba refresh halaman",
         variant: "destructive"
       })
+    } finally {
+      setLoading(false)
+      setRefreshing(false)
     }
   }
 
-  const loadStats = async () => {
-    try {
-      const result = await getReportFolderStatsAction()
-      if (result.success) {
-        setStats(result.data as any)
-      }
-    } catch (error) {
-      console.error("Error loading stats:", error)
-    }
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await loadAllData(false)
+    toast({
+      title: "🔄 Data diperbarui!",
+      description: "Semua data telah dimuat ulang",
+    })
   }
 
   useEffect(() => {
-    const loadData = async () => {
-      setLoading(true)
-      await Promise.all([loadFolders(), loadStats()])
-      setLoading(false)
-    }
-    loadData()
+    loadAllData()
   }, [searchQuery])
+
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('📊 Current state:', {
+      masterYears: masterYears.length,
+      masterCohorts: masterCohorts.length,
+      trainingPrograms: trainingPrograms.length,
+      trainingCohorts: trainingCohorts.length,
+      folders: folders.length
+    })
+  }, [masterYears, masterCohorts, trainingPrograms, trainingCohorts, folders])
 
   const handleCreateFolder = async () => {
     if (!createFormData.reportType || !createFormData.year || !createFormData.batch) {
@@ -146,7 +261,21 @@ export default function ReportFoldersPage() {
 
     setFormLoading(true)
     try {
-      const result = await createReportFolderAction(createFormData)
+      // Find matching cohort based on selected data
+      const selectedProgram = trainingPrograms.find(p => p.name === createFormData.reportType)
+      const selectedCohort = trainingCohorts.find(c =>
+        c.training_program_id === selectedProgram?.id &&
+        c.year === createFormData.year &&
+        c.name === createFormData.batch
+      )
+
+      const folderData = {
+        ...createFormData,
+        training_program_id: selectedProgram?.id,
+        cohort_id: selectedCohort?.id
+      }
+
+      const result = await createReportFolderAction(folderData)
 
       if (result.success) {
         toast({
@@ -161,8 +290,7 @@ export default function ReportFoldersPage() {
           batch: "",
           description: ""
         })
-        await loadFolders()
-        await loadStats()
+        await loadAllData()
       } else {
         toast({
           title: "😅 Waduh!",
@@ -179,6 +307,193 @@ export default function ReportFoldersPage() {
       })
     } finally {
       setFormLoading(false)
+    }
+  }
+
+  const handleCreateCohort = async () => {
+    if (!createCohortData.name || !createCohortData.training_program_id || !createCohortData.year) {
+      toast({
+        title: "⚠️ Tunggu dulu!",
+        description: "Mohon lengkapi semua field yang wajib diisi ya! 💫",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setFormLoading(true)
+    try {
+      const result = await createTrainingCohortAction(createCohortData)
+
+      if (result.success) {
+        toast({
+          title: "🎓 Yeay! Angkatan Baru!",
+          description: `${result.message} ✨`,
+          duration: 4000
+        })
+        setIsCreateCohortDialogOpen(false)
+        setCreateCohortData({
+          name: "",
+          training_program_id: "",
+          year: "",
+          description: ""
+        })
+        await loadAllData()
+      } else {
+        toast({
+          title: "😅 Waduh!",
+          description: result.error,
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Create cohort error:", error)
+      toast({
+        title: "💥 Error!",
+        description: "Gagal membuat angkatan, coba lagi ya!",
+        variant: "destructive"
+      })
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleAddMasterYear = async () => {
+    if (!newYear) {
+      toast({
+        title: "⚠️ Tunggu dulu!",
+        description: "Mohon masukkan tahun",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setFormLoading(true)
+    try {
+      const result = await createMasterYearAction(newYear)
+      if (result.success) {
+        toast({
+          title: "🎉 Berhasil!",
+          description: "Tahun baru berhasil ditambahkan",
+        })
+        setNewYear("")
+        await loadAllData()
+      } else {
+        toast({
+          title: "❌ Gagal!",
+          description: result.error || "Gagal menambahkan tahun",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error adding year:", error)
+      toast({
+        title: "❌ Error!",
+        description: "Terjadi kesalahan saat menambahkan tahun",
+        variant: "destructive"
+      })
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleAddMasterCohort = async () => {
+    if (!newCohortName) {
+      toast({
+        title: "⚠️ Tunggu dulu!",
+        description: "Mohon masukkan nama angkatan",
+        variant: "destructive"
+      })
+      return
+    }
+
+    setFormLoading(true)
+    try {
+      const result = await createMasterCohortAction(newCohortName)
+      if (result.success) {
+        toast({
+          title: "🎉 Berhasil!",
+          description: "Angkatan baru berhasil ditambahkan",
+        })
+        setNewCohortName("")
+        await loadAllData()
+      } else {
+        toast({
+          title: "❌ Gagal!",
+          description: result.error || "Gagal menambahkan angkatan",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error adding cohort:", error)
+      toast({
+        title: "❌ Error!",
+        description: "Terjadi kesalahan saat menambahkan angkatan",
+        variant: "destructive"
+      })
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleDeleteMasterYear = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus tahun ini?")) return
+
+    setDeleteLoading(true)
+    try {
+      const result = await deleteMasterYearAction(id)
+      if (result.success) {
+        toast({
+          title: "🗑️ Berhasil!",
+          description: "Tahun berhasil dihapus",
+        })
+        await loadAllData()
+      } else {
+        toast({
+          title: "❌ Gagal!",
+          description: result.error || "Gagal menghapus tahun",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error deleting year:", error)
+      toast({
+        title: "❌ Error!",
+        description: "Terjadi kesalahan saat menghapus tahun",
+        variant: "destructive"
+      })
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
+  const handleDeleteMasterCohort = async (id: string) => {
+    if (!confirm("Yakin ingin menghapus angkatan ini?")) return
+
+    setDeleteLoading(true)
+    try {
+      const result = await deleteMasterCohortAction(id)
+      if (result.success) {
+        toast({
+          title: "🗑️ Berhasil!",
+          description: "Angkatan berhasil dihapus",
+        })
+        await loadAllData()
+      } else {
+        toast({
+          title: "❌ Gagal!",
+          description: result.error || "Gagal menghapus angkatan",
+          variant: "destructive"
+        })
+      }
+    } catch (error) {
+      console.error("Error deleting cohort:", error)
+      toast({
+        title: "❌ Error!",
+        description: "Terjadi kesalahan saat menghapus angkatan",
+        variant: "destructive"
+      })
+    } finally {
+      setDeleteLoading(false)
     }
   }
 
@@ -201,11 +516,10 @@ export default function ReportFoldersPage() {
         })
         setIsEditDialogOpen(false)
         setSelectedFolder(null)
-        await loadFolders()
-        await loadStats()
+        await loadAllData()
       } else {
         toast({
-          title: "😬 Hmm...",
+          title: "😅 Waduh...",
           description: result.error,
           variant: "destructive"
         })
@@ -237,11 +551,10 @@ export default function ReportFoldersPage() {
           description: `${result.message} 👋`,
           duration: 4000
         })
-        await loadFolders()
-        await loadStats()
+        await loadAllData()
       } else {
         toast({
-          title: "😵 Gagal!",
+          title: "❌ Gagal!",
           description: result.error,
           variant: "destructive"
         })
@@ -265,6 +578,23 @@ export default function ReportFoldersPage() {
       is_active: folder.is_active
     })
     setIsEditDialogOpen(true)
+  }
+
+  // Get available batches for selected program and year
+  const getAvailableBatches = () => {
+    if (!createFormData.reportType || !createFormData.year) return batchOptions
+
+    const selectedProgram = trainingPrograms.find(p => p.name === createFormData.reportType)
+    if (!selectedProgram) return batchOptions
+
+    const existingCohorts = trainingCohorts.filter(c =>
+      c.training_program_id === selectedProgram.id &&
+      c.year === createFormData.year
+    )
+
+    return batchOptions.filter(batch =>
+      !existingCohorts.some(cohort => cohort.name === batch)
+    )
   }
 
   const filteredFolders = folders.filter(folder =>
@@ -363,11 +693,11 @@ export default function ReportFoldersPage() {
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl text-white">
-                    <TrendingUp className="h-6 w-6" />
+                    <GraduationCap className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-gray-800">{stats.foldersByYear.length}</p>
-                    <p className="text-sm text-gray-600">Tahun Aktif</p>
+                    <p className="text-2xl font-bold text-gray-800">{trainingCohorts.length}</p>
+                    <p className="text-sm text-gray-600">Total Angkatan</p>
                   </div>
                 </div>
               </CardContent>
@@ -407,128 +737,343 @@ export default function ReportFoldersPage() {
                   className="pl-10 bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300"
                 />
               </div>
-              <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Buat Folder ✨
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl w-full bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl fixed top-8 left-1/4 translate-x-0 translate-y-0">
-                  <DialogHeader className="text-center pb-4">
-                    <div className="mx-auto w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
-                      <FolderPlus className="h-6 w-6 text-white" />
-                    </div>
-                    <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                      Buat Folder Baru 🚀
-                    </DialogTitle>
-                    <DialogDescription className="text-gray-600">
-                      Yuk buat folder laporan yang keren! ✨
-                    </DialogDescription>
-                  </DialogHeader>
+              <div className="flex gap-3">
+                {/* Refresh Button */}
+                <Button
+                  onClick={handleRefresh}
+                  disabled={refreshing}
+                  className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white border-0 rounded-xl px-4 py-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  {refreshing ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="h-4 w-4" />
+                  )}
+                </Button>
 
-                  <div className="space-y-8 py-6">
-                    <div className="space-y-3">
-                      <Label htmlFor="reportType" className="text-base font-semibold text-gray-800 flex items-center gap-2">
-                        📋 Jenis Laporan Pelatihan
-                      </Label>
-                      <Select value={createFormData.reportType} onValueChange={(value) => setCreateFormData({ ...createFormData, reportType: value })}>
-                        <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
-                          <SelectValue placeholder="Pilih jenis laporan pelatihan..." />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
-                          <SelectItem value="PKN" className="text-base py-3">🎯 PKN (Pelatihan Kepemimpinan Nasional)</SelectItem>
-                          <SelectItem value="PKP" className="text-base py-3">👁️ PKP (Pengawas)</SelectItem>
-                          <SelectItem value="PKA" className="text-base py-3">⚙️ PKA (Administrator)</SelectItem>
-                          <SelectItem value="LATSAR" className="text-base py-3">🎓 Latsar CPNS</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                {/* Toggle Manage Years & Cohorts Button */}
+                <Button
+                  onClick={() => setIsCreateCohortDialogOpen(!isCreateCohortDialogOpen)}
+                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white border-0 rounded-xl px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {isCreateCohortDialogOpen ? 'Tutup' : 'Kelola'} Tahun & Angkatan 📅
+                </Button>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <Label htmlFor="year" className="text-base font-semibold text-gray-800 flex items-center gap-2">
-                          📅 Tahun Pelatihan
-                        </Label>
-                        <Select value={createFormData.year} onValueChange={(value) => setCreateFormData({ ...createFormData, year: value })}>
-                          <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
-                            <SelectValue placeholder="Pilih tahun pelatihan..." />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
-                            {yearOptions.map((year) => (
-                              <SelectItem key={year} value={year} className="text-base py-3">
-                                📅 Tahun {year}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                {/* Create Folder Button */}
+                <Button
+                  onClick={() => setIsCreateDialogOpen(!isCreateDialogOpen)}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  {isCreateDialogOpen ? 'Tutup' : 'Buat'} Folder ✨
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-                      <div className="space-y-3">
-                        <Label htmlFor="batch" className="text-base font-semibold text-gray-800 flex items-center gap-2">
-                          👥 Angkatan Pelatihan
-                        </Label>
-                        <Select value={createFormData.batch} onValueChange={(value) => setCreateFormData({ ...createFormData, batch: value })}>
-                          <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
-                            <SelectValue placeholder="Pilih angkatan pelatihan..." />
-                          </SelectTrigger>
-                          <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
-                            {batchOptions.map((batch) => (
-                              <SelectItem key={batch} value={batch} className="text-base py-3">
-                                👥 Angkatan {batch}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <Label htmlFor="description" className="text-base font-semibold text-gray-800 flex items-center gap-2">
-                        💭 Deskripsi Folder (Opsional)
-                      </Label>
-                      <Textarea
-                        placeholder="Tambahkan deskripsi keren untuk folder pelatihan ini... Misalnya: 'Folder khusus untuk laporan PKN batch terbaru dengan tema kepemimpinan digital' ✨"
-                        value={createFormData.description}
-                        onChange={(e) => setCreateFormData({ ...createFormData, description: e.target.value })}
-                        rows={4}
-                        className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300 resize-none text-base"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4 pt-6">
+        {/* Manage Years & Cohorts Section */}
+        {isCreateCohortDialogOpen && (
+          <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 text-white p-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="text-xl font-bold mb-1">Kelola Tahun & Angkatan 📅</CardTitle>
+                  <CardDescription className="text-emerald-100">
+                    Tambahkan atau hapus master data tahun dan angkatan ✨
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-8">
+              {/* Form Tambah Tahun */}
+              <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold text-blue-800 flex items-center gap-2">
+                    <Calendar className="h-5 w-5" />
+                    Tambah Tahun Baru
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-4">
+                    <Input
+                      type="number"
+                      placeholder="2024"
+                      value={newYear}
+                      onChange={(e) => setNewYear(e.target.value)}
+                      className="bg-white border-blue-200 rounded-lg"
+                      min="2000"
+                      max="2050"
+                    />
                     <Button
-                      variant="outline"
-                      onClick={() => setIsCreateDialogOpen(false)}
-                      className="flex-1 bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
-                      disabled={formLoading}
-                    >
-                      Batal 😔
-                    </Button>
-                    <Button
-                      onClick={handleCreateFolder}
-                      disabled={formLoading}
-                      className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
+                      onClick={handleAddMasterYear}
+                      disabled={formLoading || !newYear}
+                      className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white rounded-lg px-6"
                     >
                       {formLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Membuat Folder...
-                        </>
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <>
-                          <Rocket className="mr-2 h-5 w-5" />
-                          Buat Folder Keren! 🚀
+                          <Plus className="mr-2 h-4 w-4" />
+                          Tambah
                         </>
                       )}
                     </Button>
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </CardContent>
-        </Card>
+                </CardContent>
+              </Card>
+
+              {/* Form Tambah Angkatan */}
+              <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold text-purple-800 flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Tambah Angkatan Baru
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-4">
+                    <Input
+                      placeholder="VI, VII, VIII..."
+                      value={newCohortName}
+                      onChange={(e) => setNewCohortName(e.target.value)}
+                      className="bg-white border-purple-200 rounded-lg"
+                    />
+                    <Button
+                      onClick={handleAddMasterCohort}
+                      disabled={formLoading || !newCohortName}
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg px-6"
+                    >
+                      {formLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Tambah
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Daftar Tahun */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Daftar Tahun
+                </h3>
+                <Card className="bg-white/70 border-gray-200 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex flex-wrap gap-2">
+                      {masterYears.length === 0 ? (
+                        <p className="text-gray-500 text-sm italic">Belum ada tahun</p>
+                      ) : (
+                        masterYears.map((year) => (
+                          <div
+                            key={year.id}
+                            className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg px-3 py-2 text-sm flex items-center gap-2"
+                          >
+                            <Calendar className="h-3 w-3 text-blue-600" />
+                            <span className="font-medium text-blue-800">
+                              {year.year}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteMasterYear(year.id)}
+                              disabled={deleteLoading}
+                              className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Daftar Angkatan */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Daftar Angkatan
+                </h3>
+                <Card className="bg-white/70 border-gray-200 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex flex-wrap gap-2">
+                      {masterCohorts.length === 0 ? (
+                        <p className="text-gray-500 text-sm italic">Belum ada angkatan</p>
+                      ) : (
+                        masterCohorts.map((cohort) => (
+                          <div
+                            key={cohort.id}
+                            className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg px-3 py-2 text-sm flex items-center gap-2"
+                          >
+                            <Users className="h-3 w-3 text-purple-600" />
+                            <span className="font-medium text-purple-800">
+                              Angkatan {cohort.name}
+                            </span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDeleteMasterCohort(cohort.id)}
+                              disabled={deleteLoading}
+                              className="h-6 w-6 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Create Folder Section */}
+        {isCreateDialogOpen && (
+          <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                    <FolderPlus className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <CardTitle className="text-xl font-bold mb-1">Buat Folder Baru 🚀</CardTitle>
+                    <CardDescription className="text-purple-100">
+                      Yuk buat folder laporan yang keren! ✨
+                    </CardDescription>
+                  </div>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                  className="text-white hover:bg-white/20 rounded-xl h-8 w-8 p-0"
+                >
+                  ✕
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-3">
+                <Label htmlFor="reportType" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                  📋 Jenis Laporan Pelatihan
+                </Label>
+                <Select value={createFormData.reportType} onValueChange={(value) => setCreateFormData({ ...createFormData, reportType: value, year: "", batch: "" })}>
+                  <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
+                    <SelectValue placeholder="Pilih jenis laporan pelatihan..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
+                    {trainingPrograms.map((program) => (
+                      <SelectItem key={program.id} value={program.name} className="text-base py-3">
+                        🎯 {program.name} - {program.full_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label htmlFor="year" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                    📅 Tahun Pelatihan
+                  </Label>
+                  <Select
+                    value={createFormData.year}
+                    onValueChange={(value) => setCreateFormData({ ...createFormData, year: value, batch: "" })}
+                    disabled={!createFormData.reportType}
+                  >
+                    <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
+                      <SelectValue placeholder="Pilih tahun pelatihan..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
+                      {masterYears.filter(y => y.is_active).map((year) => (
+                        <SelectItem key={year.id} value={year.year} className="text-base py-3">
+                          📅 Tahun {year.year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-3">
+                  <Label htmlFor="batch" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                    👥 Angkatan Pelatihan
+                  </Label>
+                  <Select
+                    value={createFormData.batch}
+                    onValueChange={(value) => setCreateFormData({ ...createFormData, batch: value })}
+                    disabled={!createFormData.reportType || !createFormData.year}
+                  >
+                    <SelectTrigger className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md h-12 text-base">
+                      <SelectValue placeholder="Pilih angkatan pelatihan..." />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
+                      {masterCohorts.filter(c => c.is_active).map((cohort) => (
+                        <SelectItem key={cohort.id} value={cohort.name} className="text-base py-3">
+                          👥 Angkatan {cohort.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="description" className="text-base font-semibold text-gray-800 flex items-center gap-2">
+                  💭 Deskripsi Folder (Opsional)
+                </Label>
+                <Textarea
+                  placeholder="Tambahkan deskripsi keren untuk folder pelatihan ini... Misalnya: 'Folder khusus untuk laporan PKN batch terbaru dengan tema kepemimpinan digital' ✨"
+                  value={createFormData.description}
+                  onChange={(e) => setCreateFormData({ ...createFormData, description: e.target.value })}
+                  rows={4}
+                  className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300 resize-none text-base"
+                />
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsCreateDialogOpen(false)}
+                  className="flex-1 bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
+                  disabled={formLoading}
+                >
+                  Batal 😔
+                </Button>
+                <Button
+                  onClick={handleCreateFolder}
+                  disabled={formLoading}
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
+                >
+                  {formLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Membuat Folder...
+                    </>
+                  ) : (
+                    <>
+                      <Rocket className="mr-2 h-5 w-5" />
+                      Buat Folder Keren! 🚀
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Folders List */}
         <Card className="bg-white/70 backdrop-blur-md border-0 shadow-xl rounded-2xl overflow-hidden">
@@ -643,7 +1188,7 @@ export default function ReportFoldersPage() {
 
         {/* Edit Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="max-w-2xl w-full bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl  translate-x-0 translate-y-0 top-10 left-96">
+          <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl">
             <DialogHeader className="text-center pb-4">
               <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4">
                 <Settings className="h-6 w-6 text-white" />
@@ -738,6 +1283,7 @@ export default function ReportFoldersPage() {
             </div>
           </DialogContent>
         </Dialog>
+
       </div>
     </div>
   )

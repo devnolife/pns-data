@@ -2,12 +2,16 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 export default function Loading() {
   return (
-    <div className="container mx-auto p-6 min-h-screen">
+    <div className="container mx-auto p-6 min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+      {/* Floating decorative elements */}
+      <div className="fixed top-20 left-10 h-20 w-20 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full animate-pulse blur-xl" />
+      <div className="fixed top-40 right-20 h-16 w-16 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full animate-pulse blur-xl" />
+
       {/* Header Skeleton */}
       <div className="flex flex-col space-y-4 mb-8">
         <div className="flex items-center justify-between">
           <div className="space-y-3">
-            <div className="h-8 bg-gradient-to-r from-blue-200 to-indigo-200 rounded-lg w-80 animate-pulse" />
+            <div className="h-8 bg-gradient-to-r from-purple-200 to-pink-200 rounded-lg w-80 animate-pulse" />
             <div className="h-4 bg-gray-200 rounded w-64 animate-pulse" />
             <div className="flex items-center gap-2">
               <div className="h-6 bg-blue-100 rounded-full w-24 animate-pulse" />
@@ -18,66 +22,74 @@ export default function Loading() {
 
         {/* Search Skeleton */}
         <div className="flex gap-2 max-w-md">
-          <div className="h-10 bg-gray-100 rounded-md flex-1 animate-pulse" />
-          <div className="h-10 bg-blue-100 rounded-md w-20 animate-pulse" />
+          <div className="h-10 bg-white/70 backdrop-blur-md rounded-md flex-1 animate-pulse border border-gray-200" />
+          <div className="h-10 bg-gradient-to-r from-purple-200 to-pink-200 rounded-md w-20 animate-pulse" />
         </div>
       </div>
 
-      {/* Categories Grid Skeleton */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 pb-8">
+      {/* Reports Grid Skeleton with Cover Images */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-8">
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div key={i} className="group relative overflow-hidden">
             {/* Card Background */}
-            <div className="bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-lg p-6 space-y-6">
-              {/* Header */}
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg relative">
-                  <div className="h-7 w-7 bg-white/20 rounded animate-pulse" />
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full animate-pulse" />
-                </div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-full animate-pulse" />
-                  <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse" />
-                </div>
-              </div>
+            <div className="bg-white/60 backdrop-blur-md rounded-3xl border-0 shadow-xl overflow-hidden">
 
-              {/* Stats Cards */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 p-4 border border-blue-200/50">
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-blue-500/10 rounded-full -mr-8 -mt-8" />
-                  <div className="relative space-y-2">
-                    <div className="h-8 bg-gradient-to-r from-blue-200 to-blue-300 rounded w-12 animate-pulse" />
-                    <div className="h-4 bg-blue-100 rounded w-16 animate-pulse" />
+              {/* Cover Image Skeleton */}
+              <div className="h-48 overflow-hidden bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 relative">
+                {/* Simulated Cover Image Loading */}
+                <div className="w-full h-full animate-pulse bg-gradient-to-br from-purple-200 to-pink-200 flex items-center justify-center">
+                  <div className="text-center text-purple-400">
+                    <div className="h-16 w-16 bg-purple-300 rounded-full mx-auto mb-3 animate-pulse" />
+                    <div className="h-4 bg-purple-300 rounded w-24 mx-auto animate-pulse" />
                   </div>
                 </div>
-                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-4 border border-emerald-200/50">
-                  <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-500/10 rounded-full -mr-8 -mt-8" />
-                  <div className="relative space-y-2">
-                    <div className="h-8 bg-gradient-to-r from-emerald-200 to-emerald-300 rounded w-12 animate-pulse" />
-                    <div className="h-4 bg-emerald-100 rounded w-16 animate-pulse" />
-                  </div>
-                </div>
+                {/* Loading overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-3">
-                <div className="flex-1 h-10 bg-gradient-to-r from-blue-200 to-purple-200 rounded-md animate-pulse" />
-                <div className="flex-1 h-10 bg-gray-100 border-2 border-gray-200 rounded-md animate-pulse" />
+              {/* Content Skeleton */}
+              <div className="p-6 space-y-4">
+                {/* Header */}
+                <div className="flex items-start gap-4">
+                  <div className="h-12 w-12 bg-gradient-to-br from-blue-200 to-purple-200 rounded-2xl animate-pulse flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded-lg w-full animate-pulse" />
+                    <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse" />
+                  </div>
+                </div>
+
+                {/* Metadata */}
+                <div className="flex items-center justify-between pt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 bg-purple-200 rounded animate-pulse" />
+                    <div className="h-4 bg-gray-200 rounded w-16 animate-pulse" />
+                  </div>
+                  <div className="h-6 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full w-20 animate-pulse" />
+                </div>
+
+                {/* Author info */}
+                <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+                  <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse" />
+                  <div className="h-3 bg-gray-100 rounded w-24 animate-pulse" />
+                </div>
               </div>
             </div>
 
             {/* Floating Animation */}
-            <div className="absolute top-4 right-4 w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.2}s` }} />
+            <div
+              className="absolute top-4 right-4 w-3 h-3 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-bounce"
+              style={{ animationDelay: `${i * 0.2}s` }}
+            />
           </div>
         ))}
       </div>
 
-      {/* Loading Indicator */}
-      <div className="fixed bottom-8 right-8 bg-white/90 backdrop-blur-sm rounded-full p-4 shadow-xl border border-blue-200/50">
+      {/* Enhanced Loading Indicator */}
+      <div className="fixed bottom-8 right-8 bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-2xl border border-purple-200/50">
         <div className="flex items-center gap-3">
-          <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent" />
-          <div className="text-sm font-medium text-blue-700">
-            🔒 Public Access Mode
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-purple-500 border-t-transparent" />
+          <div className="text-sm font-medium text-purple-700">
+            🔒 Memuat Koleksi Publik...
           </div>
         </div>
       </div>

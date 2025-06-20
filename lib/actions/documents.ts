@@ -27,6 +27,7 @@ export interface ReportData {
   title: string
   description: string | null
   content: string
+  cover_image_url?: string | null // ✅ ADD COVER IMAGE URL
   status: string
   category: string | null
   priority: string
@@ -517,6 +518,19 @@ export async function getReportByIdAction(reportId: string) {
             training: true,
             angkatan: true
           }
+        },
+        files: {
+          select: {
+            id: true,
+            filename: true,
+            original_name: true,
+            file_size: true,
+            mime_type: true,
+            file_type: true,
+            year: true,
+            batch: true,
+            created_at: true
+          }
         }
       }
     })
@@ -535,13 +549,15 @@ export async function getReportByIdAction(reportId: string) {
         title: report.title,
         description: report.description,
         content: report.content,
+        cover_image_url: report.cover_image_url, // ✅ INCLUDE COVER IMAGE URL
         status: report.status,
         category: report.category,
         priority: report.priority,
         author_id: report.author_id,
         created_at: report.created_at,
         updated_at: report.updated_at,
-        author: report.users_reports_author_idTousers
+        author: report.users_reports_author_idTousers,
+        files: report.files // ✅ INCLUDE FILES FOR FALLBACK COVER DETECTION
       }
     }
   } catch (error) {
@@ -951,6 +967,7 @@ export async function getAllCompletedReportsByAngkatanAction(category: string, y
       title: report.title,
       description: report.description,
       content: report.content,
+      cover_image_url: report.cover_image_url, // ✅ INCLUDE COVER IMAGE URL
       status: report.status,
       category: report.category,
       priority: report.priority,
@@ -1089,6 +1106,7 @@ export async function searchPublicDocumentsAction(query: string, type: 'collecti
         title: report.title,
         description: report.description,
         content: report.content,
+        cover_image_url: report.cover_image_url, // ✅ INCLUDE COVER IMAGE URL
         status: report.status,
         category: report.category,
         priority: report.priority,

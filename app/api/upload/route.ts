@@ -71,30 +71,38 @@ export async function POST(request: NextRequest) {
 
     // BARU: Validasi terhadap report_folders schema
     if (year && batch) {
-      const reportFolder = await prisma.report_folders.findUnique({
+      // Cari folder yang aktif untuk kombinasi year dan batch
+      // Karena bisa ada multiple report_type untuk year/batch yang sama
+      const reportFolders = await prisma.report_folders.findMany({
         where: {
-          year_batch: {
-            year: year,
-            batch: batch
-          }
+          year: year,
+          batch: batch,
+          is_active: true
         }
       })
 
-      if (!reportFolder) {
+      if (reportFolders.length === 0) {
         return NextResponse.json(
-          { success: false, error: `Folder laporan untuk tahun ${year} angkatan ${batch} belum dibuat. Hubungi administrator untuk membuat folder terlebih dahulu.` },
+          {
+            success: false,
+            error: `Folder laporan untuk tahun ${year} angkatan ${batch} belum dibuat atau sedang nonaktif. Hubungi administrator untuk membuat folder terlebih dahulu.`,
+            details: {
+              year: year,
+              batch: batch,
+              availableFolders: await prisma.report_folders.findMany({
+                where: { is_active: true },
+                select: { year: true, batch: true, report_type: true }
+              })
+            }
+          },
           { status: 400 }
         )
       }
 
-      if (!reportFolder.is_active) {
-        return NextResponse.json(
-          { success: false, error: `Folder laporan untuk tahun ${year} angkatan ${batch} sedang nonaktif. Hubungi administrator.` },
-          { status: 400 }
-        )
-      }
+      // Log available folders for debugging
+      console.log(`📁 Upload validation passed for ${year}-${batch}. Found ${reportFolders.length} active folders:`,
+        reportFolders.map(f => f.report_type).join(', '))
     }
-
 
     const uploadedFiles = []
 

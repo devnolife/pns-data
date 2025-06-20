@@ -61,31 +61,30 @@ export interface HourlyActivity {
 
 export async function getDashboardStats(): Promise<DashboardStats> {
   try {
-    // Get current counts
-    const [totalUsers, collectionsCount, limitedCollectionsCount, pendingReports] = await Promise.all([
+    // Get current counts - use completed reports as collections
+    const [totalUsers, totalCollections, pendingReports] = await Promise.all([
       prisma.users.count(),
-      prisma.collections.count(),
-      prisma.limited_collections.count(),
+      prisma.reports.count({
+        where: { status: ReportStatus.COMPLETED }
+      }),
       prisma.reports.count({
         where: { status: ReportStatus.PENDING }
       })
     ])
 
-    const totalCollections = collectionsCount + limitedCollectionsCount
-
     // Get counts from last month for growth calculation
     const lastMonth = new Date()
     lastMonth.setMonth(lastMonth.getMonth() - 1)
 
-    const [lastMonthUsers, lastMonthCollections, lastMonthLimitedCollections, lastMonthReports] = await Promise.all([
+    const [lastMonthUsers, lastMonthCollections, lastMonthReports] = await Promise.all([
       prisma.users.count({
         where: { created_at: { lt: lastMonth } }
       }),
-      prisma.collections.count({
-        where: { created_at: { lt: lastMonth } }
-      }),
-      prisma.limited_collections.count({
-        where: { created_at: { lt: lastMonth } }
+      prisma.reports.count({
+        where: {
+          created_at: { lt: lastMonth },
+          status: ReportStatus.COMPLETED
+        }
       }),
       prisma.reports.count({
         where: {
@@ -95,11 +94,9 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       })
     ])
 
-    const lastMonthTotalCollections = lastMonthCollections + lastMonthLimitedCollections
-
     // Calculate growth percentages
     const userGrowth = lastMonthUsers > 0 ? Math.round(((totalUsers - lastMonthUsers) / lastMonthUsers) * 100) : 0
-    const collectionGrowth = lastMonthTotalCollections > 0 ? Math.round(((totalCollections - lastMonthTotalCollections) / lastMonthTotalCollections) * 100) : 0
+    const collectionGrowth = lastMonthCollections > 0 ? Math.round(((totalCollections - lastMonthCollections) / lastMonthCollections) * 100) : 0
     const reportGrowth = lastMonthReports > 0 ? Math.round(((pendingReports - lastMonthReports) / lastMonthReports) * 100) : 0
 
     // Mock visitor data (you can implement actual visitor tracking later)
@@ -157,15 +154,16 @@ export async function getRecentActivities(): Promise<RecentActivity[]> {
       }
     })
 
-    // Get recent collections
-    const recentCollections = await prisma.collections.findMany({
+    // Get recent collections (completed reports)
+    const recentCollections = await prisma.reports.findMany({
       take: 5,
-      orderBy: { created_at: 'desc' },
+      where: { status: ReportStatus.COMPLETED },
+      orderBy: { verified_at: 'desc' },
       select: {
         id: true,
         title: true,
-        created_at: true,
-        users: {
+        verified_at: true,
+        users_reports_author_idTousers: {
           select: {
             username: true,
             name: true
@@ -199,15 +197,15 @@ export async function getRecentActivities(): Promise<RecentActivity[]> {
       })
     })
 
-    // Add collection activities
+    // Add collection activities (completed reports)
     recentCollections.forEach(collection => {
       activities.push({
         id: `collection-${collection.id}`,
         type: 'collection',
         title: 'Koleksi Dibuat',
         description: `Koleksi baru '${collection.title}' dibuat`,
-        timestamp: collection.created_at,
-        userName: collection.users.name || collection.users.username
+        timestamp: collection.verified_at || new Date(),
+        userName: collection.users_reports_author_idTousers.name || collection.users_reports_author_idTousers.username
       })
     })
 
@@ -270,24 +268,8 @@ export async function getMonthlyStats() {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1)
       const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - i + 1, 1)
 
-      const [users, collectionsCount, limitedCollectionsCount, reports] = await Promise.all([
+      const [users, collections, reports] = await Promise.all([
         prisma.users.count({
-          where: {
-            created_at: {
-              gte: date,
-              lt: nextMonth
-            }
-          }
-        }),
-        prisma.collections.count({
-          where: {
-            created_at: {
-              gte: date,
-              lt: nextMonth
-            }
-          }
-        }),
-        prisma.limited_collections.count({
           where: {
             created_at: {
               gte: date,
@@ -300,12 +282,19 @@ export async function getMonthlyStats() {
             created_at: {
               gte: date,
               lt: nextMonth
+            },
+            status: ReportStatus.COMPLETED
+          }
+        }),
+        prisma.reports.count({
+          where: {
+            created_at: {
+              gte: date,
+              lt: nextMonth
             }
           }
         })
       ])
-
-      const collections = collectionsCount + limitedCollectionsCount
 
       months.push({
         name: date.toLocaleDateString('id-ID', { month: 'short' }),
@@ -1777,7 +1766,7 @@ export async function exportVisitorStatsAction(period: string = "30") {
     ])
 
     // Get detailed visitor analytics if available
-    let detailedVisitorData = []
+    let detailedVisitorData: any[] = []
     try {
       const visitorAnalytics = await prisma.visitor_analytics.findMany({
         where: {
@@ -1815,7 +1804,7 @@ export async function exportVisitorStatsAction(period: string = "30") {
     }
 
     // Get guestbook entries for the period
-    let guestbookData = []
+    let guestbookData: any[] = []
     try {
       const guestbookEntries = await prisma.guestbook_entries.findMany({
         where: {

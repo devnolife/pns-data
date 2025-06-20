@@ -249,27 +249,62 @@ export default function PublicCollectionDetailPage() {
                         alt={`Cover of ${report.title}`}
                         className="w-full max-h-80 object-cover"
                         onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                          const fallback = e.currentTarget.nextElementSibling as HTMLElement
-                          if (fallback) fallback.classList.remove('hidden')
+                          // Smart fallback logic
+                          const img = e.currentTarget
+                          if (!img.dataset.retryCount) {
+                            img.dataset.retryCount = '1'
+                            // Try with different year path
+                            const reportYear = new Date(report.created_at).getFullYear()
+                            const filename = img.src.split('/').pop()
+                            img.src = `/uploads/covers/${reportYear}/${filename}`
+                          } else if (img.dataset.retryCount === '1') {
+                            img.dataset.retryCount = '2'
+                            // Try placeholder
+                            img.src = '/placeholder-cover.svg'
+                          } else {
+                            // Final fallback - show beautiful gradient with title
+                            img.style.display = 'none'
+                            const fallback = img.parentElement?.nextElementSibling as HTMLElement
+                            if (fallback) fallback.classList.remove('hidden')
+                          }
                         }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center">
-                        <div className="text-center text-white">
-                          <BookOpen className="h-20 w-20 mx-auto mb-3" />
-                          <p className="text-lg font-semibold">Gambar tidak dapat dimuat</p>
+                    </div>
+                  ) : null}
+
+                  {/* Enhanced Fallback Design */}
+                  <div className={`${report.cover_image_url ? 'hidden' : ''} w-full h-80 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center relative overflow-hidden`}>
+                    {/* Background Pattern */}
+                    <div className="absolute inset-0 opacity-20">
+                      <div className="absolute inset-0" style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='m0 40l40-40h-40v40zm40 0v-40h-40l40 40z'/%3E%3C/g%3E%3C/svg%3E")`,
+                        backgroundSize: '40px 40px'
+                      }} />
+                    </div>
+
+                    <div className="text-center text-white relative z-10 p-8">
+                      <div className="relative mb-6">
+                        <BookOpen className="h-24 w-24 mx-auto animate-pulse" />
+                        <div className="absolute -top-2 -right-2 bg-yellow-400 rounded-full p-2">
+                          <span className="text-sm">📚</span>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="w-full h-80 bg-gradient-to-br from-blue-200 to-purple-300 flex items-center justify-center">
-                      <div className="text-center text-white">
-                        <BookOpen className="h-20 w-20 mx-auto mb-4" />
-                        <p className="text-2xl font-semibold mb-2">{report.title}</p>
-                        <p className="text-lg opacity-90">Laporan • {report.category || 'Umum'}</p>
+                      <p className="text-2xl font-bold mb-3 leading-tight line-clamp-3">
+                        {report.title}
+                      </p>
+                      <p className="text-lg opacity-90 uppercase tracking-widest font-medium">
+                        {report.category || 'Laporan'}
+                      </p>
+                      <div className="mt-4 flex items-center justify-center gap-2 text-sm opacity-75">
+                        <Calendar className="h-4 w-4" />
+                        <span>{new Date(report.created_at).getFullYear()}</span>
                       </div>
                     </div>
-                  )}
+
+                    {/* Decorative elements */}
+                    <div className="absolute top-4 right-4 w-16 h-16 bg-white/10 rounded-full animate-ping" />
+                    <div className="absolute bottom-4 left-4 w-12 h-12 bg-white/10 rounded-full animate-pulse" />
+                  </div>
                 </div>
               </Card>
 

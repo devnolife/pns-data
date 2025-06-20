@@ -61,18 +61,19 @@ export async function createReportFolderAction(data: {
     // Validate input data
     const validatedData = createReportFolderSchema.parse(data)
 
-    // Check if folder with same year and batch already exists
+    // Check if folder with same year, batch, and report type already exists
     const existingFolder = await prisma.report_folders.findFirst({
       where: {
         year: validatedData.year,
-        batch: validatedData.batch
+        batch: validatedData.batch,
+        report_type: validatedData.reportType
       }
     })
 
     if (existingFolder) {
       return {
         success: false,
-        error: `Folder untuk tahun ${validatedData.year} angkatan ${validatedData.batch} sudah ada`
+        error: `Folder untuk ${validatedData.reportType} tahun ${validatedData.year} angkatan ${validatedData.batch} sudah ada`
       }
     }
 
@@ -83,6 +84,7 @@ export async function createReportFolderAction(data: {
       data: {
         year: validatedData.year,
         batch: validatedData.batch,
+        report_type: validatedData.reportType,
         description: validatedData.description || `Folder untuk laporan ${validatedData.reportType} tahun ${validatedData.year} angkatan ${validatedData.batch}`,
         created_by: currentUser.id
       },
@@ -103,7 +105,7 @@ export async function createReportFolderAction(data: {
       success: true,
       data: {
         id: reportFolder.id,
-        reportType: validatedData.reportType,
+        reportType: reportFolder.report_type,
         year: reportFolder.year,
         batch: reportFolder.batch,
         description: reportFolder.description,
@@ -177,7 +179,7 @@ export async function getReportFoldersAction(page = 1, limit = 10, search?: stri
       success: true,
       data: reportFolders.map(folder => ({
         id: folder.id,
-        reportType: 'GENERAL', // We'll determine this from context or add a field later
+        reportType: folder.report_type,
         year: folder.year,
         batch: folder.batch,
         description: folder.description,
@@ -235,15 +237,17 @@ export async function updateReportFolderAction(data: {
       }
     }
 
-    // If year or batch is being updated, check for conflicts
-    if (validatedData.year || validatedData.batch) {
+    // If year, batch, or reportType is being updated, check for conflicts
+    if (validatedData.year || validatedData.batch || validatedData.reportType) {
       const newYear = validatedData.year || existingFolder.year
       const newBatch = validatedData.batch || existingFolder.batch
+      const newReportType = validatedData.reportType || existingFolder.report_type
 
       const conflictFolder = await prisma.report_folders.findFirst({
         where: {
           year: newYear,
           batch: newBatch,
+          report_type: newReportType,
           NOT: { id: validatedData.id }
         }
       })
@@ -251,7 +255,7 @@ export async function updateReportFolderAction(data: {
       if (conflictFolder) {
         return {
           success: false,
-          error: `Folder untuk tahun ${newYear} angkatan ${newBatch} sudah ada`
+          error: `Folder untuk ${newReportType} tahun ${newYear} angkatan ${newBatch} sudah ada`
         }
       }
     }
@@ -259,6 +263,7 @@ export async function updateReportFolderAction(data: {
     const updateData: any = {}
     if (validatedData.year !== undefined) updateData.year = validatedData.year
     if (validatedData.batch !== undefined) updateData.batch = validatedData.batch
+    if (validatedData.reportType !== undefined) updateData.report_type = validatedData.reportType
     if (validatedData.description !== undefined) updateData.description = validatedData.description
     if (validatedData.is_active !== undefined) updateData.is_active = validatedData.is_active
 
@@ -282,7 +287,7 @@ export async function updateReportFolderAction(data: {
       success: true,
       data: {
         id: reportFolder.id,
-        reportType: validatedData.reportType || 'GENERAL',
+        reportType: reportFolder.report_type,
         year: reportFolder.year,
         batch: reportFolder.batch,
         description: reportFolder.description,
@@ -321,7 +326,10 @@ export async function deleteReportFolderAction(id: string) {
     }
 
     const existingFolder = await prisma.report_folders.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        creator: true
+      }
     })
 
     if (!existingFolder) {
@@ -331,15 +339,157 @@ export async function deleteReportFolderAction(id: string) {
       }
     }
 
-    await prisma.report_folders.delete({
-      where: { id }
+    // Get all files related to this folder by year and batch
+    const [relatedReports, relatedCollections, relatedFiles] = await Promise.all([
+      // Get reports by matching users with training year and angkatan
+      prisma.reports.findMany({
+        where: {
+          users_reports_author_idTousers: {
+            training: existingFolder.year,
+            angkatan: existingFolder.batch
+          }
+        },
+        include: {
+          files: true,
+          users_reports_author_idTousers: true
+        }
+      }),
+      // Get collections by matching users with training year and angkatan
+      prisma.collections.findMany({
+        where: {
+          users: {
+            training: existingFolder.year,
+            angkatan: existingFolder.batch
+          }
+        },
+        include: {
+          users: true
+        }
+      }),
+      // Get uploaded files by year and batch
+      prisma.uploaded_files.findMany({
+        where: {
+          AND: [
+            { year: existingFolder.year },
+            { batch: existingFolder.batch }
+          ]
+        }
+      })
+    ])
+
+    console.log(`🗑️ Preparing to delete folder: ${existingFolder.year} - Angkatan ${existingFolder.batch}`)
+    console.log(`📊 Found: ${relatedReports.length} reports, ${relatedCollections.length} collections, ${relatedFiles.length} files`)
+
+    // Import filesystem utilities
+    const fs = require('fs').promises
+    const path = require('path')
+
+    // Helper function to safely delete file
+    const safeDeleteFile = async (filePath: string) => {
+      try {
+        await fs.access(filePath)
+        await fs.unlink(filePath)
+        console.log(`✅ Deleted file: ${filePath}`)
+        return true
+      } catch (error) {
+        console.log(`⚠️ File not found or already deleted: ${filePath}`)
+        return false
+      }
+    }
+
+    // Helper function to safely delete directory if empty
+    const safeDeleteDir = async (dirPath: string) => {
+      try {
+        const files = await fs.readdir(dirPath)
+        if (files.length === 0) {
+          await fs.rmdir(dirPath)
+          console.log(`✅ Deleted empty directory: ${dirPath}`)
+        } else {
+          console.log(`⚠️ Directory not empty, keeping: ${dirPath}`)
+        }
+      } catch (error) {
+        console.log(`⚠️ Directory not found: ${dirPath}`)
+      }
+    }
+
+    let deletedFilesCount = 0
+    const publicPath = path.join(process.cwd(), 'public')
+
+    // Delete physical files from uploads
+    for (const file of relatedFiles) {
+      const fileDir = file.category === 'collection' ? 'collections' : 'reports'
+      const filePath = path.join(publicPath, 'uploads', fileDir, file.year || existingFolder.year, file.batch || existingFolder.batch, file.filename)
+
+      if (await safeDeleteFile(filePath)) {
+        deletedFilesCount++
+      }
+    }
+
+    // Also delete files that might be referenced in reports but not in uploaded_files table
+    for (const report of relatedReports) {
+      if (report.files && report.files.length > 0) {
+        for (const file of report.files) {
+          const fileDir = file.category === 'collection' ? 'collections' : 'reports'
+          const filePath = path.join(publicPath, 'uploads', fileDir, file.year || existingFolder.year, file.batch || existingFolder.batch, file.filename)
+
+          if (await safeDeleteFile(filePath)) {
+            deletedFilesCount++
+          }
+        }
+      }
+    }
+
+    // Delete directories if empty
+    const reportsDir = path.join(publicPath, 'uploads', 'reports', existingFolder.year, existingFolder.batch)
+    const collectionsDir = path.join(publicPath, 'uploads', 'collections', existingFolder.year, existingFolder.batch)
+
+    await safeDeleteDir(reportsDir)
+    await safeDeleteDir(collectionsDir)
+
+    // Delete from database using transaction
+    await prisma.$transaction(async (tx) => {
+      // Delete uploaded files
+      await tx.uploaded_files.deleteMany({
+        where: {
+          AND: [
+            { year: existingFolder.year },
+            { batch: existingFolder.batch }
+          ]
+        }
+      })
+
+      // Delete reports (files will be cascade deleted)
+      await tx.reports.deleteMany({
+        where: {
+          id: { in: relatedReports.map(r => r.id) }
+        }
+      })
+
+      // Delete collections
+      await tx.collections.deleteMany({
+        where: {
+          id: { in: relatedCollections.map(c => c.id) }
+        }
+      })
+
+      // Finally delete the folder
+      await tx.report_folders.delete({
+        where: { id }
+      })
     })
 
     revalidatePath('/dashboard/admin/report-folders')
+    revalidatePath('/dashboard/user/digital-collection')
 
     return {
       success: true,
-      message: 'Folder berhasil dihapus'
+      message: `Folder ${existingFolder.year} - Angkatan ${existingFolder.batch} berhasil dihapus beserta ${deletedFilesCount} file, ${relatedReports.length} laporan, dan ${relatedCollections.length} koleksi`,
+      details: {
+        deletedFiles: deletedFilesCount,
+        deletedReports: relatedReports.length,
+        deletedCollections: relatedCollections.length,
+        folderInfo: `${existingFolder.year} - Angkatan ${existingFolder.batch}`
+      }
     }
   } catch (error) {
     console.error('Delete report folder error:', error)
@@ -425,7 +575,7 @@ export async function getAvailableYearBatchCombinationsAction() {
       }
       acc[folder.year].push({
         batch: folder.batch,
-        description: folder.description
+        description: folder.description || undefined
       })
       return acc
     }, {} as Record<string, { batch: string; description?: string }[]>)
@@ -433,7 +583,7 @@ export async function getAvailableYearBatchCombinationsAction() {
     // Convert to arrays for easier UI handling
     const years = Object.keys(yearBatchMap).sort((a, b) => parseInt(b) - parseInt(a))
     const batches = availableFolders.map(folder => folder.batch)
-    const uniqueBatches = [...new Set(batches)].sort()
+    const uniqueBatches = Array.from(new Set(batches)).sort()
 
     return {
       success: true,
@@ -464,28 +614,23 @@ export async function validateYearBatchCombinationAction(year: string, batch: st
       }
     }
 
-    const folder = await prisma.report_folders.findUnique({
+    const folders = await prisma.report_folders.findMany({
       where: {
-        year_batch: {
-          year: year,
-          batch: batch
-        }
+        year: year,
+        batch: batch,
+        is_active: true
       }
     })
 
-    if (!folder) {
+    if (folders.length === 0) {
       return {
         success: false,
-        error: `Folder untuk tahun ${year} angkatan ${batch} tidak ditemukan`
+        error: `Tidak ada folder aktif untuk tahun ${year} angkatan ${batch}`
       }
     }
 
-    if (!folder.is_active) {
-      return {
-        success: false,
-        error: `Folder untuk tahun ${year} angkatan ${batch} sedang nonaktif`
-      }
-    }
+    // Return the first active folder found (could be any report type)
+    const folder = folders[0]
 
     return {
       success: true,

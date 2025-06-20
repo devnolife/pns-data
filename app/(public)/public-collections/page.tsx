@@ -405,10 +405,10 @@ export default function PublicCollectionsPage() {
                   </div>
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
-                  {searchTerm ? 'Tidak ada hasil ditemukan' : 'Belum ada data'}
+                  {searchTerm ? 'Tidak ada hasil ditemukan' : 'Belum ada laporan terverifikasi'}
                 </h3>
                 <p className="text-gray-500 text-lg">
-                  {searchTerm ? 'Coba ubah kata kunci pencarian! ✨' : 'Data akan muncul setelah ada laporan yang diverifikasi'}
+                  {searchTerm ? 'Coba ubah kata kunci pencarian! ✨' : 'Laporan akan muncul di sini setelah diverifikasi dan memiliki file PDF yang valid. Silakan cek kembali nanti! 🚀'}
                 </p>
               </CardContent>
             </Card>
@@ -560,28 +560,47 @@ export default function PublicCollectionsPage() {
                   onClick={() => handleReportClick(report)}
                 >
                   {/* Enhanced Cover Image with Fallback */}
-                  <div className="h-48 overflow-hidden bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+                  <div className="h-48 overflow-hidden bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 relative">
                     {report.cover_image_url ? (
                       <img
                         src={report.cover_image_url}
                         alt={`Cover of ${report.title}`}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                          const fallback = e.currentTarget.nextElementSibling as HTMLElement
-                          if (fallback) fallback.classList.remove('hidden')
+                          // Try fallback URLs if original fails
+                          const img = e.currentTarget
+                          if (!img.dataset.retryCount) {
+                            img.dataset.retryCount = '1'
+                            // Try with different potential paths
+                            const reportYear = new Date(report.created_at).getFullYear()
+                            img.src = `/uploads/covers/${reportYear}/${img.src.split('/').pop()}`
+                          } else if (img.dataset.retryCount === '1') {
+                            img.dataset.retryCount = '2'
+                            // Try placeholder image
+                            img.src = '/placeholder-cover.svg'
+                          } else {
+                            // Final fallback - hide image and show text
+                            img.style.display = 'none'
+                            const fallback = img.parentElement?.querySelector('.fallback-cover') as HTMLElement
+                            if (fallback) fallback.classList.remove('hidden')
+                          }
                         }}
                       />
                     ) : null}
-                    <div className={`${report.cover_image_url ? 'hidden' : ''} w-full h-full flex items-center justify-center text-center p-6`}>
+                    {/* Fallback when no cover image */}
+                    <div className={`fallback-cover absolute inset-0 ${report.cover_image_url ? 'hidden' : ''} w-full h-full flex items-center justify-center text-center p-6 bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100`}>
                       <div>
-                        <BookOpen className="h-16 w-16 text-purple-400 mx-auto mb-3" />
-                        <div className="text-sm font-semibold text-purple-700 mb-1">
-                          {report.title.length > 30 ? report.title.substring(0, 30) + '...' : report.title}
+                        <BookOpen className="h-16 w-16 text-purple-400 mx-auto mb-3 animate-pulse" />
+                        <div className="text-sm font-semibold text-purple-700 mb-1 line-clamp-2">
+                          {report.title.length > 40 ? report.title.substring(0, 40) + '...' : report.title}
                         </div>
-                        <div className="text-xs text-purple-500">{report.category}</div>
+                        <div className="text-xs text-purple-500 uppercase tracking-wide">
+                          {report.category || 'LAPORAN'}
+                        </div>
                       </div>
                     </div>
+                    {/* Decorative overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/20 to-transparent" />
                   </div>
                   <CardHeader className="pb-3 p-6">
                     <div className="flex items-start gap-4">

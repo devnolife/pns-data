@@ -6,315 +6,264 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('🌱 Seeding database...')
 
-  // Create admin user
-  const adminPassword = await bcrypt.hash('admin123', 12)
+  // Seed Master Years (2017-2027)
+  const years = Array.from({ length: 11 }, (_, i) => (2017 + i).toString())
+  for (const year of years) {
+    await prisma.master_years.upsert({
+      where: { year },
+      update: {},
+      create: {
+        year,
+        is_active: true,
+      },
+    })
+  }
+  console.log('✅ Master years seeded (2017-2027)')
+
+  // Seed Master Cohorts (I-V)
+  const cohortNames = ['I', 'II', 'III', 'IV', 'V']
+  for (const name of cohortNames) {
+    await prisma.master_cohorts.upsert({
+      where: { name },
+      update: {},
+      create: {
+        name,
+        is_active: true,
+      },
+    })
+  }
+  console.log('✅ Master cohorts seeded (I-V)')
+
+  // Seed Admin User
+  const adminPassword = await bcrypt.hash('admin123', 10)
   const admin = await prisma.users.upsert({
-    where: { username: 'admin' },
-    update: {},
+    where: { email: 'admin@example.com' },
+    update: { updated_at: new Date() },
     create: {
-      id: crypto.randomUUID(),
+      id: 'admin-1',
+      email: 'admin@example.com',
       username: 'admin',
-      email: 'admin@pnsdata.com',
       password: adminPassword,
-      name: 'Administrator',
       role: 'ADMIN',
+      name: 'Administrator',
       updated_at: new Date(),
     },
   })
 
-  // Create sample users for different training programs
-  const userPKN = await prisma.users.create({
-    data: {
-      id: crypto.randomUUID(),
-      username: 'user_pkn',
-      email: 'pkn@pnsdata.com',
-      password: await bcrypt.hash('user123', 12),
-      name: 'Peserta PKN',
-      role: 'USER',
+  // Seed Training Programs
+  const trainingPrograms = [
+    {
+      id: 'prog-pkn',
+      name: 'PKN',
+      full_name: 'Pelatihan Kepemimpinan Nasional',
+      description: 'Program pelatihan kepemimpinan tingkat nasional untuk aparatur sipil negara',
+      duration_days: 30,
+    },
+    {
+      id: 'prog-pkp',
+      name: 'PKP',
+      full_name: 'Pelatihan Kepemimpinan Pengawas',
+      description: 'Program pelatihan kepemimpinan untuk jabatan pengawas',
+      duration_days: 25,
+    },
+    {
+      id: 'prog-pka',
+      name: 'PKA',
+      full_name: 'Pelatihan Kepemimpinan Administrator',
+      description: 'Program pelatihan kepemimpinan untuk jabatan administrator',
+      duration_days: 20,
+    },
+    {
+      id: 'prog-latsar',
+      name: 'LATSAR',
+      full_name: 'Pelatihan Dasar CPNS',
+      description: 'Pelatihan dasar untuk calon pegawai negeri sipil',
+      duration_days: 20,
+    },
+  ]
+
+  for (const program of trainingPrograms) {
+    await prisma.training_programs.upsert({
+      where: { name: program.name },
+      update: program,
+      create: program,
+    })
+  }
+
+  // Seed Training Cohorts untuk tahun 2024
+  const cohorts = [
+    {
+      id: 'cohort-pkn-2024-1',
+      name: 'I',
+      training_program_id: 'prog-pkn',
+      year: '2024',
+      status: 'ONGOING' as const,
+      max_participants: 30,
+      current_participants: 25,
+      description: 'Angkatan pertama PKN tahun 2024',
+    },
+    {
+      id: 'cohort-pkn-2024-2',
+      name: 'II',
+      training_program_id: 'prog-pkn',
+      year: '2024',
+      status: 'PLANNING' as const,
+      max_participants: 30,
+      description: 'Angkatan kedua PKN tahun 2024',
+    },
+    {
+      id: 'cohort-pkp-2024-1',
+      name: 'I',
+      training_program_id: 'prog-pkp',
+      year: '2024',
+      status: 'COMPLETED' as const,
+      max_participants: 25,
+      current_participants: 25,
+      description: 'Angkatan pertama PKP tahun 2024',
+    },
+    {
+      id: 'cohort-latsar-2024-1',
+      name: 'I',
+      training_program_id: 'prog-latsar',
+      year: '2024',
+      status: 'ONGOING' as const,
+      max_participants: 50,
+      current_participants: 45,
+      description: 'Angkatan pertama LATSAR tahun 2024',
+    },
+  ]
+
+  for (const cohort of cohorts) {
+    await prisma.training_cohorts.upsert({
+      where: {
+        training_program_id_name_year: {
+          training_program_id: cohort.training_program_id,
+          name: cohort.name,
+          year: cohort.year
+        }
+      },
+      update: cohort,
+      create: cohort,
+    })
+  }
+
+  // Seed Report Folders dengan koneksi ke training programs dan cohorts
+  const reportFolders = [
+    {
+      id: 'folder-pkn-2024-1',
+      year: '2024',
+      batch: 'I',
+      report_type: 'PKN',
+      description: 'Folder laporan PKN angkatan I tahun 2024',
+      created_by: admin.id,
+      training_program_id: 'prog-pkn',
+      cohort_id: 'cohort-pkn-2024-1',
+    },
+    {
+      id: 'folder-pkn-2024-2',
+      year: '2024',
+      batch: 'II',
+      report_type: 'PKN',
+      description: 'Folder laporan PKN angkatan II tahun 2024',
+      created_by: admin.id,
+      training_program_id: 'prog-pkn',
+      cohort_id: 'cohort-pkn-2024-2',
+    },
+    {
+      id: 'folder-pkp-2024-1',
+      year: '2024',
+      batch: 'I',
+      report_type: 'PKP',
+      description: 'Folder laporan PKP angkatan I tahun 2024',
+      created_by: admin.id,
+      training_program_id: 'prog-pkp',
+      cohort_id: 'cohort-pkp-2024-1',
+    },
+    {
+      id: 'folder-latsar-2024-1',
+      year: '2024',
+      batch: 'I',
+      report_type: 'LATSAR',
+      description: 'Folder laporan LATSAR angkatan I tahun 2024',
+      created_by: admin.id,
+      training_program_id: 'prog-latsar',
+      cohort_id: 'cohort-latsar-2024-1',
+    },
+  ]
+
+  for (const folder of reportFolders) {
+    await prisma.report_folders.upsert({
+      where: {
+        year_batch_report_type: {
+          year: folder.year,
+          batch: folder.batch,
+          report_type: folder.report_type
+        }
+      },
+      update: folder,
+      create: folder,
+    })
+  }
+
+  // Seed Sample User dan buat mereka sebagai anggota cohort
+  const userPassword = await bcrypt.hash('password123', 10)
+  const sampleUsers = [
+    {
+      id: 'user-1',
+      email: 'john@example.com',
+      username: 'john',
+      password: userPassword,
+      name: 'John Doe',
       training: 'PKN',
       angkatan: 'I',
-      updated_at: new Date(),
+      training_program_id: 'prog-pkn',
     },
-  })
-
-  const userPKA = await prisma.users.create({
-    data: {
-      id: crypto.randomUUID(),
-      username: 'user_pka',
-      email: 'pka@pnsdata.com',
-      password: await bcrypt.hash('user123', 12),
-      name: 'Peserta PKA',
-      role: 'USER',
-      training: 'PKA',
-      angkatan: 'II',
-      updated_at: new Date(),
-    },
-  })
-
-  const userPKP = await prisma.users.create({
-    data: {
-      id: crypto.randomUUID(),
-      username: 'user_pkp',
-      email: 'pkp@pnsdata.com',
-      password: await bcrypt.hash('user123', 12),
-      name: 'Peserta PKP',
-      role: 'USER',
+    {
+      id: 'user-2',
+      email: 'jane@example.com',
+      username: 'jane',
+      password: userPassword,
+      name: 'Jane Smith',
       training: 'PKP',
       angkatan: 'I',
-      updated_at: new Date(),
+      training_program_id: 'prog-pkp',
     },
-  })
-
-  const userLatsar = await prisma.users.create({
-    data: {
-      id: crypto.randomUUID(),
-      username: 'user_latsar',
-      email: 'latsar@pnsdata.com',
-      password: await bcrypt.hash('user123', 12),
-      name: 'Peserta Latsar',
-      role: 'USER',
-      training: 'LATSAR',
-      angkatan: 'III',
-      updated_at: new Date(),
-    },
-  })
-
-  // Create PKN Reports (2023-2024)
-  const pknReports = [
-    {
-      title: 'Analisis Kepemimpinan Transformasional dalam Era Digital',
-      description: 'Penelitian mendalam tentang gaya kepemimpinan transformasional di era digitalisasi sektor publik',
-      content: `
-        <h2>Abstrak</h2>
-        <p>Penelitian ini mengkaji penerapan gaya kepemimpinan transformasional dalam menghadapi tantangan digitalisasi di sektor publik. Studi dilakukan terhadap 50 pemimpin di berbagai instansi pemerintah dengan fokus pada adaptasi teknologi dan perubahan organisasi.</p>
-        
-        <h2>Metodologi</h2>
-        <p>Penelitian menggunakan pendekatan kualitatif dan kuantitatif dengan teknik wawancara mendalam, observasi, dan survei terstruktur.</p>
-        
-        <h2>Hasil dan Pembahasan</h2>
-        <p>Hasil penelitian menunjukkan bahwa kepemimpinan transformasional memiliki korelasi positif yang signifikan dengan keberhasilan implementasi digitalisasi di sektor publik.</p>
-        
-        <h2>Kesimpulan</h2>
-        <p>Kepemimpinan transformasional terbukti efektif dalam memimpin perubahan digital di organisasi pemerintah.</p>
-      `,
-      category: 'PKN',
-      author_id: userPKN.id,
-      year: 2024,
-      angkatan: 'I'
-    },
-    {
-      title: 'Implementasi Good Governance dalam Pelayanan Publik',
-      description: 'Studi implementasi prinsip-prinsip good governance untuk meningkatkan kualitas pelayanan publik',
-      content: `
-        <h2>Abstrak</h2>
-        <p>Laporan ini membahas implementasi prinsip-prinsip good governance dalam meningkatkan kualitas pelayanan publik. Penelitian dilakukan di 3 kabupaten dengan menganalisis tingkat kepuasan masyarakat dan efektivitas pelayanan.</p>
-        
-        <h2>Latar Belakang</h2>
-        <p>Good governance menjadi kunci utama dalam meningkatkan kualitas pelayanan publik yang responsif, transparan, dan akuntabel.</p>
-        
-        <h2>Temuan Penelitian</h2>
-        <p>Implementasi good governance terbukti meningkatkan indeks kepuasan masyarakat hingga 85% di ketiga kabupaten yang diteliti.</p>
-      `,
-      category: 'PKN',
-      author_id: userPKN.id,
-      year: 2024,
-      angkatan: 'I'
-    },
-    {
-      title: 'Strategi Komunikasi Publik di Era Media Sosial',
-      description: 'Analisis strategi komunikasi publik yang efektif di era media sosial',
-      content: `
-        <h2>Pendahuluan</h2>
-        <p>Era media sosial mengubah paradigma komunikasi publik secara fundamental. Pemerintah perlu mengadaptasi strategi komunikasi untuk menjangkau masyarakat secara lebih efektif.</p>
-        
-        <h2>Strategi yang Direkomendasikan</h2>
-        <ul>
-          <li>Penggunaan multi-platform media sosial</li>
-          <li>Konten yang engaging dan informatif</li>
-          <li>Respons yang cepat terhadap feedback masyarakat</li>
-        </ul>
-      `,
-      category: 'PKN',
-      author_id: admin.id,
-      year: 2023,
-      angkatan: 'II'
-    }
   ]
 
-  // Create PKA Reports
-  const pkaReports = [
+  for (const user of sampleUsers) {
+    await prisma.users.upsert({
+      where: { email: user.email },
+      update: { ...user, updated_at: new Date() },
+      create: { ...user, updated_at: new Date() },
+    })
+  }
+
+  // Seed Cohort Members
+  const cohortMembers = [
     {
-      title: 'Optimalisasi Sistem Administrasi Kepegawaian Digital',
-      description: 'Analisis implementasi sistem administrasi kepegawaian digital untuk meningkatkan efisiensi',
-      content: `
-        <h2>Latar Belakang</h2>
-        <p>Digitalisasi sistem administrasi kepegawaian menjadi kebutuhan mendesak untuk meningkatkan efisiensi dan akurasi data kepegawaian.</p>
-        
-        <h2>Implementasi Sistem</h2>
-        <p>Studi kasus dilakukan di 5 instansi pemerintah dengan fokus pada digitalisasi proses administrasi kepegawaian.</p>
-        
-        <h2>Hasil</h2>
-        <p>Implementasi sistem digital berhasil meningkatkan efisiensi proses administrasi hingga 70% dan mengurangi kesalahan data hingga 90%.</p>
-      `,
-      category: 'PKA',
-      author_id: userPKA.id,
-      year: 2024,
-      angkatan: 'II'
+      id: 'member-1',
+      user_id: 'user-1',
+      cohort_id: 'cohort-pkn-2024-1',
+      status: 'ACTIVE' as const,
     },
     {
-      title: 'Manajemen Kinerja Berbasis Kompetensi',
-      description: 'Pengembangan sistem manajemen kinerja berbasis kompetensi untuk ASN',
-      content: `
-        <h2>Konsep Manajemen Kinerja</h2>
-        <p>Manajemen kinerja berbasis kompetensi merupakan pendekatan holistik dalam mengelola dan mengembangkan kinerja ASN.</p>
-        
-        <h2>Model yang Dikembangkan</h2>
-        <p>Model manajemen kinerja yang dikembangkan mencakup aspek kompetensi teknis, manajerial, dan sosial kultural.</p>
-      `,
-      category: 'PKA',
-      author_id: userPKA.id,
-      year: 2024,
-      angkatan: 'I'
-    }
+      id: 'member-2',
+      user_id: 'user-2',
+      cohort_id: 'cohort-pkp-2024-1',
+      status: 'GRADUATED' as const,
+    },
   ]
 
-  // Create PKP Reports
-  const pkpReports = [
-    {
-      title: 'Strategi Pengawasan Berbasis Risiko di Era New Normal',
-      description: 'Pengembangan strategi pengawasan efektif dengan pendekatan berbasis risiko',
-      content: `
-        <h2>Pendahuluan</h2>
-        <p>Era new normal menuntut adaptasi strategi pengawasan yang lebih efektif dan efisien dengan pendekatan berbasis risiko.</p>
-        
-        <h2>Metodologi Pengawasan</h2>
-        <p>Penelitian mencakup analisis terhadap 25 unit kerja di lingkungan pemerintah daerah dengan fokus pada identifikasi dan mitigasi risiko.</p>
-        
-        <h2>Rekomendasi</h2>
-        <p>Strategi pengawasan berbasis risiko terbukti lebih efektif dalam mengidentifikasi dan mencegah potensi masalah dalam organisasi.</p>
-      `,
-      category: 'PKP',
-      author_id: userPKP.id,
-      year: 2024,
-      angkatan: 'I'
-    },
-    {
-      title: 'Audit Internal dan Tata Kelola Organisasi',
-      description: 'Peran audit internal dalam memperkuat tata kelola organisasi pemerintah',
-      content: `
-        <h2>Peran Audit Internal</h2>
-        <p>Audit internal memiliki peran strategis dalam memperkuat tata kelola organisasi dan memastikan pencapaian tujuan organisasi.</p>
-        
-        <h2>Best Practices</h2>
-        <p>Implementasi best practices audit internal dapat meningkatkan efektivitas tata kelola organisasi secara signifikan.</p>
-      `,
-      category: 'PKP',
-      author_id: admin.id,
-      year: 2023,
-      angkatan: 'II'
-    }
-  ]
-
-  // Create LATSAR Reports
-  const latsarReports = [
-    {
-      title: 'Pengembangan Kompetensi ASN Melalui Pembelajaran Digital',
-      description: 'Evaluasi efektivitas program pengembangan kompetensi ASN melalui platform digital',
-      content: `
-        <h2>Latar Belakang</h2>
-        <p>Pembelajaran digital menjadi metode yang semakin penting dalam pengembangan kompetensi ASN di era digital.</p>
-        
-        <h2>Metodologi Penelitian</h2>
-        <p>Penelitian melibatkan 200 peserta dari berbagai instansi dengan evaluasi terhadap peningkatan kompetensi dan kinerja.</p>
-        
-        <h2>Hasil Evaluasi</h2>
-        <p>Platform pembelajaran digital terbukti efektif meningkatkan kompetensi ASN dengan tingkat kepuasan peserta mencapai 92%.</p>
-      `,
-      category: 'LATSAR',
-      author_id: userLatsar.id,
-      year: 2024,
-      angkatan: 'III'
-    },
-    {
-      title: 'Aktualisasi Nilai-Nilai Dasar ASN dalam Pelayanan Publik',
-      description: 'Implementasi nilai-nilai dasar ASN dalam meningkatkan kualitas pelayanan publik',
-      content: `
-        <h2>Nilai-Nilai Dasar ASN</h2>
-        <p>Nilai-nilai dasar ASN meliputi integritas, profesionalitas, inovasi, tanggung jawab, dan keteladanan.</p>
-        
-        <h2>Aktualisasi dalam Pelayanan</h2>
-        <p>Aktualisasi nilai-nilai dasar ASN dalam pelayanan publik dapat meningkatkan kepercayaan masyarakat terhadap pemerintah.</p>
-        
-        <h2>Studi Kasus</h2>
-        <p>Implementasi di 10 unit pelayanan publik menunjukkan peningkatan indeks kepuasan masyarakat yang signifikan.</p>
-      `,
-      category: 'LATSAR',
-      author_id: userLatsar.id,
-      year: 2024,
-      angkatan: 'I'
-    },
-    {
-      title: 'Inovasi Pelayanan Publik Berbasis Teknologi',
-      description: 'Pengembangan inovasi pelayanan publik dengan memanfaatkan teknologi digital',
-      content: `
-        <h2>Konsep Inovasi</h2>
-        <p>Inovasi pelayanan publik berbasis teknologi merupakan upaya untuk meningkatkan efektivitas dan efisiensi pelayanan.</p>
-        
-        <h2>Implementasi Teknologi</h2>
-        <p>Pemanfaatan teknologi digital dalam pelayanan publik dapat mempercepat proses dan meningkatkan akurasi layanan.</p>
-      `,
-      category: 'LATSAR',
-      author_id: admin.id,
-      year: 2023,
-      angkatan: 'II'
-    }
-  ]
-
-  // Insert all reports with varied statuses
-  const allReports = [...pknReports, ...pkaReports, ...pkpReports, ...latsarReports]
-
-  for (let i = 0; i < allReports.length; i++) {
-    const reportData = allReports[i]
-
-    // Vary the status for testing
-    let status: 'PENDING' | 'COMPLETED' | 'REJECTED'
-    let feedback: string | undefined
-    let verified_at: Date | undefined
-    let rejected_at: Date | undefined
-
-    if (i % 3 === 0) {
-      status = 'PENDING'
-    } else if (i % 3 === 1) {
-      status = 'COMPLETED'
-      verified_at = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
-    } else {
-      status = 'REJECTED'
-      rejected_at = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000) // Random date within last week
-      feedback = [
-        'Laporan perlu dilengkapi dengan data statistik yang lebih komprehensif dan referensi yang lebih update.',
-        'Metodologi penelitian kurang jelas. Mohon tambahkan penjelasan yang lebih detail tentang metode yang digunakan.',
-        'Analisis data perlu diperdalam. Tambahkan interpretasi yang lebih mendalam terhadap hasil penelitian.',
-        'Format laporan belum sesuai dengan template yang ditetapkan. Mohon perbaiki struktur dan format penulisan.',
-        'Kesimpulan tidak didukung oleh data yang cukup. Perkuat argumentasi dengan evidence yang lebih kuat.'
-      ][Math.floor(Math.random() * 5)]
-    }
-
-    await prisma.reports.create({
-      data: {
-        id: crypto.randomUUID(),
-        title: reportData.title,
-        description: reportData.description,
-        content: reportData.content,
-        category: reportData.category,
-        priority: 'MEDIUM',
-        status: status,
-        author_id: reportData.author_id,
-        feedback: feedback,
-        verified_at: verified_at,
-        rejected_at: rejected_at,
-        created_at: new Date(reportData.year, Math.floor(Math.random() * 12), Math.floor(Math.random() * 28) + 1),
-        updated_at: new Date(),
+  for (const member of cohortMembers) {
+    await prisma.cohort_members.upsert({
+      where: {
+        user_id_cohort_id: {
+          user_id: member.user_id,
+          cohort_id: member.cohort_id
+        }
       },
+      update: member,
+      create: member,
     })
   }
 
@@ -415,7 +364,7 @@ async function main() {
       email: 'ahmad@example.com',
       message: 'Terima kasih atas layanan yang sangat baik! Website ini sangat membantu dalam mengakses informasi pelatihan.',
       is_approved: true,
-      author_id: userPKN.id,
+      author_id: 'user-1',
       updated_at: new Date(),
     },
   })
@@ -427,17 +376,16 @@ async function main() {
       email: 'siti@example.com',
       message: 'Platform yang sangat informatif dan mudah digunakan. Sangat membantu untuk mengakses materi pelatihan.',
       is_approved: true,
-      author_id: userPKA.id,
+      author_id: 'user-2',
       updated_at: new Date(),
     },
   })
 
   console.log('✅ Database seeded successfully!')
+  console.log('🎓 Training programs, cohorts, folders, and members created!')
   console.log('👤 Admin user: admin / admin123')
-  console.log('👤 PKN user: user_pkn / user123')
-  console.log('👤 PKA user: user_pka / user123')
-  console.log('👤 PKP user: user_pkp / user123')
-  console.log('👤 LATSAR user: user_latsar / user123')
+  console.log('👤 PKN user: john / password123')
+  console.log('👤 PKP user: jane / password123')
   console.log(`📊 Created ${await prisma.reports.count()} reports`)
   console.log(`📚 Created ${await prisma.collections.count()} collections`)
   console.log(`💬 Created ${await prisma.guestbook_entries.count()} guestbook entries`)
@@ -499,7 +447,7 @@ async function main() {
         page_title: page.title,
         referrer: referrer === 'direct' ? null : referrer,
         session_id: crypto.randomUUID(),
-        user_id: Math.random() > 0.7 ? [admin.id, userPKN.id, userPKA.id, userPKP.id, userLatsar.id][Math.floor(Math.random() * 5)] : null,
+        user_id: Math.random() > 0.7 ? ['admin-1', 'user-1', 'user-2'][Math.floor(Math.random() * 3)] : null,
         visit_duration: Math.floor(Math.random() * 600) + 30, // 30 seconds to 10 minutes
         created_at: visitTime
       })

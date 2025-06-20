@@ -161,8 +161,43 @@ export async function updateReportAction(formData: FormData) {
     if (validatedData.content) updateData.content = validatedData.content
     if (validatedData.category !== undefined) updateData.category = validatedData.category
     if (validatedData.priority) updateData.priority = validatedData.priority
-    if (validatedData.status) updateData.status = validatedData.status
     if (validatedData.assigneeId !== undefined) updateData.assignee_id = validatedData.assigneeId
+
+    // ✅ VALIDATION: Only allow COMPLETED status if report has valid PDF files
+    if (validatedData.status) {
+      if (validatedData.status === 'COMPLETED') {
+        // Check if report has PDF files
+        const reportFiles = await prisma.uploaded_files.findMany({
+          where: {
+            report_id: validatedData.id,
+            mime_type: 'application/pdf'
+          }
+        })
+
+        if (reportFiles.length === 0) {
+          return { error: 'Cannot mark report as COMPLETED: No PDF files found. Please upload PDF files first.' }
+        }
+
+        // Verify that PDF files actually exist on filesystem
+        const fs = require('fs')
+        const path = require('path')
+        let hasValidPDF = false
+
+        for (const file of reportFiles) {
+          const fullPath = path.join(process.cwd(), 'public', file.file_path)
+          if (fs.existsSync(fullPath)) {
+            hasValidPDF = true
+            break
+          }
+        }
+
+        if (!hasValidPDF) {
+          return { error: 'Cannot mark report as COMPLETED: PDF files are missing from filesystem. Please re-upload PDF files.' }
+        }
+      }
+
+      updateData.status = validatedData.status
+    }
 
     const report = await prisma.reports.update({
       where: { id: validatedData.id },
@@ -863,6 +898,7 @@ export async function getPublicReportsAction() {
             original_name: true,
             file_size: true,
             mime_type: true,
+            file_type: true,
             category: true,
             year: true,
             batch: true,
@@ -880,12 +916,32 @@ export async function getPublicReportsAction() {
       const reportYear = firstFile?.year || new Date(report.created_at).getFullYear().toString()
       const reportBatch = firstFile?.batch || 'General'
 
+      // ✅ PERBAIKAN: Generate cover image URL
+      let coverImageUrl = report.cover_image_url
+
+      // If no cover_image_url in database, try to find cover image from files
+      if (!coverImageUrl && report.files.length > 0) {
+        // Look for cover image in uploaded files
+        const coverFile = report.files.find(file =>
+          file.file_type === 'cover' ||
+          file.mime_type?.startsWith('image/') ||
+          file.original_name?.toLowerCase().includes('cover') ||
+          file.original_name?.toLowerCase().includes('sampul')
+        )
+
+        if (coverFile) {
+          // Generate URL based on actual file structure
+          coverImageUrl = `/uploads/covers/${coverFile.year || reportYear}/${coverFile.filename}`
+        }
+      }
+
       return {
         id: report.id,
         title: report.title,
         description: report.description || '',
         category: report.category || 'GENERAL',
         priority: report.priority,
+        cover_image_url: coverImageUrl, // ✅ INCLUDE COVER IMAGE URL
         author: {
           name: report.users_reports_author_idTousers?.name || 'Anonymous',
           username: report.users_reports_author_idTousers?.username || 'anonymous',
@@ -1485,12 +1541,31 @@ export async function getPublicReportsHierarchicalAction() {
         acc[categoryKey][year][angkatan] = []
       }
 
+      // ✅ PERBAIKAN: Generate cover image URL if not exists
+      let coverImageUrl = report.cover_image_url
+
+      // If no cover_image_url in database, try to find cover image from files
+      if (!coverImageUrl && report.files.length > 0) {
+        // Look for cover image in uploaded files
+        const coverFile = report.files.find(file =>
+          file.file_type === 'cover' ||
+          file.mime_type?.startsWith('image/') ||
+          file.original_name?.toLowerCase().includes('cover') ||
+          file.original_name?.toLowerCase().includes('sampul')
+        )
+
+        if (coverFile) {
+          // Generate URL based on actual file structure
+          coverImageUrl = `/uploads/covers/${coverFile.year || year}/${coverFile.filename}`
+        }
+      }
+
       acc[categoryKey][year][angkatan].push({
         id: report.id,
         title: report.title,
         description: report.description,
         content: report.content,
-        cover_image_url: report.cover_image_url,
+        cover_image_url: coverImageUrl, // ✅ USE GENERATED COVER URL
         status: report.status,
         category: report.category,
         priority: report.priority,
@@ -1732,6 +1807,7 @@ export async function getSecureReportDetailsAction(reportId: string) {
       title: report.title,
       description: report.description,
       content: report.content,
+      cover_image_url: report.cover_image_url, // ✅ INCLUDE COVER IMAGE URL
       category: report.category,
       created_at: report.created_at,
       author: {
@@ -1747,6 +1823,9 @@ export async function getSecureReportDetailsAction(reportId: string) {
         file_path: file.file_path,
         file_size: file.file_size,
         mime_type: file.mime_type,
+        file_type: file.file_type, // ✅ INCLUDE FILE TYPE FOR COVER DETECTION
+        year: file.year,
+        batch: file.batch,
         created_at: file.created_at,
       })),
     }

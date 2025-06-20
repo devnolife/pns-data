@@ -275,10 +275,9 @@ export async function getUserByIdAction(userId: string) {
         phone: true,
         created_at: true,
         updated_at: true,
-        // Include related data counts
+        // Include related data counts - use reports instead of collections
         _count: {
           select: {
-            collections: true,
             reports_reports_author_idTousers: true,
             guestbook_entries: true,
           }
@@ -293,9 +292,23 @@ export async function getUserByIdAction(userId: string) {
       }
     }
 
+    // Get completed reports count (as collections)
+    const completedReportsCount = await prisma.reports.count({
+      where: {
+        author_id: userId,
+        status: 'COMPLETED'
+      }
+    })
+
     return {
       success: true,
-      data: user
+      data: {
+        ...user,
+        _count: {
+          ...user._count,
+          collections: completedReportsCount
+        }
+      }
     }
   } catch (error) {
     console.error('Get user by ID error:', error)
@@ -475,17 +488,13 @@ export async function deleteUserAction(userId: string) {
       }
     }
 
-    // Check if user exists
+    // Check if user exists and get related data counts
     const existingUser = await prisma.users.findUnique({
       where: { id: userId },
-      include: {
-        _count: {
-          select: {
-            collections: true,
-            reports_reports_author_idTousers: true,
-            guestbook_entries: true,
-          }
-        }
+      select: {
+        id: true,
+        username: true,
+        role: true,
       }
     })
 
@@ -497,15 +506,17 @@ export async function deleteUserAction(userId: string) {
     }
 
     // Check if user has related data
-    const hasRelatedData =
-      existingUser._count.collections > 0 ||
-      existingUser._count.reports_reports_author_idTousers > 0 ||
-      existingUser._count.guestbook_entries > 0
+    const [reportsCount, guestbookCount] = await Promise.all([
+      prisma.reports.count({ where: { author_id: userId } }),
+      prisma.guestbook_entries.count({ where: { author_id: userId } })
+    ])
+
+    const hasRelatedData = reportsCount > 0 || guestbookCount > 0
 
     if (hasRelatedData) {
       return {
         success: false,
-        error: 'User tidak dapat dihapus karena memiliki data terkait (koleksi, laporan, atau entri buku tamu)'
+        error: 'User tidak dapat dihapus karena memiliki data terkait (laporan atau entri buku tamu)'
       }
     }
 
@@ -850,10 +861,9 @@ export async function getOwnProfileAction() {
         phone: true,
         created_at: true,
         updated_at: true,
-        // Include related data counts
+        // Include related data counts - use reports instead of collections
         _count: {
           select: {
-            collections: true,
             reports_reports_author_idTousers: true,
             guestbook_entries: true,
           }
@@ -868,9 +878,23 @@ export async function getOwnProfileAction() {
       }
     }
 
+    // Get completed reports count (as collections)
+    const completedReportsCount = await prisma.reports.count({
+      where: {
+        author_id: currentUser.id,
+        status: 'COMPLETED'
+      }
+    })
+
     return {
       success: true,
-      data: userProfile
+      data: {
+        ...userProfile,
+        _count: {
+          ...userProfile._count,
+          collections: completedReportsCount
+        }
+      }
     }
   } catch (error) {
     console.error('Get own profile error:', error)
@@ -895,17 +919,20 @@ export async function getUserDashboardStatsAction() {
 
     // Get user statistics
     const [
-      totalCollections,
+      totalCompletedReports, // Use completed reports as collections
       totalReports,
       totalGuestbookEntries,
       recentReports,
-      recentCollections,
+      recentCompletedReports, // Use completed reports as collections
       monthlyReports,
       lastActivity
     ] = await Promise.all([
-      // Total collections created by user
-      prisma.collections.count({
-        where: { author_id: currentUser.id }
+      // Total completed reports (as collections) created by user
+      prisma.reports.count({
+        where: {
+          author_id: currentUser.id,
+          status: 'COMPLETED'
+        }
       }),
 
       // Total reports created by user
@@ -932,17 +959,20 @@ export async function getUserDashboardStatsAction() {
         take: 5,
       }),
 
-      // Recent collections (last 5)
-      prisma.collections.findMany({
-        where: { author_id: currentUser.id },
+      // Recent completed reports (as collections, last 5)
+      prisma.reports.findMany({
+        where: {
+          author_id: currentUser.id,
+          status: 'COMPLETED'
+        },
         select: {
           id: true,
           title: true,
           category: true,
           created_at: true,
-          is_public: true,
+          verified_at: true,
         },
-        orderBy: { created_at: 'desc' },
+        orderBy: { verified_at: 'desc' },
         take: 5,
       }),
 
@@ -956,26 +986,12 @@ export async function getUserDashboardStatsAction() {
         }
       }),
 
-      // Last activity (most recent report or collection)
-      Promise.all([
-        prisma.reports.findFirst({
-          where: { author_id: currentUser.id },
-          select: { created_at: true },
-          orderBy: { created_at: 'desc' }
-        }),
-        prisma.collections.findFirst({
-          where: { author_id: currentUser.id },
-          select: { created_at: true },
-          orderBy: { created_at: 'desc' }
-        })
-      ]).then(([lastReport, lastCollection]) => {
-        const dates = [
-          lastReport?.created_at,
-          lastCollection?.created_at
-        ].filter(Boolean)
-
-        return dates.length > 0 ? new Date(Math.max(...dates.map(d => d!.getTime()))) : null
-      })
+      // Last activity (most recent report)
+      prisma.reports.findFirst({
+        where: { author_id: currentUser.id },
+        select: { created_at: true },
+        orderBy: { created_at: 'desc' }
+      }).then(lastReport => lastReport?.created_at || null)
     ])
 
     // Calculate days since last activity
@@ -987,14 +1003,14 @@ export async function getUserDashboardStatsAction() {
       success: true,
       data: {
         stats: {
-          totalCollections,
+          totalCollections: totalCompletedReports,
           totalReports,
           totalGuestbookEntries,
           monthlyReports,
           daysSinceLastActivity,
         },
         recentActivity: {
-          reports: recentReports.map(report => ({
+          reports: recentReports.map((report: any) => ({
             id: report.id,
             title: report.title,
             type: 'report' as const,
@@ -1002,13 +1018,13 @@ export async function getUserDashboardStatsAction() {
             category: report.category,
             createdAt: report.created_at,
           })),
-          collections: recentCollections.map(collection => ({
+          collections: recentCompletedReports.map((collection: any) => ({
             id: collection.id,
             title: collection.title,
             type: 'collection' as const,
             category: collection.category,
-            isPublic: collection.is_public,
-            createdAt: collection.created_at,
+            isPublic: true, // Completed reports are public
+            createdAt: collection.verified_at || collection.created_at,
           }))
         }
       }
@@ -1034,8 +1050,8 @@ export async function getUserRecentActivitiesAction(limit: number = 10) {
       }
     }
 
-    // Get recent activities from reports and collections
-    const [recentReports, recentCollections, recentGuestbookEntries] = await Promise.all([
+    // Get recent activities from reports and guestbook entries
+    const [recentReports, recentCompletedReports, recentGuestbookEntries] = await Promise.all([
       prisma.reports.findMany({
         where: { author_id: currentUser.id },
         select: {
@@ -1050,15 +1066,18 @@ export async function getUserRecentActivitiesAction(limit: number = 10) {
         take: limit,
       }),
 
-      prisma.collections.findMany({
-        where: { author_id: currentUser.id },
+      prisma.reports.findMany({
+        where: {
+          author_id: currentUser.id,
+          status: 'COMPLETED'
+        },
         select: {
           id: true,
           title: true,
           category: true,
           created_at: true,
           updated_at: true,
-          is_public: true,
+          verified_at: true,
         },
         orderBy: { updated_at: 'desc' },
         take: limit,
@@ -1079,7 +1098,7 @@ export async function getUserRecentActivitiesAction(limit: number = 10) {
 
     // Combine and sort all activities
     const allActivities = [
-      ...recentReports.map(report => ({
+      ...recentReports.map((report: any) => ({
         id: report.id,
         title: report.title,
         type: 'report' as const,
@@ -1089,17 +1108,17 @@ export async function getUserRecentActivitiesAction(limit: number = 10) {
         createdAt: report.created_at,
         updatedAt: report.updated_at,
       })),
-      ...recentCollections.map(collection => ({
+      ...recentCompletedReports.map((collection: any) => ({
         id: collection.id,
         title: collection.title,
         type: 'collection' as const,
         action: 'created',
         category: collection.category,
-        isPublic: collection.is_public,
-        createdAt: collection.created_at,
+        isPublic: true,
+        createdAt: collection.verified_at || collection.created_at,
         updatedAt: collection.updated_at,
       })),
-      ...recentGuestbookEntries.map(entry => ({
+      ...recentGuestbookEntries.map((entry: any) => ({
         id: entry.id,
         title: entry.message.substring(0, 50) + '...',
         type: 'guestbook' as const,

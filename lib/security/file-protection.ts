@@ -173,7 +173,21 @@ export class FileProtectionMiddleware {
       })
     }
 
-    // Block direct file access - redirect to secure API
+    // ✅ PERBAIKAN: Allow public access to cover images
+    if (pathname.startsWith('/uploads/covers/')) {
+      // Validate that it's actually an image file
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
+      const hasImageExtension = imageExtensions.some(ext =>
+        pathname.toLowerCase().endsWith(ext)
+      )
+
+      if (hasImageExtension) {
+        this.logAccess(request, false, 'Cover image access allowed')
+        return null // Allow access to cover images
+      }
+    }
+
+    // Block other direct file access - redirect to secure API
     this.logAccess(request, true, 'Direct file access blocked')
     return new NextResponse(
       'Direct file access not allowed. Use secure API endpoints for file access.',

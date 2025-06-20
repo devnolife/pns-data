@@ -53,11 +53,11 @@ export default function ManageFoldersPage() {
 
       if (result.success && result.data) {
         const currentYear = new Date().getFullYear()
-        const foldersWithAge = result.data.map(folder => ({
+        const foldersWithAge: FolderWithAge[] = result.data.map(folder => ({
           ...folder,
           ageInYears: currentYear - parseInt(folder.year),
           isOld: currentYear - parseInt(folder.year) >= 5
-        }))
+        })) as FolderWithAge[]
         setFolders(foldersWithAge)
         setFilteredFolders(foldersWithAge)
       } else {
@@ -90,7 +90,7 @@ export default function ManageFoldersPage() {
     if (searchQuery) {
       const query = searchQuery.toLowerCase()
       filtered = filtered.filter(folder =>
-        folder.report_type.toLowerCase().includes(query) ||
+        folder.reportType.toLowerCase().includes(query) ||
         folder.year.includes(query) ||
         folder.batch.toLowerCase().includes(query) ||
         folder.description?.toLowerCase().includes(query)
@@ -292,7 +292,7 @@ export default function ManageFoldersPage() {
           <SelectContent>
             <SelectItem value="all">Semua Folder</SelectItem>
             <SelectItem value="old">Folder Lama (≥5 tahun)</SelectItem>
-            <SelectItem value="recent">Folder Baru (<5 tahun)</SelectItem>
+            <SelectItem value="recent">Folder Baru (&lt;5 tahun)</SelectItem>
           </SelectContent>
         </Select>
         <Button
@@ -362,7 +362,7 @@ export default function ManageFoldersPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-medium truncate">
-                          {folder.report_type} {folder.year} - Angkatan {folder.batch}
+                          {folder.reportType} {folder.year} - Angkatan {folder.batch}
                         </h3>
                         <Badge variant="outline" className={getAgeColor(folder.ageInYears)}>
                           {folder.ageInYears} tahun

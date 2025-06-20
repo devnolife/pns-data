@@ -1,0 +1,49 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="icon" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.7" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  
+  <!-- Pattern overlay -->
+  <pattern id="dots" patternUnits="userSpaceOnUse" width="20" height="20">
+    <circle cx="10" cy="10" r="1.5" fill="rgba(255,255,255,0.1)"/>
+  </pattern>
+  <rect width="400" height="300" fill="url(#dots)"/>
+  
+  <!-- Book icon -->
+  <g transform="translate(175, 100)">
+    <path d="M25 2C23.8954 2 23 2.89543 23 4V46C23 47.1046 23.8954 48 25 48H47C48.1046 48 49 47.1046 49 46V4C49 2.89543 48.1046 2 47 2H25Z" fill="url(#icon)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    <path d="M1 6C1 4.89543 1.89543 4 3 4H21C22.1046 4 23 4.89543 23 6V44C23 45.1046 22.1046 46 21 46H3C1.89543 46 1 45.1046 1 44V6Z" fill="url(#icon)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    
+    <!-- Book pages lines -->
+    <line x1="6" y1="12" x2="18" y2="12" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+    <line x1="6" y1="16" x2="18" y2="16" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+    <line x1="6" y1="20" x2="15" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+    
+    <line x1="28" y1="12" x2="42" y2="12" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+    <line x1="28" y1="16" x2="42" y2="16" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+    <line x1="28" y1="20" x2="39" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="200" y="200" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Arial, sans-serif" font-size="16" font-weight="600">
+    LAPORAN KOLEKSI DIGITAL
+  </text>
+  <text x="200" y="220" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="Arial, sans-serif" font-size="12">
+    Cover tidak tersedia
+  </text>
+  
+  <!-- Decorative elements -->
+  <circle cx="50" cy="50" r="20" fill="rgba(255,255,255,0.1)" opacity="0.5"/>
+  <circle cx="350" cy="250" r="15" fill="rgba(255,255,255,0.1)" opacity="0.3"/>
+</svg> 

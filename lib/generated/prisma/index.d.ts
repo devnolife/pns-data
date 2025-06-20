@@ -14,11 +14,6 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
 
 
 /**
- * Model collections
- * 
- */
-export type collections = $Result.DefaultSelection<Prisma.$collectionsPayload>
-/**
  * Model visitor_analytics
  * 
  */
@@ -28,11 +23,6 @@ export type visitor_analytics = $Result.DefaultSelection<Prisma.$visitor_analyti
  * 
  */
 export type guestbook_entries = $Result.DefaultSelection<Prisma.$guestbook_entriesPayload>
-/**
- * Model limited_collections
- * 
- */
-export type limited_collections = $Result.DefaultSelection<Prisma.$limited_collectionsPayload>
 /**
  * Model reports
  * 
@@ -53,6 +43,31 @@ export type users = $Result.DefaultSelection<Prisma.$usersPayload>
  * 
  */
 export type report_folders = $Result.DefaultSelection<Prisma.$report_foldersPayload>
+/**
+ * Model training_programs
+ * 
+ */
+export type training_programs = $Result.DefaultSelection<Prisma.$training_programsPayload>
+/**
+ * Model training_cohorts
+ * 
+ */
+export type training_cohorts = $Result.DefaultSelection<Prisma.$training_cohortsPayload>
+/**
+ * Model cohort_members
+ * 
+ */
+export type cohort_members = $Result.DefaultSelection<Prisma.$cohort_membersPayload>
+/**
+ * Model master_years
+ * 
+ */
+export type master_years = $Result.DefaultSelection<Prisma.$master_yearsPayload>
+/**
+ * Model master_cohorts
+ * 
+ */
+export type master_cohorts = $Result.DefaultSelection<Prisma.$master_cohortsPayload>
 
 /**
  * Enums
@@ -86,6 +101,27 @@ export const Role: {
 
 export type Role = (typeof Role)[keyof typeof Role]
 
+
+export const CohortStatus: {
+  PLANNING: 'PLANNING',
+  REGISTRATION: 'REGISTRATION',
+  ONGOING: 'ONGOING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type CohortStatus = (typeof CohortStatus)[keyof typeof CohortStatus]
+
+
+export const MemberStatus: {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  GRADUATED: 'GRADUATED',
+  DROPPED: 'DROPPED'
+};
+
+export type MemberStatus = (typeof MemberStatus)[keyof typeof MemberStatus]
+
 }
 
 export type Priority = $Enums.Priority
@@ -100,6 +136,14 @@ export type Role = $Enums.Role
 
 export const Role: typeof $Enums.Role
 
+export type CohortStatus = $Enums.CohortStatus
+
+export const CohortStatus: typeof $Enums.CohortStatus
+
+export type MemberStatus = $Enums.MemberStatus
+
+export const MemberStatus: typeof $Enums.MemberStatus
+
 /**
  * ##  Prisma Client ʲˢ
  *
@@ -107,8 +151,8 @@ export const Role: typeof $Enums.Role
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Collections
- * const collections = await prisma.collections.findMany()
+ * // Fetch zero or more Visitor_analytics
+ * const visitor_analytics = await prisma.visitor_analytics.findMany()
  * ```
  *
  *
@@ -128,8 +172,8 @@ export class PrismaClient<
    * @example
    * ```
    * const prisma = new PrismaClient()
-   * // Fetch zero or more Collections
-   * const collections = await prisma.collections.findMany()
+   * // Fetch zero or more Visitor_analytics
+   * const visitor_analytics = await prisma.visitor_analytics.findMany()
    * ```
    *
    *
@@ -226,16 +270,6 @@ export class PrismaClient<
   }>>
 
       /**
-   * `prisma.collections`: Exposes CRUD operations for the **collections** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Collections
-    * const collections = await prisma.collections.findMany()
-    * ```
-    */
-  get collections(): Prisma.collectionsDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.visitor_analytics`: Exposes CRUD operations for the **visitor_analytics** model.
     * Example usage:
     * ```ts
@@ -254,16 +288,6 @@ export class PrismaClient<
     * ```
     */
   get guestbook_entries(): Prisma.guestbook_entriesDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.limited_collections`: Exposes CRUD operations for the **limited_collections** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Limited_collections
-    * const limited_collections = await prisma.limited_collections.findMany()
-    * ```
-    */
-  get limited_collections(): Prisma.limited_collectionsDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.reports`: Exposes CRUD operations for the **reports** model.
@@ -304,6 +328,56 @@ export class PrismaClient<
     * ```
     */
   get report_folders(): Prisma.report_foldersDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.training_programs`: Exposes CRUD operations for the **training_programs** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Training_programs
+    * const training_programs = await prisma.training_programs.findMany()
+    * ```
+    */
+  get training_programs(): Prisma.training_programsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.training_cohorts`: Exposes CRUD operations for the **training_cohorts** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Training_cohorts
+    * const training_cohorts = await prisma.training_cohorts.findMany()
+    * ```
+    */
+  get training_cohorts(): Prisma.training_cohortsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cohort_members`: Exposes CRUD operations for the **cohort_members** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Cohort_members
+    * const cohort_members = await prisma.cohort_members.findMany()
+    * ```
+    */
+  get cohort_members(): Prisma.cohort_membersDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.master_years`: Exposes CRUD operations for the **master_years** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Master_years
+    * const master_years = await prisma.master_years.findMany()
+    * ```
+    */
+  get master_years(): Prisma.master_yearsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.master_cohorts`: Exposes CRUD operations for the **master_cohorts** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Master_cohorts
+    * const master_cohorts = await prisma.master_cohorts.findMany()
+    * ```
+    */
+  get master_cohorts(): Prisma.master_cohortsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -744,14 +818,17 @@ export namespace Prisma {
 
 
   export const ModelName: {
-    collections: 'collections',
     visitor_analytics: 'visitor_analytics',
     guestbook_entries: 'guestbook_entries',
-    limited_collections: 'limited_collections',
     reports: 'reports',
     uploaded_files: 'uploaded_files',
     users: 'users',
-    report_folders: 'report_folders'
+    report_folders: 'report_folders',
+    training_programs: 'training_programs',
+    training_cohorts: 'training_cohorts',
+    cohort_members: 'cohort_members',
+    master_years: 'master_years',
+    master_cohorts: 'master_cohorts'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -770,84 +847,10 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "collections" | "visitor_analytics" | "guestbook_entries" | "limited_collections" | "reports" | "uploaded_files" | "users" | "report_folders"
+      modelProps: "visitor_analytics" | "guestbook_entries" | "reports" | "uploaded_files" | "users" | "report_folders" | "training_programs" | "training_cohorts" | "cohort_members" | "master_years" | "master_cohorts"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
-      collections: {
-        payload: Prisma.$collectionsPayload<ExtArgs>
-        fields: Prisma.collectionsFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.collectionsFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.collectionsFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>
-          }
-          findFirst: {
-            args: Prisma.collectionsFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.collectionsFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>
-          }
-          findMany: {
-            args: Prisma.collectionsFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>[]
-          }
-          create: {
-            args: Prisma.collectionsCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>
-          }
-          createMany: {
-            args: Prisma.collectionsCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.collectionsCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>[]
-          }
-          delete: {
-            args: Prisma.collectionsDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>
-          }
-          update: {
-            args: Prisma.collectionsUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>
-          }
-          deleteMany: {
-            args: Prisma.collectionsDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.collectionsUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.collectionsUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>[]
-          }
-          upsert: {
-            args: Prisma.collectionsUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$collectionsPayload>
-          }
-          aggregate: {
-            args: Prisma.CollectionsAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateCollections>
-          }
-          groupBy: {
-            args: Prisma.collectionsGroupByArgs<ExtArgs>
-            result: $Utils.Optional<CollectionsGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.collectionsCountArgs<ExtArgs>
-            result: $Utils.Optional<CollectionsCountAggregateOutputType> | number
-          }
-        }
-      }
       visitor_analytics: {
         payload: Prisma.$visitor_analyticsPayload<ExtArgs>
         fields: Prisma.visitor_analyticsFieldRefs
@@ -993,80 +996,6 @@ export namespace Prisma {
           count: {
             args: Prisma.guestbook_entriesCountArgs<ExtArgs>
             result: $Utils.Optional<Guestbook_entriesCountAggregateOutputType> | number
-          }
-        }
-      }
-      limited_collections: {
-        payload: Prisma.$limited_collectionsPayload<ExtArgs>
-        fields: Prisma.limited_collectionsFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.limited_collectionsFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.limited_collectionsFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>
-          }
-          findFirst: {
-            args: Prisma.limited_collectionsFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.limited_collectionsFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>
-          }
-          findMany: {
-            args: Prisma.limited_collectionsFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>[]
-          }
-          create: {
-            args: Prisma.limited_collectionsCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>
-          }
-          createMany: {
-            args: Prisma.limited_collectionsCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.limited_collectionsCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>[]
-          }
-          delete: {
-            args: Prisma.limited_collectionsDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>
-          }
-          update: {
-            args: Prisma.limited_collectionsUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>
-          }
-          deleteMany: {
-            args: Prisma.limited_collectionsDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.limited_collectionsUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.limited_collectionsUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>[]
-          }
-          upsert: {
-            args: Prisma.limited_collectionsUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$limited_collectionsPayload>
-          }
-          aggregate: {
-            args: Prisma.Limited_collectionsAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateLimited_collections>
-          }
-          groupBy: {
-            args: Prisma.limited_collectionsGroupByArgs<ExtArgs>
-            result: $Utils.Optional<Limited_collectionsGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.limited_collectionsCountArgs<ExtArgs>
-            result: $Utils.Optional<Limited_collectionsCountAggregateOutputType> | number
           }
         }
       }
@@ -1366,6 +1295,376 @@ export namespace Prisma {
           }
         }
       }
+      training_programs: {
+        payload: Prisma.$training_programsPayload<ExtArgs>
+        fields: Prisma.training_programsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.training_programsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.training_programsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>
+          }
+          findFirst: {
+            args: Prisma.training_programsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.training_programsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>
+          }
+          findMany: {
+            args: Prisma.training_programsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>[]
+          }
+          create: {
+            args: Prisma.training_programsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>
+          }
+          createMany: {
+            args: Prisma.training_programsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.training_programsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>[]
+          }
+          delete: {
+            args: Prisma.training_programsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>
+          }
+          update: {
+            args: Prisma.training_programsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>
+          }
+          deleteMany: {
+            args: Prisma.training_programsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.training_programsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.training_programsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>[]
+          }
+          upsert: {
+            args: Prisma.training_programsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_programsPayload>
+          }
+          aggregate: {
+            args: Prisma.Training_programsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTraining_programs>
+          }
+          groupBy: {
+            args: Prisma.training_programsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Training_programsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.training_programsCountArgs<ExtArgs>
+            result: $Utils.Optional<Training_programsCountAggregateOutputType> | number
+          }
+        }
+      }
+      training_cohorts: {
+        payload: Prisma.$training_cohortsPayload<ExtArgs>
+        fields: Prisma.training_cohortsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.training_cohortsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.training_cohortsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>
+          }
+          findFirst: {
+            args: Prisma.training_cohortsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.training_cohortsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>
+          }
+          findMany: {
+            args: Prisma.training_cohortsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>[]
+          }
+          create: {
+            args: Prisma.training_cohortsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>
+          }
+          createMany: {
+            args: Prisma.training_cohortsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.training_cohortsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>[]
+          }
+          delete: {
+            args: Prisma.training_cohortsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>
+          }
+          update: {
+            args: Prisma.training_cohortsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>
+          }
+          deleteMany: {
+            args: Prisma.training_cohortsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.training_cohortsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.training_cohortsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>[]
+          }
+          upsert: {
+            args: Prisma.training_cohortsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$training_cohortsPayload>
+          }
+          aggregate: {
+            args: Prisma.Training_cohortsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTraining_cohorts>
+          }
+          groupBy: {
+            args: Prisma.training_cohortsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Training_cohortsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.training_cohortsCountArgs<ExtArgs>
+            result: $Utils.Optional<Training_cohortsCountAggregateOutputType> | number
+          }
+        }
+      }
+      cohort_members: {
+        payload: Prisma.$cohort_membersPayload<ExtArgs>
+        fields: Prisma.cohort_membersFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.cohort_membersFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.cohort_membersFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>
+          }
+          findFirst: {
+            args: Prisma.cohort_membersFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.cohort_membersFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>
+          }
+          findMany: {
+            args: Prisma.cohort_membersFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>[]
+          }
+          create: {
+            args: Prisma.cohort_membersCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>
+          }
+          createMany: {
+            args: Prisma.cohort_membersCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.cohort_membersCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>[]
+          }
+          delete: {
+            args: Prisma.cohort_membersDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>
+          }
+          update: {
+            args: Prisma.cohort_membersUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>
+          }
+          deleteMany: {
+            args: Prisma.cohort_membersDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.cohort_membersUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.cohort_membersUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>[]
+          }
+          upsert: {
+            args: Prisma.cohort_membersUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$cohort_membersPayload>
+          }
+          aggregate: {
+            args: Prisma.Cohort_membersAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCohort_members>
+          }
+          groupBy: {
+            args: Prisma.cohort_membersGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Cohort_membersGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.cohort_membersCountArgs<ExtArgs>
+            result: $Utils.Optional<Cohort_membersCountAggregateOutputType> | number
+          }
+        }
+      }
+      master_years: {
+        payload: Prisma.$master_yearsPayload<ExtArgs>
+        fields: Prisma.master_yearsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.master_yearsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.master_yearsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>
+          }
+          findFirst: {
+            args: Prisma.master_yearsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.master_yearsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>
+          }
+          findMany: {
+            args: Prisma.master_yearsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>[]
+          }
+          create: {
+            args: Prisma.master_yearsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>
+          }
+          createMany: {
+            args: Prisma.master_yearsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.master_yearsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>[]
+          }
+          delete: {
+            args: Prisma.master_yearsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>
+          }
+          update: {
+            args: Prisma.master_yearsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>
+          }
+          deleteMany: {
+            args: Prisma.master_yearsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.master_yearsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.master_yearsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>[]
+          }
+          upsert: {
+            args: Prisma.master_yearsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_yearsPayload>
+          }
+          aggregate: {
+            args: Prisma.Master_yearsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMaster_years>
+          }
+          groupBy: {
+            args: Prisma.master_yearsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Master_yearsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.master_yearsCountArgs<ExtArgs>
+            result: $Utils.Optional<Master_yearsCountAggregateOutputType> | number
+          }
+        }
+      }
+      master_cohorts: {
+        payload: Prisma.$master_cohortsPayload<ExtArgs>
+        fields: Prisma.master_cohortsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.master_cohortsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.master_cohortsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>
+          }
+          findFirst: {
+            args: Prisma.master_cohortsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.master_cohortsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>
+          }
+          findMany: {
+            args: Prisma.master_cohortsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>[]
+          }
+          create: {
+            args: Prisma.master_cohortsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>
+          }
+          createMany: {
+            args: Prisma.master_cohortsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.master_cohortsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>[]
+          }
+          delete: {
+            args: Prisma.master_cohortsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>
+          }
+          update: {
+            args: Prisma.master_cohortsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>
+          }
+          deleteMany: {
+            args: Prisma.master_cohortsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.master_cohortsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.master_cohortsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>[]
+          }
+          upsert: {
+            args: Prisma.master_cohortsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$master_cohortsPayload>
+          }
+          aggregate: {
+            args: Prisma.Master_cohortsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMaster_cohorts>
+          }
+          groupBy: {
+            args: Prisma.master_cohortsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<Master_cohortsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.master_cohortsCountArgs<ExtArgs>
+            result: $Utils.Optional<Master_cohortsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1450,14 +1749,17 @@ export namespace Prisma {
     omit?: Prisma.GlobalOmitConfig
   }
   export type GlobalOmitConfig = {
-    collections?: collectionsOmit
     visitor_analytics?: visitor_analyticsOmit
     guestbook_entries?: guestbook_entriesOmit
-    limited_collections?: limited_collectionsOmit
     reports?: reportsOmit
     uploaded_files?: uploaded_filesOmit
     users?: usersOmit
     report_folders?: report_foldersOmit
+    training_programs?: training_programsOmit
+    training_cohorts?: training_cohortsOmit
+    cohort_members?: cohort_membersOmit
+    master_years?: master_yearsOmit
+    master_cohorts?: master_cohortsOmit
   }
 
   /* Types for Logging */
@@ -1583,25 +1885,23 @@ export namespace Prisma {
    */
 
   export type UsersCountOutputType = {
-    collections: number
     visitor_analytics: number
     guestbook_entries: number
-    limited_collections: number
     reports_reports_assignee_idTousers: number
     reports_reports_author_idTousers: number
     uploaded_files: number
     created_folders: number
+    cohort_memberships: number
   }
 
   export type UsersCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    collections?: boolean | UsersCountOutputTypeCountCollectionsArgs
     visitor_analytics?: boolean | UsersCountOutputTypeCountVisitor_analyticsArgs
     guestbook_entries?: boolean | UsersCountOutputTypeCountGuestbook_entriesArgs
-    limited_collections?: boolean | UsersCountOutputTypeCountLimited_collectionsArgs
     reports_reports_assignee_idTousers?: boolean | UsersCountOutputTypeCountReports_reports_assignee_idTousersArgs
     reports_reports_author_idTousers?: boolean | UsersCountOutputTypeCountReports_reports_author_idTousersArgs
     uploaded_files?: boolean | UsersCountOutputTypeCountUploaded_filesArgs
     created_folders?: boolean | UsersCountOutputTypeCountCreated_foldersArgs
+    cohort_memberships?: boolean | UsersCountOutputTypeCountCohort_membershipsArgs
   }
 
   // Custom InputTypes
@@ -1618,13 +1918,6 @@ export namespace Prisma {
   /**
    * UsersCountOutputType without action
    */
-  export type UsersCountOutputTypeCountCollectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: collectionsWhereInput
-  }
-
-  /**
-   * UsersCountOutputType without action
-   */
   export type UsersCountOutputTypeCountVisitor_analyticsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: visitor_analyticsWhereInput
   }
@@ -1634,13 +1927,6 @@ export namespace Prisma {
    */
   export type UsersCountOutputTypeCountGuestbook_entriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: guestbook_entriesWhereInput
-  }
-
-  /**
-   * UsersCountOutputType without action
-   */
-  export type UsersCountOutputTypeCountLimited_collectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: limited_collectionsWhereInput
   }
 
   /**
@@ -1671,1146 +1957,106 @@ export namespace Prisma {
     where?: report_foldersWhereInput
   }
 
+  /**
+   * UsersCountOutputType without action
+   */
+  export type UsersCountOutputTypeCountCohort_membershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cohort_membersWhereInput
+  }
+
+
+  /**
+   * Count Type Training_programsCountOutputType
+   */
+
+  export type Training_programsCountOutputType = {
+    users: number
+    cohorts: number
+    folders: number
+  }
+
+  export type Training_programsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | Training_programsCountOutputTypeCountUsersArgs
+    cohorts?: boolean | Training_programsCountOutputTypeCountCohortsArgs
+    folders?: boolean | Training_programsCountOutputTypeCountFoldersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Training_programsCountOutputType without action
+   */
+  export type Training_programsCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Training_programsCountOutputType
+     */
+    select?: Training_programsCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Training_programsCountOutputType without action
+   */
+  export type Training_programsCountOutputTypeCountUsersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: usersWhereInput
+  }
+
+  /**
+   * Training_programsCountOutputType without action
+   */
+  export type Training_programsCountOutputTypeCountCohortsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: training_cohortsWhereInput
+  }
+
+  /**
+   * Training_programsCountOutputType without action
+   */
+  export type Training_programsCountOutputTypeCountFoldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: report_foldersWhereInput
+  }
+
+
+  /**
+   * Count Type Training_cohortsCountOutputType
+   */
+
+  export type Training_cohortsCountOutputType = {
+    members: number
+    folders: number
+  }
+
+  export type Training_cohortsCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    members?: boolean | Training_cohortsCountOutputTypeCountMembersArgs
+    folders?: boolean | Training_cohortsCountOutputTypeCountFoldersArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * Training_cohortsCountOutputType without action
+   */
+  export type Training_cohortsCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Training_cohortsCountOutputType
+     */
+    select?: Training_cohortsCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * Training_cohortsCountOutputType without action
+   */
+  export type Training_cohortsCountOutputTypeCountMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cohort_membersWhereInput
+  }
+
+  /**
+   * Training_cohortsCountOutputType without action
+   */
+  export type Training_cohortsCountOutputTypeCountFoldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: report_foldersWhereInput
+  }
+
 
   /**
    * Models
    */
-
-  /**
-   * Model collections
-   */
-
-  export type AggregateCollections = {
-    _count: CollectionsCountAggregateOutputType | null
-    _min: CollectionsMinAggregateOutputType | null
-    _max: CollectionsMaxAggregateOutputType | null
-  }
-
-  export type CollectionsMinAggregateOutputType = {
-    id: string | null
-    title: string | null
-    description: string | null
-    content: string | null
-    image_url: string | null
-    category: string | null
-    tags: string | null
-    is_public: boolean | null
-    author_id: string | null
-    created_at: Date | null
-    updated_at: Date | null
-  }
-
-  export type CollectionsMaxAggregateOutputType = {
-    id: string | null
-    title: string | null
-    description: string | null
-    content: string | null
-    image_url: string | null
-    category: string | null
-    tags: string | null
-    is_public: boolean | null
-    author_id: string | null
-    created_at: Date | null
-    updated_at: Date | null
-  }
-
-  export type CollectionsCountAggregateOutputType = {
-    id: number
-    title: number
-    description: number
-    content: number
-    image_url: number
-    category: number
-    tags: number
-    is_public: number
-    author_id: number
-    created_at: number
-    updated_at: number
-    _all: number
-  }
-
-
-  export type CollectionsMinAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    content?: true
-    image_url?: true
-    category?: true
-    tags?: true
-    is_public?: true
-    author_id?: true
-    created_at?: true
-    updated_at?: true
-  }
-
-  export type CollectionsMaxAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    content?: true
-    image_url?: true
-    category?: true
-    tags?: true
-    is_public?: true
-    author_id?: true
-    created_at?: true
-    updated_at?: true
-  }
-
-  export type CollectionsCountAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    content?: true
-    image_url?: true
-    category?: true
-    tags?: true
-    is_public?: true
-    author_id?: true
-    created_at?: true
-    updated_at?: true
-    _all?: true
-  }
-
-  export type CollectionsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which collections to aggregate.
-     */
-    where?: collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of collections to fetch.
-     */
-    orderBy?: collectionsOrderByWithRelationInput | collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` collections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned collections
-    **/
-    _count?: true | CollectionsCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: CollectionsMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: CollectionsMaxAggregateInputType
-  }
-
-  export type GetCollectionsAggregateType<T extends CollectionsAggregateArgs> = {
-        [P in keyof T & keyof AggregateCollections]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateCollections[P]>
-      : GetScalarType<T[P], AggregateCollections[P]>
-  }
-
-
-
-
-  export type collectionsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: collectionsWhereInput
-    orderBy?: collectionsOrderByWithAggregationInput | collectionsOrderByWithAggregationInput[]
-    by: CollectionsScalarFieldEnum[] | CollectionsScalarFieldEnum
-    having?: collectionsScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: CollectionsCountAggregateInputType | true
-    _min?: CollectionsMinAggregateInputType
-    _max?: CollectionsMaxAggregateInputType
-  }
-
-  export type CollectionsGroupByOutputType = {
-    id: string
-    title: string
-    description: string | null
-    content: string
-    image_url: string | null
-    category: string | null
-    tags: string | null
-    is_public: boolean
-    author_id: string
-    created_at: Date
-    updated_at: Date
-    _count: CollectionsCountAggregateOutputType | null
-    _min: CollectionsMinAggregateOutputType | null
-    _max: CollectionsMaxAggregateOutputType | null
-  }
-
-  type GetCollectionsGroupByPayload<T extends collectionsGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<CollectionsGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof CollectionsGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], CollectionsGroupByOutputType[P]>
-            : GetScalarType<T[P], CollectionsGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type collectionsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    is_public?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["collections"]>
-
-  export type collectionsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    is_public?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["collections"]>
-
-  export type collectionsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    is_public?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["collections"]>
-
-  export type collectionsSelectScalar = {
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    is_public?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-  }
-
-  export type collectionsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "content" | "image_url" | "category" | "tags" | "is_public" | "author_id" | "created_at" | "updated_at", ExtArgs["result"]["collections"]>
-  export type collectionsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }
-  export type collectionsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }
-  export type collectionsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }
-
-  export type $collectionsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "collections"
-    objects: {
-      users: Prisma.$usersPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      title: string
-      description: string | null
-      content: string
-      image_url: string | null
-      category: string | null
-      tags: string | null
-      is_public: boolean
-      author_id: string
-      created_at: Date
-      updated_at: Date
-    }, ExtArgs["result"]["collections"]>
-    composites: {}
-  }
-
-  type collectionsGetPayload<S extends boolean | null | undefined | collectionsDefaultArgs> = $Result.GetResult<Prisma.$collectionsPayload, S>
-
-  type collectionsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<collectionsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: CollectionsCountAggregateInputType | true
-    }
-
-  export interface collectionsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['collections'], meta: { name: 'collections' } }
-    /**
-     * Find zero or one Collections that matches the filter.
-     * @param {collectionsFindUniqueArgs} args - Arguments to find a Collections
-     * @example
-     * // Get one Collections
-     * const collections = await prisma.collections.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends collectionsFindUniqueArgs>(args: SelectSubset<T, collectionsFindUniqueArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Collections that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {collectionsFindUniqueOrThrowArgs} args - Arguments to find a Collections
-     * @example
-     * // Get one Collections
-     * const collections = await prisma.collections.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends collectionsFindUniqueOrThrowArgs>(args: SelectSubset<T, collectionsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Collections that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {collectionsFindFirstArgs} args - Arguments to find a Collections
-     * @example
-     * // Get one Collections
-     * const collections = await prisma.collections.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends collectionsFindFirstArgs>(args?: SelectSubset<T, collectionsFindFirstArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Collections that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {collectionsFindFirstOrThrowArgs} args - Arguments to find a Collections
-     * @example
-     * // Get one Collections
-     * const collections = await prisma.collections.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends collectionsFindFirstOrThrowArgs>(args?: SelectSubset<T, collectionsFindFirstOrThrowArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Collections that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {collectionsFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Collections
-     * const collections = await prisma.collections.findMany()
-     * 
-     * // Get first 10 Collections
-     * const collections = await prisma.collections.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const collectionsWithIdOnly = await prisma.collections.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends collectionsFindManyArgs>(args?: SelectSubset<T, collectionsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Collections.
-     * @param {collectionsCreateArgs} args - Arguments to create a Collections.
-     * @example
-     * // Create one Collections
-     * const Collections = await prisma.collections.create({
-     *   data: {
-     *     // ... data to create a Collections
-     *   }
-     * })
-     * 
-     */
-    create<T extends collectionsCreateArgs>(args: SelectSubset<T, collectionsCreateArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Collections.
-     * @param {collectionsCreateManyArgs} args - Arguments to create many Collections.
-     * @example
-     * // Create many Collections
-     * const collections = await prisma.collections.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends collectionsCreateManyArgs>(args?: SelectSubset<T, collectionsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Collections and returns the data saved in the database.
-     * @param {collectionsCreateManyAndReturnArgs} args - Arguments to create many Collections.
-     * @example
-     * // Create many Collections
-     * const collections = await prisma.collections.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Collections and only return the `id`
-     * const collectionsWithIdOnly = await prisma.collections.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends collectionsCreateManyAndReturnArgs>(args?: SelectSubset<T, collectionsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Collections.
-     * @param {collectionsDeleteArgs} args - Arguments to delete one Collections.
-     * @example
-     * // Delete one Collections
-     * const Collections = await prisma.collections.delete({
-     *   where: {
-     *     // ... filter to delete one Collections
-     *   }
-     * })
-     * 
-     */
-    delete<T extends collectionsDeleteArgs>(args: SelectSubset<T, collectionsDeleteArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Collections.
-     * @param {collectionsUpdateArgs} args - Arguments to update one Collections.
-     * @example
-     * // Update one Collections
-     * const collections = await prisma.collections.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends collectionsUpdateArgs>(args: SelectSubset<T, collectionsUpdateArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Collections.
-     * @param {collectionsDeleteManyArgs} args - Arguments to filter Collections to delete.
-     * @example
-     * // Delete a few Collections
-     * const { count } = await prisma.collections.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends collectionsDeleteManyArgs>(args?: SelectSubset<T, collectionsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {collectionsUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Collections
-     * const collections = await prisma.collections.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends collectionsUpdateManyArgs>(args: SelectSubset<T, collectionsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Collections and returns the data updated in the database.
-     * @param {collectionsUpdateManyAndReturnArgs} args - Arguments to update many Collections.
-     * @example
-     * // Update many Collections
-     * const collections = await prisma.collections.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Collections and only return the `id`
-     * const collectionsWithIdOnly = await prisma.collections.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends collectionsUpdateManyAndReturnArgs>(args: SelectSubset<T, collectionsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Collections.
-     * @param {collectionsUpsertArgs} args - Arguments to update or create a Collections.
-     * @example
-     * // Update or create a Collections
-     * const collections = await prisma.collections.upsert({
-     *   create: {
-     *     // ... data to create a Collections
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Collections we want to update
-     *   }
-     * })
-     */
-    upsert<T extends collectionsUpsertArgs>(args: SelectSubset<T, collectionsUpsertArgs<ExtArgs>>): Prisma__collectionsClient<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {collectionsCountArgs} args - Arguments to filter Collections to count.
-     * @example
-     * // Count the number of Collections
-     * const count = await prisma.collections.count({
-     *   where: {
-     *     // ... the filter for the Collections we want to count
-     *   }
-     * })
-    **/
-    count<T extends collectionsCountArgs>(
-      args?: Subset<T, collectionsCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], CollectionsCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {CollectionsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends CollectionsAggregateArgs>(args: Subset<T, CollectionsAggregateArgs>): Prisma.PrismaPromise<GetCollectionsAggregateType<T>>
-
-    /**
-     * Group by Collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {collectionsGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends collectionsGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: collectionsGroupByArgs['orderBy'] }
-        : { orderBy?: collectionsGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, collectionsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCollectionsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the collections model
-   */
-  readonly fields: collectionsFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for collections.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__collectionsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    users<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the collections model
-   */
-  interface collectionsFieldRefs {
-    readonly id: FieldRef<"collections", 'String'>
-    readonly title: FieldRef<"collections", 'String'>
-    readonly description: FieldRef<"collections", 'String'>
-    readonly content: FieldRef<"collections", 'String'>
-    readonly image_url: FieldRef<"collections", 'String'>
-    readonly category: FieldRef<"collections", 'String'>
-    readonly tags: FieldRef<"collections", 'String'>
-    readonly is_public: FieldRef<"collections", 'Boolean'>
-    readonly author_id: FieldRef<"collections", 'String'>
-    readonly created_at: FieldRef<"collections", 'DateTime'>
-    readonly updated_at: FieldRef<"collections", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * collections findUnique
-   */
-  export type collectionsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which collections to fetch.
-     */
-    where: collectionsWhereUniqueInput
-  }
-
-  /**
-   * collections findUniqueOrThrow
-   */
-  export type collectionsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which collections to fetch.
-     */
-    where: collectionsWhereUniqueInput
-  }
-
-  /**
-   * collections findFirst
-   */
-  export type collectionsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which collections to fetch.
-     */
-    where?: collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of collections to fetch.
-     */
-    orderBy?: collectionsOrderByWithRelationInput | collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for collections.
-     */
-    cursor?: collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` collections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of collections.
-     */
-    distinct?: CollectionsScalarFieldEnum | CollectionsScalarFieldEnum[]
-  }
-
-  /**
-   * collections findFirstOrThrow
-   */
-  export type collectionsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which collections to fetch.
-     */
-    where?: collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of collections to fetch.
-     */
-    orderBy?: collectionsOrderByWithRelationInput | collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for collections.
-     */
-    cursor?: collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` collections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of collections.
-     */
-    distinct?: CollectionsScalarFieldEnum | CollectionsScalarFieldEnum[]
-  }
-
-  /**
-   * collections findMany
-   */
-  export type collectionsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which collections to fetch.
-     */
-    where?: collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of collections to fetch.
-     */
-    orderBy?: collectionsOrderByWithRelationInput | collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing collections.
-     */
-    cursor?: collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` collections.
-     */
-    skip?: number
-    distinct?: CollectionsScalarFieldEnum | CollectionsScalarFieldEnum[]
-  }
-
-  /**
-   * collections create
-   */
-  export type collectionsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * The data needed to create a collections.
-     */
-    data: XOR<collectionsCreateInput, collectionsUncheckedCreateInput>
-  }
-
-  /**
-   * collections createMany
-   */
-  export type collectionsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many collections.
-     */
-    data: collectionsCreateManyInput | collectionsCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * collections createManyAndReturn
-   */
-  export type collectionsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * The data used to create many collections.
-     */
-    data: collectionsCreateManyInput | collectionsCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * collections update
-   */
-  export type collectionsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * The data needed to update a collections.
-     */
-    data: XOR<collectionsUpdateInput, collectionsUncheckedUpdateInput>
-    /**
-     * Choose, which collections to update.
-     */
-    where: collectionsWhereUniqueInput
-  }
-
-  /**
-   * collections updateMany
-   */
-  export type collectionsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update collections.
-     */
-    data: XOR<collectionsUpdateManyMutationInput, collectionsUncheckedUpdateManyInput>
-    /**
-     * Filter which collections to update
-     */
-    where?: collectionsWhereInput
-    /**
-     * Limit how many collections to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * collections updateManyAndReturn
-   */
-  export type collectionsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * The data used to update collections.
-     */
-    data: XOR<collectionsUpdateManyMutationInput, collectionsUncheckedUpdateManyInput>
-    /**
-     * Filter which collections to update
-     */
-    where?: collectionsWhereInput
-    /**
-     * Limit how many collections to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * collections upsert
-   */
-  export type collectionsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * The filter to search for the collections to update in case it exists.
-     */
-    where: collectionsWhereUniqueInput
-    /**
-     * In case the collections found by the `where` argument doesn't exist, create a new collections with this data.
-     */
-    create: XOR<collectionsCreateInput, collectionsUncheckedCreateInput>
-    /**
-     * In case the collections was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<collectionsUpdateInput, collectionsUncheckedUpdateInput>
-  }
-
-  /**
-   * collections delete
-   */
-  export type collectionsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    /**
-     * Filter which collections to delete.
-     */
-    where: collectionsWhereUniqueInput
-  }
-
-  /**
-   * collections deleteMany
-   */
-  export type collectionsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which collections to delete
-     */
-    where?: collectionsWhereInput
-    /**
-     * Limit how many collections to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * collections without action
-   */
-  export type collectionsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-  }
-
 
   /**
    * Model visitor_analytics
@@ -5105,1213 +4351,25 @@ export namespace Prisma {
 
 
   /**
-   * Model limited_collections
-   */
-
-  export type AggregateLimited_collections = {
-    _count: Limited_collectionsCountAggregateOutputType | null
-    _avg: Limited_collectionsAvgAggregateOutputType | null
-    _sum: Limited_collectionsSumAggregateOutputType | null
-    _min: Limited_collectionsMinAggregateOutputType | null
-    _max: Limited_collectionsMaxAggregateOutputType | null
-  }
-
-  export type Limited_collectionsAvgAggregateOutputType = {
-    max_access: number | null
-    current_access: number | null
-  }
-
-  export type Limited_collectionsSumAggregateOutputType = {
-    max_access: number | null
-    current_access: number | null
-  }
-
-  export type Limited_collectionsMinAggregateOutputType = {
-    id: string | null
-    title: string | null
-    description: string | null
-    content: string | null
-    image_url: string | null
-    category: string | null
-    tags: string | null
-    max_access: number | null
-    current_access: number | null
-    is_active: boolean | null
-    author_id: string | null
-    created_at: Date | null
-    updated_at: Date | null
-  }
-
-  export type Limited_collectionsMaxAggregateOutputType = {
-    id: string | null
-    title: string | null
-    description: string | null
-    content: string | null
-    image_url: string | null
-    category: string | null
-    tags: string | null
-    max_access: number | null
-    current_access: number | null
-    is_active: boolean | null
-    author_id: string | null
-    created_at: Date | null
-    updated_at: Date | null
-  }
-
-  export type Limited_collectionsCountAggregateOutputType = {
-    id: number
-    title: number
-    description: number
-    content: number
-    image_url: number
-    category: number
-    tags: number
-    max_access: number
-    current_access: number
-    is_active: number
-    author_id: number
-    created_at: number
-    updated_at: number
-    _all: number
-  }
-
-
-  export type Limited_collectionsAvgAggregateInputType = {
-    max_access?: true
-    current_access?: true
-  }
-
-  export type Limited_collectionsSumAggregateInputType = {
-    max_access?: true
-    current_access?: true
-  }
-
-  export type Limited_collectionsMinAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    content?: true
-    image_url?: true
-    category?: true
-    tags?: true
-    max_access?: true
-    current_access?: true
-    is_active?: true
-    author_id?: true
-    created_at?: true
-    updated_at?: true
-  }
-
-  export type Limited_collectionsMaxAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    content?: true
-    image_url?: true
-    category?: true
-    tags?: true
-    max_access?: true
-    current_access?: true
-    is_active?: true
-    author_id?: true
-    created_at?: true
-    updated_at?: true
-  }
-
-  export type Limited_collectionsCountAggregateInputType = {
-    id?: true
-    title?: true
-    description?: true
-    content?: true
-    image_url?: true
-    category?: true
-    tags?: true
-    max_access?: true
-    current_access?: true
-    is_active?: true
-    author_id?: true
-    created_at?: true
-    updated_at?: true
-    _all?: true
-  }
-
-  export type Limited_collectionsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which limited_collections to aggregate.
-     */
-    where?: limited_collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of limited_collections to fetch.
-     */
-    orderBy?: limited_collectionsOrderByWithRelationInput | limited_collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: limited_collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` limited_collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` limited_collections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned limited_collections
-    **/
-    _count?: true | Limited_collectionsCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: Limited_collectionsAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: Limited_collectionsSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: Limited_collectionsMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: Limited_collectionsMaxAggregateInputType
-  }
-
-  export type GetLimited_collectionsAggregateType<T extends Limited_collectionsAggregateArgs> = {
-        [P in keyof T & keyof AggregateLimited_collections]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateLimited_collections[P]>
-      : GetScalarType<T[P], AggregateLimited_collections[P]>
-  }
-
-
-
-
-  export type limited_collectionsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: limited_collectionsWhereInput
-    orderBy?: limited_collectionsOrderByWithAggregationInput | limited_collectionsOrderByWithAggregationInput[]
-    by: Limited_collectionsScalarFieldEnum[] | Limited_collectionsScalarFieldEnum
-    having?: limited_collectionsScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: Limited_collectionsCountAggregateInputType | true
-    _avg?: Limited_collectionsAvgAggregateInputType
-    _sum?: Limited_collectionsSumAggregateInputType
-    _min?: Limited_collectionsMinAggregateInputType
-    _max?: Limited_collectionsMaxAggregateInputType
-  }
-
-  export type Limited_collectionsGroupByOutputType = {
-    id: string
-    title: string
-    description: string | null
-    content: string
-    image_url: string | null
-    category: string | null
-    tags: string | null
-    max_access: number
-    current_access: number
-    is_active: boolean
-    author_id: string
-    created_at: Date
-    updated_at: Date
-    _count: Limited_collectionsCountAggregateOutputType | null
-    _avg: Limited_collectionsAvgAggregateOutputType | null
-    _sum: Limited_collectionsSumAggregateOutputType | null
-    _min: Limited_collectionsMinAggregateOutputType | null
-    _max: Limited_collectionsMaxAggregateOutputType | null
-  }
-
-  type GetLimited_collectionsGroupByPayload<T extends limited_collectionsGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<Limited_collectionsGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof Limited_collectionsGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], Limited_collectionsGroupByOutputType[P]>
-            : GetScalarType<T[P], Limited_collectionsGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type limited_collectionsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    max_access?: boolean
-    current_access?: boolean
-    is_active?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["limited_collections"]>
-
-  export type limited_collectionsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    max_access?: boolean
-    current_access?: boolean
-    is_active?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["limited_collections"]>
-
-  export type limited_collectionsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    max_access?: boolean
-    current_access?: boolean
-    is_active?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["limited_collections"]>
-
-  export type limited_collectionsSelectScalar = {
-    id?: boolean
-    title?: boolean
-    description?: boolean
-    content?: boolean
-    image_url?: boolean
-    category?: boolean
-    tags?: boolean
-    max_access?: boolean
-    current_access?: boolean
-    is_active?: boolean
-    author_id?: boolean
-    created_at?: boolean
-    updated_at?: boolean
-  }
-
-  export type limited_collectionsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "content" | "image_url" | "category" | "tags" | "max_access" | "current_access" | "is_active" | "author_id" | "created_at" | "updated_at", ExtArgs["result"]["limited_collections"]>
-  export type limited_collectionsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }
-  export type limited_collectionsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }
-  export type limited_collectionsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    users?: boolean | usersDefaultArgs<ExtArgs>
-  }
-
-  export type $limited_collectionsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "limited_collections"
-    objects: {
-      users: Prisma.$usersPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      title: string
-      description: string | null
-      content: string
-      image_url: string | null
-      category: string | null
-      tags: string | null
-      max_access: number
-      current_access: number
-      is_active: boolean
-      author_id: string
-      created_at: Date
-      updated_at: Date
-    }, ExtArgs["result"]["limited_collections"]>
-    composites: {}
-  }
-
-  type limited_collectionsGetPayload<S extends boolean | null | undefined | limited_collectionsDefaultArgs> = $Result.GetResult<Prisma.$limited_collectionsPayload, S>
-
-  type limited_collectionsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<limited_collectionsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: Limited_collectionsCountAggregateInputType | true
-    }
-
-  export interface limited_collectionsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['limited_collections'], meta: { name: 'limited_collections' } }
-    /**
-     * Find zero or one Limited_collections that matches the filter.
-     * @param {limited_collectionsFindUniqueArgs} args - Arguments to find a Limited_collections
-     * @example
-     * // Get one Limited_collections
-     * const limited_collections = await prisma.limited_collections.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends limited_collectionsFindUniqueArgs>(args: SelectSubset<T, limited_collectionsFindUniqueArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Limited_collections that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {limited_collectionsFindUniqueOrThrowArgs} args - Arguments to find a Limited_collections
-     * @example
-     * // Get one Limited_collections
-     * const limited_collections = await prisma.limited_collections.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends limited_collectionsFindUniqueOrThrowArgs>(args: SelectSubset<T, limited_collectionsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Limited_collections that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {limited_collectionsFindFirstArgs} args - Arguments to find a Limited_collections
-     * @example
-     * // Get one Limited_collections
-     * const limited_collections = await prisma.limited_collections.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends limited_collectionsFindFirstArgs>(args?: SelectSubset<T, limited_collectionsFindFirstArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Limited_collections that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {limited_collectionsFindFirstOrThrowArgs} args - Arguments to find a Limited_collections
-     * @example
-     * // Get one Limited_collections
-     * const limited_collections = await prisma.limited_collections.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends limited_collectionsFindFirstOrThrowArgs>(args?: SelectSubset<T, limited_collectionsFindFirstOrThrowArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Limited_collections that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {limited_collectionsFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Limited_collections
-     * const limited_collections = await prisma.limited_collections.findMany()
-     * 
-     * // Get first 10 Limited_collections
-     * const limited_collections = await prisma.limited_collections.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const limited_collectionsWithIdOnly = await prisma.limited_collections.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends limited_collectionsFindManyArgs>(args?: SelectSubset<T, limited_collectionsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Limited_collections.
-     * @param {limited_collectionsCreateArgs} args - Arguments to create a Limited_collections.
-     * @example
-     * // Create one Limited_collections
-     * const Limited_collections = await prisma.limited_collections.create({
-     *   data: {
-     *     // ... data to create a Limited_collections
-     *   }
-     * })
-     * 
-     */
-    create<T extends limited_collectionsCreateArgs>(args: SelectSubset<T, limited_collectionsCreateArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Limited_collections.
-     * @param {limited_collectionsCreateManyArgs} args - Arguments to create many Limited_collections.
-     * @example
-     * // Create many Limited_collections
-     * const limited_collections = await prisma.limited_collections.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends limited_collectionsCreateManyArgs>(args?: SelectSubset<T, limited_collectionsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Limited_collections and returns the data saved in the database.
-     * @param {limited_collectionsCreateManyAndReturnArgs} args - Arguments to create many Limited_collections.
-     * @example
-     * // Create many Limited_collections
-     * const limited_collections = await prisma.limited_collections.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Limited_collections and only return the `id`
-     * const limited_collectionsWithIdOnly = await prisma.limited_collections.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends limited_collectionsCreateManyAndReturnArgs>(args?: SelectSubset<T, limited_collectionsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Limited_collections.
-     * @param {limited_collectionsDeleteArgs} args - Arguments to delete one Limited_collections.
-     * @example
-     * // Delete one Limited_collections
-     * const Limited_collections = await prisma.limited_collections.delete({
-     *   where: {
-     *     // ... filter to delete one Limited_collections
-     *   }
-     * })
-     * 
-     */
-    delete<T extends limited_collectionsDeleteArgs>(args: SelectSubset<T, limited_collectionsDeleteArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Limited_collections.
-     * @param {limited_collectionsUpdateArgs} args - Arguments to update one Limited_collections.
-     * @example
-     * // Update one Limited_collections
-     * const limited_collections = await prisma.limited_collections.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends limited_collectionsUpdateArgs>(args: SelectSubset<T, limited_collectionsUpdateArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Limited_collections.
-     * @param {limited_collectionsDeleteManyArgs} args - Arguments to filter Limited_collections to delete.
-     * @example
-     * // Delete a few Limited_collections
-     * const { count } = await prisma.limited_collections.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends limited_collectionsDeleteManyArgs>(args?: SelectSubset<T, limited_collectionsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Limited_collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {limited_collectionsUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Limited_collections
-     * const limited_collections = await prisma.limited_collections.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends limited_collectionsUpdateManyArgs>(args: SelectSubset<T, limited_collectionsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Limited_collections and returns the data updated in the database.
-     * @param {limited_collectionsUpdateManyAndReturnArgs} args - Arguments to update many Limited_collections.
-     * @example
-     * // Update many Limited_collections
-     * const limited_collections = await prisma.limited_collections.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Limited_collections and only return the `id`
-     * const limited_collectionsWithIdOnly = await prisma.limited_collections.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends limited_collectionsUpdateManyAndReturnArgs>(args: SelectSubset<T, limited_collectionsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Limited_collections.
-     * @param {limited_collectionsUpsertArgs} args - Arguments to update or create a Limited_collections.
-     * @example
-     * // Update or create a Limited_collections
-     * const limited_collections = await prisma.limited_collections.upsert({
-     *   create: {
-     *     // ... data to create a Limited_collections
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Limited_collections we want to update
-     *   }
-     * })
-     */
-    upsert<T extends limited_collectionsUpsertArgs>(args: SelectSubset<T, limited_collectionsUpsertArgs<ExtArgs>>): Prisma__limited_collectionsClient<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Limited_collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {limited_collectionsCountArgs} args - Arguments to filter Limited_collections to count.
-     * @example
-     * // Count the number of Limited_collections
-     * const count = await prisma.limited_collections.count({
-     *   where: {
-     *     // ... the filter for the Limited_collections we want to count
-     *   }
-     * })
-    **/
-    count<T extends limited_collectionsCountArgs>(
-      args?: Subset<T, limited_collectionsCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], Limited_collectionsCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Limited_collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {Limited_collectionsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends Limited_collectionsAggregateArgs>(args: Subset<T, Limited_collectionsAggregateArgs>): Prisma.PrismaPromise<GetLimited_collectionsAggregateType<T>>
-
-    /**
-     * Group by Limited_collections.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {limited_collectionsGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends limited_collectionsGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: limited_collectionsGroupByArgs['orderBy'] }
-        : { orderBy?: limited_collectionsGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, limited_collectionsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetLimited_collectionsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the limited_collections model
-   */
-  readonly fields: limited_collectionsFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for limited_collections.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__limited_collectionsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    users<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the limited_collections model
-   */
-  interface limited_collectionsFieldRefs {
-    readonly id: FieldRef<"limited_collections", 'String'>
-    readonly title: FieldRef<"limited_collections", 'String'>
-    readonly description: FieldRef<"limited_collections", 'String'>
-    readonly content: FieldRef<"limited_collections", 'String'>
-    readonly image_url: FieldRef<"limited_collections", 'String'>
-    readonly category: FieldRef<"limited_collections", 'String'>
-    readonly tags: FieldRef<"limited_collections", 'String'>
-    readonly max_access: FieldRef<"limited_collections", 'Int'>
-    readonly current_access: FieldRef<"limited_collections", 'Int'>
-    readonly is_active: FieldRef<"limited_collections", 'Boolean'>
-    readonly author_id: FieldRef<"limited_collections", 'String'>
-    readonly created_at: FieldRef<"limited_collections", 'DateTime'>
-    readonly updated_at: FieldRef<"limited_collections", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * limited_collections findUnique
-   */
-  export type limited_collectionsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which limited_collections to fetch.
-     */
-    where: limited_collectionsWhereUniqueInput
-  }
-
-  /**
-   * limited_collections findUniqueOrThrow
-   */
-  export type limited_collectionsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which limited_collections to fetch.
-     */
-    where: limited_collectionsWhereUniqueInput
-  }
-
-  /**
-   * limited_collections findFirst
-   */
-  export type limited_collectionsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which limited_collections to fetch.
-     */
-    where?: limited_collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of limited_collections to fetch.
-     */
-    orderBy?: limited_collectionsOrderByWithRelationInput | limited_collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for limited_collections.
-     */
-    cursor?: limited_collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` limited_collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` limited_collections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of limited_collections.
-     */
-    distinct?: Limited_collectionsScalarFieldEnum | Limited_collectionsScalarFieldEnum[]
-  }
-
-  /**
-   * limited_collections findFirstOrThrow
-   */
-  export type limited_collectionsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which limited_collections to fetch.
-     */
-    where?: limited_collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of limited_collections to fetch.
-     */
-    orderBy?: limited_collectionsOrderByWithRelationInput | limited_collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for limited_collections.
-     */
-    cursor?: limited_collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` limited_collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` limited_collections.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of limited_collections.
-     */
-    distinct?: Limited_collectionsScalarFieldEnum | Limited_collectionsScalarFieldEnum[]
-  }
-
-  /**
-   * limited_collections findMany
-   */
-  export type limited_collectionsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * Filter, which limited_collections to fetch.
-     */
-    where?: limited_collectionsWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of limited_collections to fetch.
-     */
-    orderBy?: limited_collectionsOrderByWithRelationInput | limited_collectionsOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing limited_collections.
-     */
-    cursor?: limited_collectionsWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` limited_collections from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` limited_collections.
-     */
-    skip?: number
-    distinct?: Limited_collectionsScalarFieldEnum | Limited_collectionsScalarFieldEnum[]
-  }
-
-  /**
-   * limited_collections create
-   */
-  export type limited_collectionsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * The data needed to create a limited_collections.
-     */
-    data: XOR<limited_collectionsCreateInput, limited_collectionsUncheckedCreateInput>
-  }
-
-  /**
-   * limited_collections createMany
-   */
-  export type limited_collectionsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many limited_collections.
-     */
-    data: limited_collectionsCreateManyInput | limited_collectionsCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * limited_collections createManyAndReturn
-   */
-  export type limited_collectionsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * The data used to create many limited_collections.
-     */
-    data: limited_collectionsCreateManyInput | limited_collectionsCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * limited_collections update
-   */
-  export type limited_collectionsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * The data needed to update a limited_collections.
-     */
-    data: XOR<limited_collectionsUpdateInput, limited_collectionsUncheckedUpdateInput>
-    /**
-     * Choose, which limited_collections to update.
-     */
-    where: limited_collectionsWhereUniqueInput
-  }
-
-  /**
-   * limited_collections updateMany
-   */
-  export type limited_collectionsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update limited_collections.
-     */
-    data: XOR<limited_collectionsUpdateManyMutationInput, limited_collectionsUncheckedUpdateManyInput>
-    /**
-     * Filter which limited_collections to update
-     */
-    where?: limited_collectionsWhereInput
-    /**
-     * Limit how many limited_collections to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * limited_collections updateManyAndReturn
-   */
-  export type limited_collectionsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * The data used to update limited_collections.
-     */
-    data: XOR<limited_collectionsUpdateManyMutationInput, limited_collectionsUncheckedUpdateManyInput>
-    /**
-     * Filter which limited_collections to update
-     */
-    where?: limited_collectionsWhereInput
-    /**
-     * Limit how many limited_collections to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * limited_collections upsert
-   */
-  export type limited_collectionsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * The filter to search for the limited_collections to update in case it exists.
-     */
-    where: limited_collectionsWhereUniqueInput
-    /**
-     * In case the limited_collections found by the `where` argument doesn't exist, create a new limited_collections with this data.
-     */
-    create: XOR<limited_collectionsCreateInput, limited_collectionsUncheckedCreateInput>
-    /**
-     * In case the limited_collections was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<limited_collectionsUpdateInput, limited_collectionsUncheckedUpdateInput>
-  }
-
-  /**
-   * limited_collections delete
-   */
-  export type limited_collectionsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    /**
-     * Filter which limited_collections to delete.
-     */
-    where: limited_collectionsWhereUniqueInput
-  }
-
-  /**
-   * limited_collections deleteMany
-   */
-  export type limited_collectionsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which limited_collections to delete
-     */
-    where?: limited_collectionsWhereInput
-    /**
-     * Limit how many limited_collections to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * limited_collections without action
-   */
-  export type limited_collectionsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model reports
    */
 
   export type AggregateReports = {
     _count: ReportsCountAggregateOutputType | null
+    _avg: ReportsAvgAggregateOutputType | null
+    _sum: ReportsSumAggregateOutputType | null
     _min: ReportsMinAggregateOutputType | null
     _max: ReportsMaxAggregateOutputType | null
+  }
+
+  export type ReportsAvgAggregateOutputType = {
+    max_access: number | null
+    current_access: number | null
+  }
+
+  export type ReportsSumAggregateOutputType = {
+    max_access: number | null
+    current_access: number | null
   }
 
   export type ReportsMinAggregateOutputType = {
@@ -6323,6 +4381,10 @@ export namespace Prisma {
     status: $Enums.ReportStatus | null
     category: string | null
     priority: $Enums.Priority | null
+    is_public: boolean | null
+    max_access: number | null
+    current_access: number | null
+    tags: string | null
     author_id: string | null
     assignee_id: string | null
     feedback: string | null
@@ -6341,6 +4403,10 @@ export namespace Prisma {
     status: $Enums.ReportStatus | null
     category: string | null
     priority: $Enums.Priority | null
+    is_public: boolean | null
+    max_access: number | null
+    current_access: number | null
+    tags: string | null
     author_id: string | null
     assignee_id: string | null
     feedback: string | null
@@ -6359,6 +4425,10 @@ export namespace Prisma {
     status: number
     category: number
     priority: number
+    is_public: number
+    max_access: number
+    current_access: number
+    tags: number
     author_id: number
     assignee_id: number
     feedback: number
@@ -6370,6 +4440,16 @@ export namespace Prisma {
   }
 
 
+  export type ReportsAvgAggregateInputType = {
+    max_access?: true
+    current_access?: true
+  }
+
+  export type ReportsSumAggregateInputType = {
+    max_access?: true
+    current_access?: true
+  }
+
   export type ReportsMinAggregateInputType = {
     id?: true
     title?: true
@@ -6379,6 +4459,10 @@ export namespace Prisma {
     status?: true
     category?: true
     priority?: true
+    is_public?: true
+    max_access?: true
+    current_access?: true
+    tags?: true
     author_id?: true
     assignee_id?: true
     feedback?: true
@@ -6397,6 +4481,10 @@ export namespace Prisma {
     status?: true
     category?: true
     priority?: true
+    is_public?: true
+    max_access?: true
+    current_access?: true
+    tags?: true
     author_id?: true
     assignee_id?: true
     feedback?: true
@@ -6415,6 +4503,10 @@ export namespace Prisma {
     status?: true
     category?: true
     priority?: true
+    is_public?: true
+    max_access?: true
+    current_access?: true
+    tags?: true
     author_id?: true
     assignee_id?: true
     feedback?: true
@@ -6463,6 +4555,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: ReportsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ReportsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: ReportsMinAggregateInputType
@@ -6493,6 +4597,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: ReportsCountAggregateInputType | true
+    _avg?: ReportsAvgAggregateInputType
+    _sum?: ReportsSumAggregateInputType
     _min?: ReportsMinAggregateInputType
     _max?: ReportsMaxAggregateInputType
   }
@@ -6506,6 +4612,10 @@ export namespace Prisma {
     status: $Enums.ReportStatus
     category: string | null
     priority: $Enums.Priority
+    is_public: boolean
+    max_access: number | null
+    current_access: number | null
+    tags: string | null
     author_id: string
     assignee_id: string | null
     feedback: string | null
@@ -6514,6 +4624,8 @@ export namespace Prisma {
     created_at: Date
     updated_at: Date
     _count: ReportsCountAggregateOutputType | null
+    _avg: ReportsAvgAggregateOutputType | null
+    _sum: ReportsSumAggregateOutputType | null
     _min: ReportsMinAggregateOutputType | null
     _max: ReportsMaxAggregateOutputType | null
   }
@@ -6541,6 +4653,10 @@ export namespace Prisma {
     status?: boolean
     category?: boolean
     priority?: boolean
+    is_public?: boolean
+    max_access?: boolean
+    current_access?: boolean
+    tags?: boolean
     author_id?: boolean
     assignee_id?: boolean
     feedback?: boolean
@@ -6563,6 +4679,10 @@ export namespace Prisma {
     status?: boolean
     category?: boolean
     priority?: boolean
+    is_public?: boolean
+    max_access?: boolean
+    current_access?: boolean
+    tags?: boolean
     author_id?: boolean
     assignee_id?: boolean
     feedback?: boolean
@@ -6583,6 +4703,10 @@ export namespace Prisma {
     status?: boolean
     category?: boolean
     priority?: boolean
+    is_public?: boolean
+    max_access?: boolean
+    current_access?: boolean
+    tags?: boolean
     author_id?: boolean
     assignee_id?: boolean
     feedback?: boolean
@@ -6603,6 +4727,10 @@ export namespace Prisma {
     status?: boolean
     category?: boolean
     priority?: boolean
+    is_public?: boolean
+    max_access?: boolean
+    current_access?: boolean
+    tags?: boolean
     author_id?: boolean
     assignee_id?: boolean
     feedback?: boolean
@@ -6612,7 +4740,7 @@ export namespace Prisma {
     updated_at?: boolean
   }
 
-  export type reportsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "content" | "cover_image_url" | "status" | "category" | "priority" | "author_id" | "assignee_id" | "feedback" | "verified_at" | "rejected_at" | "created_at" | "updated_at", ExtArgs["result"]["reports"]>
+  export type reportsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "content" | "cover_image_url" | "status" | "category" | "priority" | "is_public" | "max_access" | "current_access" | "tags" | "author_id" | "assignee_id" | "feedback" | "verified_at" | "rejected_at" | "created_at" | "updated_at", ExtArgs["result"]["reports"]>
   export type reportsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users_reports_assignee_idTousers?: boolean | reports$users_reports_assignee_idTousersArgs<ExtArgs>
     users_reports_author_idTousers?: boolean | usersDefaultArgs<ExtArgs>
@@ -6644,6 +4772,10 @@ export namespace Prisma {
       status: $Enums.ReportStatus
       category: string | null
       priority: $Enums.Priority
+      is_public: boolean
+      max_access: number | null
+      current_access: number | null
+      tags: string | null
       author_id: string
       assignee_id: string | null
       feedback: string | null
@@ -7085,6 +5217,10 @@ export namespace Prisma {
     readonly status: FieldRef<"reports", 'ReportStatus'>
     readonly category: FieldRef<"reports", 'String'>
     readonly priority: FieldRef<"reports", 'Priority'>
+    readonly is_public: FieldRef<"reports", 'Boolean'>
+    readonly max_access: FieldRef<"reports", 'Int'>
+    readonly current_access: FieldRef<"reports", 'Int'>
+    readonly tags: FieldRef<"reports", 'String'>
     readonly author_id: FieldRef<"reports", 'String'>
     readonly assignee_id: FieldRef<"reports", 'String'>
     readonly feedback: FieldRef<"reports", 'String'>
@@ -8805,6 +6941,7 @@ export namespace Prisma {
     avatar: string | null
     training: string | null
     angkatan: string | null
+    training_program_id: string | null
     phone: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -8820,6 +6957,7 @@ export namespace Prisma {
     avatar: string | null
     training: string | null
     angkatan: string | null
+    training_program_id: string | null
     phone: string | null
     created_at: Date | null
     updated_at: Date | null
@@ -8835,6 +6973,7 @@ export namespace Prisma {
     avatar: number
     training: number
     angkatan: number
+    training_program_id: number
     phone: number
     created_at: number
     updated_at: number
@@ -8852,6 +6991,7 @@ export namespace Prisma {
     avatar?: true
     training?: true
     angkatan?: true
+    training_program_id?: true
     phone?: true
     created_at?: true
     updated_at?: true
@@ -8867,6 +7007,7 @@ export namespace Prisma {
     avatar?: true
     training?: true
     angkatan?: true
+    training_program_id?: true
     phone?: true
     created_at?: true
     updated_at?: true
@@ -8882,6 +7023,7 @@ export namespace Prisma {
     avatar?: true
     training?: true
     angkatan?: true
+    training_program_id?: true
     phone?: true
     created_at?: true
     updated_at?: true
@@ -8970,6 +7112,7 @@ export namespace Prisma {
     avatar: string | null
     training: string | null
     angkatan: string | null
+    training_program_id: string | null
     phone: string | null
     created_at: Date
     updated_at: Date
@@ -9002,17 +7145,18 @@ export namespace Prisma {
     avatar?: boolean
     training?: boolean
     angkatan?: boolean
+    training_program_id?: boolean
     phone?: boolean
     created_at?: boolean
     updated_at?: boolean
-    collections?: boolean | users$collectionsArgs<ExtArgs>
     visitor_analytics?: boolean | users$visitor_analyticsArgs<ExtArgs>
     guestbook_entries?: boolean | users$guestbook_entriesArgs<ExtArgs>
-    limited_collections?: boolean | users$limited_collectionsArgs<ExtArgs>
     reports_reports_assignee_idTousers?: boolean | users$reports_reports_assignee_idTousersArgs<ExtArgs>
     reports_reports_author_idTousers?: boolean | users$reports_reports_author_idTousersArgs<ExtArgs>
     uploaded_files?: boolean | users$uploaded_filesArgs<ExtArgs>
     created_folders?: boolean | users$created_foldersArgs<ExtArgs>
+    training_program?: boolean | users$training_programArgs<ExtArgs>
+    cohort_memberships?: boolean | users$cohort_membershipsArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["users"]>
 
@@ -9026,9 +7170,11 @@ export namespace Prisma {
     avatar?: boolean
     training?: boolean
     angkatan?: boolean
+    training_program_id?: boolean
     phone?: boolean
     created_at?: boolean
     updated_at?: boolean
+    training_program?: boolean | users$training_programArgs<ExtArgs>
   }, ExtArgs["result"]["users"]>
 
   export type usersSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9041,9 +7187,11 @@ export namespace Prisma {
     avatar?: boolean
     training?: boolean
     angkatan?: boolean
+    training_program_id?: boolean
     phone?: boolean
     created_at?: boolean
     updated_at?: boolean
+    training_program?: boolean | users$training_programArgs<ExtArgs>
   }, ExtArgs["result"]["users"]>
 
   export type usersSelectScalar = {
@@ -9056,37 +7204,42 @@ export namespace Prisma {
     avatar?: boolean
     training?: boolean
     angkatan?: boolean
+    training_program_id?: boolean
     phone?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type usersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "role" | "name" | "avatar" | "training" | "angkatan" | "phone" | "created_at" | "updated_at", ExtArgs["result"]["users"]>
+  export type usersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "role" | "name" | "avatar" | "training" | "angkatan" | "training_program_id" | "phone" | "created_at" | "updated_at", ExtArgs["result"]["users"]>
   export type usersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    collections?: boolean | users$collectionsArgs<ExtArgs>
     visitor_analytics?: boolean | users$visitor_analyticsArgs<ExtArgs>
     guestbook_entries?: boolean | users$guestbook_entriesArgs<ExtArgs>
-    limited_collections?: boolean | users$limited_collectionsArgs<ExtArgs>
     reports_reports_assignee_idTousers?: boolean | users$reports_reports_assignee_idTousersArgs<ExtArgs>
     reports_reports_author_idTousers?: boolean | users$reports_reports_author_idTousersArgs<ExtArgs>
     uploaded_files?: boolean | users$uploaded_filesArgs<ExtArgs>
     created_folders?: boolean | users$created_foldersArgs<ExtArgs>
+    training_program?: boolean | users$training_programArgs<ExtArgs>
+    cohort_memberships?: boolean | users$cohort_membershipsArgs<ExtArgs>
     _count?: boolean | UsersCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type usersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type usersIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type usersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    training_program?: boolean | users$training_programArgs<ExtArgs>
+  }
+  export type usersIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    training_program?: boolean | users$training_programArgs<ExtArgs>
+  }
 
   export type $usersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "users"
     objects: {
-      collections: Prisma.$collectionsPayload<ExtArgs>[]
       visitor_analytics: Prisma.$visitor_analyticsPayload<ExtArgs>[]
       guestbook_entries: Prisma.$guestbook_entriesPayload<ExtArgs>[]
-      limited_collections: Prisma.$limited_collectionsPayload<ExtArgs>[]
       reports_reports_assignee_idTousers: Prisma.$reportsPayload<ExtArgs>[]
       reports_reports_author_idTousers: Prisma.$reportsPayload<ExtArgs>[]
       uploaded_files: Prisma.$uploaded_filesPayload<ExtArgs>[]
       created_folders: Prisma.$report_foldersPayload<ExtArgs>[]
+      training_program: Prisma.$training_programsPayload<ExtArgs> | null
+      cohort_memberships: Prisma.$cohort_membersPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9098,6 +7251,7 @@ export namespace Prisma {
       avatar: string | null
       training: string | null
       angkatan: string | null
+      training_program_id: string | null
       phone: string | null
       created_at: Date
       updated_at: Date
@@ -9495,14 +7649,14 @@ export namespace Prisma {
    */
   export interface Prisma__usersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    collections<T extends users$collectionsArgs<ExtArgs> = {}>(args?: Subset<T, users$collectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$collectionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     visitor_analytics<T extends users$visitor_analyticsArgs<ExtArgs> = {}>(args?: Subset<T, users$visitor_analyticsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$visitor_analyticsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     guestbook_entries<T extends users$guestbook_entriesArgs<ExtArgs> = {}>(args?: Subset<T, users$guestbook_entriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$guestbook_entriesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    limited_collections<T extends users$limited_collectionsArgs<ExtArgs> = {}>(args?: Subset<T, users$limited_collectionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$limited_collectionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reports_reports_assignee_idTousers<T extends users$reports_reports_assignee_idTousersArgs<ExtArgs> = {}>(args?: Subset<T, users$reports_reports_assignee_idTousersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$reportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reports_reports_author_idTousers<T extends users$reports_reports_author_idTousersArgs<ExtArgs> = {}>(args?: Subset<T, users$reports_reports_author_idTousersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$reportsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     uploaded_files<T extends users$uploaded_filesArgs<ExtArgs> = {}>(args?: Subset<T, users$uploaded_filesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$uploaded_filesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     created_folders<T extends users$created_foldersArgs<ExtArgs> = {}>(args?: Subset<T, users$created_foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    training_program<T extends users$training_programArgs<ExtArgs> = {}>(args?: Subset<T, users$training_programArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    cohort_memberships<T extends users$cohort_membershipsArgs<ExtArgs> = {}>(args?: Subset<T, users$cohort_membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9541,6 +7695,7 @@ export namespace Prisma {
     readonly avatar: FieldRef<"users", 'String'>
     readonly training: FieldRef<"users", 'String'>
     readonly angkatan: FieldRef<"users", 'String'>
+    readonly training_program_id: FieldRef<"users", 'String'>
     readonly phone: FieldRef<"users", 'String'>
     readonly created_at: FieldRef<"users", 'DateTime'>
     readonly updated_at: FieldRef<"users", 'DateTime'>
@@ -9793,6 +7948,10 @@ export namespace Prisma {
      */
     data: usersCreateManyInput | usersCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usersIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9863,6 +8022,10 @@ export namespace Prisma {
      * Limit how many users to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usersIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9932,30 +8095,6 @@ export namespace Prisma {
   }
 
   /**
-   * users.collections
-   */
-  export type users$collectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the collections
-     */
-    select?: collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the collections
-     */
-    omit?: collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: collectionsInclude<ExtArgs> | null
-    where?: collectionsWhereInput
-    orderBy?: collectionsOrderByWithRelationInput | collectionsOrderByWithRelationInput[]
-    cursor?: collectionsWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: CollectionsScalarFieldEnum | CollectionsScalarFieldEnum[]
-  }
-
-  /**
    * users.visitor_analytics
    */
   export type users$visitor_analyticsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10001,30 +8140,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Guestbook_entriesScalarFieldEnum | Guestbook_entriesScalarFieldEnum[]
-  }
-
-  /**
-   * users.limited_collections
-   */
-  export type users$limited_collectionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the limited_collections
-     */
-    select?: limited_collectionsSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the limited_collections
-     */
-    omit?: limited_collectionsOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: limited_collectionsInclude<ExtArgs> | null
-    where?: limited_collectionsWhereInput
-    orderBy?: limited_collectionsOrderByWithRelationInput | limited_collectionsOrderByWithRelationInput[]
-    cursor?: limited_collectionsWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: Limited_collectionsScalarFieldEnum | Limited_collectionsScalarFieldEnum[]
   }
 
   /**
@@ -10124,6 +8239,49 @@ export namespace Prisma {
   }
 
   /**
+   * users.training_program
+   */
+  export type users$training_programArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    where?: training_programsWhereInput
+  }
+
+  /**
+   * users.cohort_memberships
+   */
+  export type users$cohort_membershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    where?: cohort_membersWhereInput
+    orderBy?: cohort_membersOrderByWithRelationInput | cohort_membersOrderByWithRelationInput[]
+    cursor?: cohort_membersWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Cohort_membersScalarFieldEnum | Cohort_membersScalarFieldEnum[]
+  }
+
+  /**
    * users without action
    */
   export type usersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10156,8 +8314,11 @@ export namespace Prisma {
     id: string | null
     year: string | null
     batch: string | null
+    report_type: string | null
     description: string | null
     created_by: string | null
+    training_program_id: string | null
+    cohort_id: string | null
     is_active: boolean | null
     created_at: Date | null
     updated_at: Date | null
@@ -10167,8 +8328,11 @@ export namespace Prisma {
     id: string | null
     year: string | null
     batch: string | null
+    report_type: string | null
     description: string | null
     created_by: string | null
+    training_program_id: string | null
+    cohort_id: string | null
     is_active: boolean | null
     created_at: Date | null
     updated_at: Date | null
@@ -10178,8 +8342,11 @@ export namespace Prisma {
     id: number
     year: number
     batch: number
+    report_type: number
     description: number
     created_by: number
+    training_program_id: number
+    cohort_id: number
     is_active: number
     created_at: number
     updated_at: number
@@ -10191,8 +8358,11 @@ export namespace Prisma {
     id?: true
     year?: true
     batch?: true
+    report_type?: true
     description?: true
     created_by?: true
+    training_program_id?: true
+    cohort_id?: true
     is_active?: true
     created_at?: true
     updated_at?: true
@@ -10202,8 +8372,11 @@ export namespace Prisma {
     id?: true
     year?: true
     batch?: true
+    report_type?: true
     description?: true
     created_by?: true
+    training_program_id?: true
+    cohort_id?: true
     is_active?: true
     created_at?: true
     updated_at?: true
@@ -10213,8 +8386,11 @@ export namespace Prisma {
     id?: true
     year?: true
     batch?: true
+    report_type?: true
     description?: true
     created_by?: true
+    training_program_id?: true
+    cohort_id?: true
     is_active?: true
     created_at?: true
     updated_at?: true
@@ -10297,8 +8473,11 @@ export namespace Prisma {
     id: string
     year: string
     batch: string
+    report_type: string
     description: string | null
     created_by: string
+    training_program_id: string | null
+    cohort_id: string | null
     is_active: boolean
     created_at: Date
     updated_at: Date
@@ -10325,71 +8504,100 @@ export namespace Prisma {
     id?: boolean
     year?: boolean
     batch?: boolean
+    report_type?: boolean
     description?: boolean
     created_by?: boolean
+    training_program_id?: boolean
+    cohort_id?: boolean
     is_active?: boolean
     created_at?: boolean
     updated_at?: boolean
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    training_program?: boolean | report_folders$training_programArgs<ExtArgs>
+    cohort?: boolean | report_folders$cohortArgs<ExtArgs>
   }, ExtArgs["result"]["report_folders"]>
 
   export type report_foldersSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     year?: boolean
     batch?: boolean
+    report_type?: boolean
     description?: boolean
     created_by?: boolean
+    training_program_id?: boolean
+    cohort_id?: boolean
     is_active?: boolean
     created_at?: boolean
     updated_at?: boolean
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    training_program?: boolean | report_folders$training_programArgs<ExtArgs>
+    cohort?: boolean | report_folders$cohortArgs<ExtArgs>
   }, ExtArgs["result"]["report_folders"]>
 
   export type report_foldersSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     year?: boolean
     batch?: boolean
+    report_type?: boolean
     description?: boolean
     created_by?: boolean
+    training_program_id?: boolean
+    cohort_id?: boolean
     is_active?: boolean
     created_at?: boolean
     updated_at?: boolean
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    training_program?: boolean | report_folders$training_programArgs<ExtArgs>
+    cohort?: boolean | report_folders$cohortArgs<ExtArgs>
   }, ExtArgs["result"]["report_folders"]>
 
   export type report_foldersSelectScalar = {
     id?: boolean
     year?: boolean
     batch?: boolean
+    report_type?: boolean
     description?: boolean
     created_by?: boolean
+    training_program_id?: boolean
+    cohort_id?: boolean
     is_active?: boolean
     created_at?: boolean
     updated_at?: boolean
   }
 
-  export type report_foldersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "year" | "batch" | "description" | "created_by" | "is_active" | "created_at" | "updated_at", ExtArgs["result"]["report_folders"]>
+  export type report_foldersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "year" | "batch" | "report_type" | "description" | "created_by" | "training_program_id" | "cohort_id" | "is_active" | "created_at" | "updated_at", ExtArgs["result"]["report_folders"]>
   export type report_foldersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    training_program?: boolean | report_folders$training_programArgs<ExtArgs>
+    cohort?: boolean | report_folders$cohortArgs<ExtArgs>
   }
   export type report_foldersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    training_program?: boolean | report_folders$training_programArgs<ExtArgs>
+    cohort?: boolean | report_folders$cohortArgs<ExtArgs>
   }
   export type report_foldersIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     creator?: boolean | usersDefaultArgs<ExtArgs>
+    training_program?: boolean | report_folders$training_programArgs<ExtArgs>
+    cohort?: boolean | report_folders$cohortArgs<ExtArgs>
   }
 
   export type $report_foldersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "report_folders"
     objects: {
       creator: Prisma.$usersPayload<ExtArgs>
+      training_program: Prisma.$training_programsPayload<ExtArgs> | null
+      cohort: Prisma.$training_cohortsPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       year: string
       batch: string
+      report_type: string
       description: string | null
       created_by: string
+      training_program_id: string | null
+      cohort_id: string | null
       is_active: boolean
       created_at: Date
       updated_at: Date
@@ -10788,6 +8996,8 @@ export namespace Prisma {
   export interface Prisma__report_foldersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     creator<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    training_program<T extends report_folders$training_programArgs<ExtArgs> = {}>(args?: Subset<T, report_folders$training_programArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    cohort<T extends report_folders$cohortArgs<ExtArgs> = {}>(args?: Subset<T, report_folders$cohortArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10820,8 +9030,11 @@ export namespace Prisma {
     readonly id: FieldRef<"report_folders", 'String'>
     readonly year: FieldRef<"report_folders", 'String'>
     readonly batch: FieldRef<"report_folders", 'String'>
+    readonly report_type: FieldRef<"report_folders", 'String'>
     readonly description: FieldRef<"report_folders", 'String'>
     readonly created_by: FieldRef<"report_folders", 'String'>
+    readonly training_program_id: FieldRef<"report_folders", 'String'>
+    readonly cohort_id: FieldRef<"report_folders", 'String'>
     readonly is_active: FieldRef<"report_folders", 'Boolean'>
     readonly created_at: FieldRef<"report_folders", 'DateTime'>
     readonly updated_at: FieldRef<"report_folders", 'DateTime'>
@@ -11221,6 +9434,44 @@ export namespace Prisma {
   }
 
   /**
+   * report_folders.training_program
+   */
+  export type report_folders$training_programArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    where?: training_programsWhereInput
+  }
+
+  /**
+   * report_folders.cohort
+   */
+  export type report_folders$cohortArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    where?: training_cohortsWhereInput
+  }
+
+  /**
    * report_folders without action
    */
   export type report_foldersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11240,6 +9491,5532 @@ export namespace Prisma {
 
 
   /**
+   * Model training_programs
+   */
+
+  export type AggregateTraining_programs = {
+    _count: Training_programsCountAggregateOutputType | null
+    _avg: Training_programsAvgAggregateOutputType | null
+    _sum: Training_programsSumAggregateOutputType | null
+    _min: Training_programsMinAggregateOutputType | null
+    _max: Training_programsMaxAggregateOutputType | null
+  }
+
+  export type Training_programsAvgAggregateOutputType = {
+    duration_days: number | null
+  }
+
+  export type Training_programsSumAggregateOutputType = {
+    duration_days: number | null
+  }
+
+  export type Training_programsMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    full_name: string | null
+    description: string | null
+    duration_days: number | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Training_programsMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    full_name: string | null
+    description: string | null
+    duration_days: number | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Training_programsCountAggregateOutputType = {
+    id: number
+    name: number
+    full_name: number
+    description: number
+    duration_days: number
+    is_active: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type Training_programsAvgAggregateInputType = {
+    duration_days?: true
+  }
+
+  export type Training_programsSumAggregateInputType = {
+    duration_days?: true
+  }
+
+  export type Training_programsMinAggregateInputType = {
+    id?: true
+    name?: true
+    full_name?: true
+    description?: true
+    duration_days?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Training_programsMaxAggregateInputType = {
+    id?: true
+    name?: true
+    full_name?: true
+    description?: true
+    duration_days?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Training_programsCountAggregateInputType = {
+    id?: true
+    name?: true
+    full_name?: true
+    description?: true
+    duration_days?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type Training_programsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which training_programs to aggregate.
+     */
+    where?: training_programsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_programs to fetch.
+     */
+    orderBy?: training_programsOrderByWithRelationInput | training_programsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: training_programsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_programs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_programs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned training_programs
+    **/
+    _count?: true | Training_programsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Training_programsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Training_programsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Training_programsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Training_programsMaxAggregateInputType
+  }
+
+  export type GetTraining_programsAggregateType<T extends Training_programsAggregateArgs> = {
+        [P in keyof T & keyof AggregateTraining_programs]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTraining_programs[P]>
+      : GetScalarType<T[P], AggregateTraining_programs[P]>
+  }
+
+
+
+
+  export type training_programsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: training_programsWhereInput
+    orderBy?: training_programsOrderByWithAggregationInput | training_programsOrderByWithAggregationInput[]
+    by: Training_programsScalarFieldEnum[] | Training_programsScalarFieldEnum
+    having?: training_programsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Training_programsCountAggregateInputType | true
+    _avg?: Training_programsAvgAggregateInputType
+    _sum?: Training_programsSumAggregateInputType
+    _min?: Training_programsMinAggregateInputType
+    _max?: Training_programsMaxAggregateInputType
+  }
+
+  export type Training_programsGroupByOutputType = {
+    id: string
+    name: string
+    full_name: string
+    description: string | null
+    duration_days: number | null
+    is_active: boolean
+    created_at: Date
+    updated_at: Date
+    _count: Training_programsCountAggregateOutputType | null
+    _avg: Training_programsAvgAggregateOutputType | null
+    _sum: Training_programsSumAggregateOutputType | null
+    _min: Training_programsMinAggregateOutputType | null
+    _max: Training_programsMaxAggregateOutputType | null
+  }
+
+  type GetTraining_programsGroupByPayload<T extends training_programsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Training_programsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Training_programsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Training_programsGroupByOutputType[P]>
+            : GetScalarType<T[P], Training_programsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type training_programsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    full_name?: boolean
+    description?: boolean
+    duration_days?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    users?: boolean | training_programs$usersArgs<ExtArgs>
+    cohorts?: boolean | training_programs$cohortsArgs<ExtArgs>
+    folders?: boolean | training_programs$foldersArgs<ExtArgs>
+    _count?: boolean | Training_programsCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["training_programs"]>
+
+  export type training_programsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    full_name?: boolean
+    description?: boolean
+    duration_days?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["training_programs"]>
+
+  export type training_programsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    full_name?: boolean
+    description?: boolean
+    duration_days?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["training_programs"]>
+
+  export type training_programsSelectScalar = {
+    id?: boolean
+    name?: boolean
+    full_name?: boolean
+    description?: boolean
+    duration_days?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type training_programsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "full_name" | "description" | "duration_days" | "is_active" | "created_at" | "updated_at", ExtArgs["result"]["training_programs"]>
+  export type training_programsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    users?: boolean | training_programs$usersArgs<ExtArgs>
+    cohorts?: boolean | training_programs$cohortsArgs<ExtArgs>
+    folders?: boolean | training_programs$foldersArgs<ExtArgs>
+    _count?: boolean | Training_programsCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type training_programsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type training_programsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $training_programsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "training_programs"
+    objects: {
+      users: Prisma.$usersPayload<ExtArgs>[]
+      cohorts: Prisma.$training_cohortsPayload<ExtArgs>[]
+      folders: Prisma.$report_foldersPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      full_name: string
+      description: string | null
+      duration_days: number | null
+      is_active: boolean
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["training_programs"]>
+    composites: {}
+  }
+
+  type training_programsGetPayload<S extends boolean | null | undefined | training_programsDefaultArgs> = $Result.GetResult<Prisma.$training_programsPayload, S>
+
+  type training_programsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<training_programsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Training_programsCountAggregateInputType | true
+    }
+
+  export interface training_programsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['training_programs'], meta: { name: 'training_programs' } }
+    /**
+     * Find zero or one Training_programs that matches the filter.
+     * @param {training_programsFindUniqueArgs} args - Arguments to find a Training_programs
+     * @example
+     * // Get one Training_programs
+     * const training_programs = await prisma.training_programs.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends training_programsFindUniqueArgs>(args: SelectSubset<T, training_programsFindUniqueArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Training_programs that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {training_programsFindUniqueOrThrowArgs} args - Arguments to find a Training_programs
+     * @example
+     * // Get one Training_programs
+     * const training_programs = await prisma.training_programs.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends training_programsFindUniqueOrThrowArgs>(args: SelectSubset<T, training_programsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Training_programs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_programsFindFirstArgs} args - Arguments to find a Training_programs
+     * @example
+     * // Get one Training_programs
+     * const training_programs = await prisma.training_programs.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends training_programsFindFirstArgs>(args?: SelectSubset<T, training_programsFindFirstArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Training_programs that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_programsFindFirstOrThrowArgs} args - Arguments to find a Training_programs
+     * @example
+     * // Get one Training_programs
+     * const training_programs = await prisma.training_programs.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends training_programsFindFirstOrThrowArgs>(args?: SelectSubset<T, training_programsFindFirstOrThrowArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Training_programs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_programsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Training_programs
+     * const training_programs = await prisma.training_programs.findMany()
+     * 
+     * // Get first 10 Training_programs
+     * const training_programs = await prisma.training_programs.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const training_programsWithIdOnly = await prisma.training_programs.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends training_programsFindManyArgs>(args?: SelectSubset<T, training_programsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Training_programs.
+     * @param {training_programsCreateArgs} args - Arguments to create a Training_programs.
+     * @example
+     * // Create one Training_programs
+     * const Training_programs = await prisma.training_programs.create({
+     *   data: {
+     *     // ... data to create a Training_programs
+     *   }
+     * })
+     * 
+     */
+    create<T extends training_programsCreateArgs>(args: SelectSubset<T, training_programsCreateArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Training_programs.
+     * @param {training_programsCreateManyArgs} args - Arguments to create many Training_programs.
+     * @example
+     * // Create many Training_programs
+     * const training_programs = await prisma.training_programs.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends training_programsCreateManyArgs>(args?: SelectSubset<T, training_programsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Training_programs and returns the data saved in the database.
+     * @param {training_programsCreateManyAndReturnArgs} args - Arguments to create many Training_programs.
+     * @example
+     * // Create many Training_programs
+     * const training_programs = await prisma.training_programs.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Training_programs and only return the `id`
+     * const training_programsWithIdOnly = await prisma.training_programs.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends training_programsCreateManyAndReturnArgs>(args?: SelectSubset<T, training_programsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Training_programs.
+     * @param {training_programsDeleteArgs} args - Arguments to delete one Training_programs.
+     * @example
+     * // Delete one Training_programs
+     * const Training_programs = await prisma.training_programs.delete({
+     *   where: {
+     *     // ... filter to delete one Training_programs
+     *   }
+     * })
+     * 
+     */
+    delete<T extends training_programsDeleteArgs>(args: SelectSubset<T, training_programsDeleteArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Training_programs.
+     * @param {training_programsUpdateArgs} args - Arguments to update one Training_programs.
+     * @example
+     * // Update one Training_programs
+     * const training_programs = await prisma.training_programs.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends training_programsUpdateArgs>(args: SelectSubset<T, training_programsUpdateArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Training_programs.
+     * @param {training_programsDeleteManyArgs} args - Arguments to filter Training_programs to delete.
+     * @example
+     * // Delete a few Training_programs
+     * const { count } = await prisma.training_programs.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends training_programsDeleteManyArgs>(args?: SelectSubset<T, training_programsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Training_programs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_programsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Training_programs
+     * const training_programs = await prisma.training_programs.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends training_programsUpdateManyArgs>(args: SelectSubset<T, training_programsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Training_programs and returns the data updated in the database.
+     * @param {training_programsUpdateManyAndReturnArgs} args - Arguments to update many Training_programs.
+     * @example
+     * // Update many Training_programs
+     * const training_programs = await prisma.training_programs.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Training_programs and only return the `id`
+     * const training_programsWithIdOnly = await prisma.training_programs.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends training_programsUpdateManyAndReturnArgs>(args: SelectSubset<T, training_programsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Training_programs.
+     * @param {training_programsUpsertArgs} args - Arguments to update or create a Training_programs.
+     * @example
+     * // Update or create a Training_programs
+     * const training_programs = await prisma.training_programs.upsert({
+     *   create: {
+     *     // ... data to create a Training_programs
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Training_programs we want to update
+     *   }
+     * })
+     */
+    upsert<T extends training_programsUpsertArgs>(args: SelectSubset<T, training_programsUpsertArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Training_programs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_programsCountArgs} args - Arguments to filter Training_programs to count.
+     * @example
+     * // Count the number of Training_programs
+     * const count = await prisma.training_programs.count({
+     *   where: {
+     *     // ... the filter for the Training_programs we want to count
+     *   }
+     * })
+    **/
+    count<T extends training_programsCountArgs>(
+      args?: Subset<T, training_programsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Training_programsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Training_programs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Training_programsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Training_programsAggregateArgs>(args: Subset<T, Training_programsAggregateArgs>): Prisma.PrismaPromise<GetTraining_programsAggregateType<T>>
+
+    /**
+     * Group by Training_programs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_programsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends training_programsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: training_programsGroupByArgs['orderBy'] }
+        : { orderBy?: training_programsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, training_programsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTraining_programsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the training_programs model
+   */
+  readonly fields: training_programsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for training_programs.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__training_programsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    users<T extends training_programs$usersArgs<ExtArgs> = {}>(args?: Subset<T, training_programs$usersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    cohorts<T extends training_programs$cohortsArgs<ExtArgs> = {}>(args?: Subset<T, training_programs$cohortsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    folders<T extends training_programs$foldersArgs<ExtArgs> = {}>(args?: Subset<T, training_programs$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the training_programs model
+   */
+  interface training_programsFieldRefs {
+    readonly id: FieldRef<"training_programs", 'String'>
+    readonly name: FieldRef<"training_programs", 'String'>
+    readonly full_name: FieldRef<"training_programs", 'String'>
+    readonly description: FieldRef<"training_programs", 'String'>
+    readonly duration_days: FieldRef<"training_programs", 'Int'>
+    readonly is_active: FieldRef<"training_programs", 'Boolean'>
+    readonly created_at: FieldRef<"training_programs", 'DateTime'>
+    readonly updated_at: FieldRef<"training_programs", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * training_programs findUnique
+   */
+  export type training_programsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_programs to fetch.
+     */
+    where: training_programsWhereUniqueInput
+  }
+
+  /**
+   * training_programs findUniqueOrThrow
+   */
+  export type training_programsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_programs to fetch.
+     */
+    where: training_programsWhereUniqueInput
+  }
+
+  /**
+   * training_programs findFirst
+   */
+  export type training_programsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_programs to fetch.
+     */
+    where?: training_programsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_programs to fetch.
+     */
+    orderBy?: training_programsOrderByWithRelationInput | training_programsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for training_programs.
+     */
+    cursor?: training_programsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_programs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_programs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of training_programs.
+     */
+    distinct?: Training_programsScalarFieldEnum | Training_programsScalarFieldEnum[]
+  }
+
+  /**
+   * training_programs findFirstOrThrow
+   */
+  export type training_programsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_programs to fetch.
+     */
+    where?: training_programsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_programs to fetch.
+     */
+    orderBy?: training_programsOrderByWithRelationInput | training_programsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for training_programs.
+     */
+    cursor?: training_programsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_programs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_programs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of training_programs.
+     */
+    distinct?: Training_programsScalarFieldEnum | Training_programsScalarFieldEnum[]
+  }
+
+  /**
+   * training_programs findMany
+   */
+  export type training_programsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_programs to fetch.
+     */
+    where?: training_programsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_programs to fetch.
+     */
+    orderBy?: training_programsOrderByWithRelationInput | training_programsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing training_programs.
+     */
+    cursor?: training_programsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_programs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_programs.
+     */
+    skip?: number
+    distinct?: Training_programsScalarFieldEnum | Training_programsScalarFieldEnum[]
+  }
+
+  /**
+   * training_programs create
+   */
+  export type training_programsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a training_programs.
+     */
+    data: XOR<training_programsCreateInput, training_programsUncheckedCreateInput>
+  }
+
+  /**
+   * training_programs createMany
+   */
+  export type training_programsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many training_programs.
+     */
+    data: training_programsCreateManyInput | training_programsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * training_programs createManyAndReturn
+   */
+  export type training_programsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * The data used to create many training_programs.
+     */
+    data: training_programsCreateManyInput | training_programsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * training_programs update
+   */
+  export type training_programsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a training_programs.
+     */
+    data: XOR<training_programsUpdateInput, training_programsUncheckedUpdateInput>
+    /**
+     * Choose, which training_programs to update.
+     */
+    where: training_programsWhereUniqueInput
+  }
+
+  /**
+   * training_programs updateMany
+   */
+  export type training_programsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update training_programs.
+     */
+    data: XOR<training_programsUpdateManyMutationInput, training_programsUncheckedUpdateManyInput>
+    /**
+     * Filter which training_programs to update
+     */
+    where?: training_programsWhereInput
+    /**
+     * Limit how many training_programs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * training_programs updateManyAndReturn
+   */
+  export type training_programsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * The data used to update training_programs.
+     */
+    data: XOR<training_programsUpdateManyMutationInput, training_programsUncheckedUpdateManyInput>
+    /**
+     * Filter which training_programs to update
+     */
+    where?: training_programsWhereInput
+    /**
+     * Limit how many training_programs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * training_programs upsert
+   */
+  export type training_programsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the training_programs to update in case it exists.
+     */
+    where: training_programsWhereUniqueInput
+    /**
+     * In case the training_programs found by the `where` argument doesn't exist, create a new training_programs with this data.
+     */
+    create: XOR<training_programsCreateInput, training_programsUncheckedCreateInput>
+    /**
+     * In case the training_programs was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<training_programsUpdateInput, training_programsUncheckedUpdateInput>
+  }
+
+  /**
+   * training_programs delete
+   */
+  export type training_programsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+    /**
+     * Filter which training_programs to delete.
+     */
+    where: training_programsWhereUniqueInput
+  }
+
+  /**
+   * training_programs deleteMany
+   */
+  export type training_programsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which training_programs to delete
+     */
+    where?: training_programsWhereInput
+    /**
+     * Limit how many training_programs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * training_programs.users
+   */
+  export type training_programs$usersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the users
+     */
+    select?: usersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the users
+     */
+    omit?: usersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: usersInclude<ExtArgs> | null
+    where?: usersWhereInput
+    orderBy?: usersOrderByWithRelationInput | usersOrderByWithRelationInput[]
+    cursor?: usersWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: UsersScalarFieldEnum | UsersScalarFieldEnum[]
+  }
+
+  /**
+   * training_programs.cohorts
+   */
+  export type training_programs$cohortsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    where?: training_cohortsWhereInput
+    orderBy?: training_cohortsOrderByWithRelationInput | training_cohortsOrderByWithRelationInput[]
+    cursor?: training_cohortsWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Training_cohortsScalarFieldEnum | Training_cohortsScalarFieldEnum[]
+  }
+
+  /**
+   * training_programs.folders
+   */
+  export type training_programs$foldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    where?: report_foldersWhereInput
+    orderBy?: report_foldersOrderByWithRelationInput | report_foldersOrderByWithRelationInput[]
+    cursor?: report_foldersWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Report_foldersScalarFieldEnum | Report_foldersScalarFieldEnum[]
+  }
+
+  /**
+   * training_programs without action
+   */
+  export type training_programsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_programs
+     */
+    select?: training_programsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_programs
+     */
+    omit?: training_programsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_programsInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model training_cohorts
+   */
+
+  export type AggregateTraining_cohorts = {
+    _count: Training_cohortsCountAggregateOutputType | null
+    _avg: Training_cohortsAvgAggregateOutputType | null
+    _sum: Training_cohortsSumAggregateOutputType | null
+    _min: Training_cohortsMinAggregateOutputType | null
+    _max: Training_cohortsMaxAggregateOutputType | null
+  }
+
+  export type Training_cohortsAvgAggregateOutputType = {
+    max_participants: number | null
+    current_participants: number | null
+  }
+
+  export type Training_cohortsSumAggregateOutputType = {
+    max_participants: number | null
+    current_participants: number | null
+  }
+
+  export type Training_cohortsMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    training_program_id: string | null
+    year: string | null
+    start_date: Date | null
+    end_date: Date | null
+    max_participants: number | null
+    current_participants: number | null
+    status: $Enums.CohortStatus | null
+    description: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Training_cohortsMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    training_program_id: string | null
+    year: string | null
+    start_date: Date | null
+    end_date: Date | null
+    max_participants: number | null
+    current_participants: number | null
+    status: $Enums.CohortStatus | null
+    description: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Training_cohortsCountAggregateOutputType = {
+    id: number
+    name: number
+    training_program_id: number
+    year: number
+    start_date: number
+    end_date: number
+    max_participants: number
+    current_participants: number
+    status: number
+    description: number
+    is_active: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type Training_cohortsAvgAggregateInputType = {
+    max_participants?: true
+    current_participants?: true
+  }
+
+  export type Training_cohortsSumAggregateInputType = {
+    max_participants?: true
+    current_participants?: true
+  }
+
+  export type Training_cohortsMinAggregateInputType = {
+    id?: true
+    name?: true
+    training_program_id?: true
+    year?: true
+    start_date?: true
+    end_date?: true
+    max_participants?: true
+    current_participants?: true
+    status?: true
+    description?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Training_cohortsMaxAggregateInputType = {
+    id?: true
+    name?: true
+    training_program_id?: true
+    year?: true
+    start_date?: true
+    end_date?: true
+    max_participants?: true
+    current_participants?: true
+    status?: true
+    description?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Training_cohortsCountAggregateInputType = {
+    id?: true
+    name?: true
+    training_program_id?: true
+    year?: true
+    start_date?: true
+    end_date?: true
+    max_participants?: true
+    current_participants?: true
+    status?: true
+    description?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type Training_cohortsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which training_cohorts to aggregate.
+     */
+    where?: training_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_cohorts to fetch.
+     */
+    orderBy?: training_cohortsOrderByWithRelationInput | training_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: training_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_cohorts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned training_cohorts
+    **/
+    _count?: true | Training_cohortsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: Training_cohortsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: Training_cohortsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Training_cohortsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Training_cohortsMaxAggregateInputType
+  }
+
+  export type GetTraining_cohortsAggregateType<T extends Training_cohortsAggregateArgs> = {
+        [P in keyof T & keyof AggregateTraining_cohorts]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTraining_cohorts[P]>
+      : GetScalarType<T[P], AggregateTraining_cohorts[P]>
+  }
+
+
+
+
+  export type training_cohortsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: training_cohortsWhereInput
+    orderBy?: training_cohortsOrderByWithAggregationInput | training_cohortsOrderByWithAggregationInput[]
+    by: Training_cohortsScalarFieldEnum[] | Training_cohortsScalarFieldEnum
+    having?: training_cohortsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Training_cohortsCountAggregateInputType | true
+    _avg?: Training_cohortsAvgAggregateInputType
+    _sum?: Training_cohortsSumAggregateInputType
+    _min?: Training_cohortsMinAggregateInputType
+    _max?: Training_cohortsMaxAggregateInputType
+  }
+
+  export type Training_cohortsGroupByOutputType = {
+    id: string
+    name: string
+    training_program_id: string
+    year: string
+    start_date: Date | null
+    end_date: Date | null
+    max_participants: number | null
+    current_participants: number
+    status: $Enums.CohortStatus
+    description: string | null
+    is_active: boolean
+    created_at: Date
+    updated_at: Date
+    _count: Training_cohortsCountAggregateOutputType | null
+    _avg: Training_cohortsAvgAggregateOutputType | null
+    _sum: Training_cohortsSumAggregateOutputType | null
+    _min: Training_cohortsMinAggregateOutputType | null
+    _max: Training_cohortsMaxAggregateOutputType | null
+  }
+
+  type GetTraining_cohortsGroupByPayload<T extends training_cohortsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Training_cohortsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Training_cohortsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Training_cohortsGroupByOutputType[P]>
+            : GetScalarType<T[P], Training_cohortsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type training_cohortsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    training_program_id?: boolean
+    year?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    max_participants?: boolean
+    current_participants?: boolean
+    status?: boolean
+    description?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    training_program?: boolean | training_programsDefaultArgs<ExtArgs>
+    members?: boolean | training_cohorts$membersArgs<ExtArgs>
+    folders?: boolean | training_cohorts$foldersArgs<ExtArgs>
+    _count?: boolean | Training_cohortsCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["training_cohorts"]>
+
+  export type training_cohortsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    training_program_id?: boolean
+    year?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    max_participants?: boolean
+    current_participants?: boolean
+    status?: boolean
+    description?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    training_program?: boolean | training_programsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["training_cohorts"]>
+
+  export type training_cohortsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    training_program_id?: boolean
+    year?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    max_participants?: boolean
+    current_participants?: boolean
+    status?: boolean
+    description?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+    training_program?: boolean | training_programsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["training_cohorts"]>
+
+  export type training_cohortsSelectScalar = {
+    id?: boolean
+    name?: boolean
+    training_program_id?: boolean
+    year?: boolean
+    start_date?: boolean
+    end_date?: boolean
+    max_participants?: boolean
+    current_participants?: boolean
+    status?: boolean
+    description?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type training_cohortsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "training_program_id" | "year" | "start_date" | "end_date" | "max_participants" | "current_participants" | "status" | "description" | "is_active" | "created_at" | "updated_at", ExtArgs["result"]["training_cohorts"]>
+  export type training_cohortsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    training_program?: boolean | training_programsDefaultArgs<ExtArgs>
+    members?: boolean | training_cohorts$membersArgs<ExtArgs>
+    folders?: boolean | training_cohorts$foldersArgs<ExtArgs>
+    _count?: boolean | Training_cohortsCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type training_cohortsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    training_program?: boolean | training_programsDefaultArgs<ExtArgs>
+  }
+  export type training_cohortsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    training_program?: boolean | training_programsDefaultArgs<ExtArgs>
+  }
+
+  export type $training_cohortsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "training_cohorts"
+    objects: {
+      training_program: Prisma.$training_programsPayload<ExtArgs>
+      members: Prisma.$cohort_membersPayload<ExtArgs>[]
+      folders: Prisma.$report_foldersPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      training_program_id: string
+      year: string
+      start_date: Date | null
+      end_date: Date | null
+      max_participants: number | null
+      current_participants: number
+      status: $Enums.CohortStatus
+      description: string | null
+      is_active: boolean
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["training_cohorts"]>
+    composites: {}
+  }
+
+  type training_cohortsGetPayload<S extends boolean | null | undefined | training_cohortsDefaultArgs> = $Result.GetResult<Prisma.$training_cohortsPayload, S>
+
+  type training_cohortsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<training_cohortsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Training_cohortsCountAggregateInputType | true
+    }
+
+  export interface training_cohortsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['training_cohorts'], meta: { name: 'training_cohorts' } }
+    /**
+     * Find zero or one Training_cohorts that matches the filter.
+     * @param {training_cohortsFindUniqueArgs} args - Arguments to find a Training_cohorts
+     * @example
+     * // Get one Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends training_cohortsFindUniqueArgs>(args: SelectSubset<T, training_cohortsFindUniqueArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Training_cohorts that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {training_cohortsFindUniqueOrThrowArgs} args - Arguments to find a Training_cohorts
+     * @example
+     * // Get one Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends training_cohortsFindUniqueOrThrowArgs>(args: SelectSubset<T, training_cohortsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Training_cohorts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_cohortsFindFirstArgs} args - Arguments to find a Training_cohorts
+     * @example
+     * // Get one Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends training_cohortsFindFirstArgs>(args?: SelectSubset<T, training_cohortsFindFirstArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Training_cohorts that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_cohortsFindFirstOrThrowArgs} args - Arguments to find a Training_cohorts
+     * @example
+     * // Get one Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends training_cohortsFindFirstOrThrowArgs>(args?: SelectSubset<T, training_cohortsFindFirstOrThrowArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Training_cohorts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_cohortsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.findMany()
+     * 
+     * // Get first 10 Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const training_cohortsWithIdOnly = await prisma.training_cohorts.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends training_cohortsFindManyArgs>(args?: SelectSubset<T, training_cohortsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Training_cohorts.
+     * @param {training_cohortsCreateArgs} args - Arguments to create a Training_cohorts.
+     * @example
+     * // Create one Training_cohorts
+     * const Training_cohorts = await prisma.training_cohorts.create({
+     *   data: {
+     *     // ... data to create a Training_cohorts
+     *   }
+     * })
+     * 
+     */
+    create<T extends training_cohortsCreateArgs>(args: SelectSubset<T, training_cohortsCreateArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Training_cohorts.
+     * @param {training_cohortsCreateManyArgs} args - Arguments to create many Training_cohorts.
+     * @example
+     * // Create many Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends training_cohortsCreateManyArgs>(args?: SelectSubset<T, training_cohortsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Training_cohorts and returns the data saved in the database.
+     * @param {training_cohortsCreateManyAndReturnArgs} args - Arguments to create many Training_cohorts.
+     * @example
+     * // Create many Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Training_cohorts and only return the `id`
+     * const training_cohortsWithIdOnly = await prisma.training_cohorts.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends training_cohortsCreateManyAndReturnArgs>(args?: SelectSubset<T, training_cohortsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Training_cohorts.
+     * @param {training_cohortsDeleteArgs} args - Arguments to delete one Training_cohorts.
+     * @example
+     * // Delete one Training_cohorts
+     * const Training_cohorts = await prisma.training_cohorts.delete({
+     *   where: {
+     *     // ... filter to delete one Training_cohorts
+     *   }
+     * })
+     * 
+     */
+    delete<T extends training_cohortsDeleteArgs>(args: SelectSubset<T, training_cohortsDeleteArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Training_cohorts.
+     * @param {training_cohortsUpdateArgs} args - Arguments to update one Training_cohorts.
+     * @example
+     * // Update one Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends training_cohortsUpdateArgs>(args: SelectSubset<T, training_cohortsUpdateArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Training_cohorts.
+     * @param {training_cohortsDeleteManyArgs} args - Arguments to filter Training_cohorts to delete.
+     * @example
+     * // Delete a few Training_cohorts
+     * const { count } = await prisma.training_cohorts.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends training_cohortsDeleteManyArgs>(args?: SelectSubset<T, training_cohortsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Training_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_cohortsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends training_cohortsUpdateManyArgs>(args: SelectSubset<T, training_cohortsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Training_cohorts and returns the data updated in the database.
+     * @param {training_cohortsUpdateManyAndReturnArgs} args - Arguments to update many Training_cohorts.
+     * @example
+     * // Update many Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Training_cohorts and only return the `id`
+     * const training_cohortsWithIdOnly = await prisma.training_cohorts.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends training_cohortsUpdateManyAndReturnArgs>(args: SelectSubset<T, training_cohortsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Training_cohorts.
+     * @param {training_cohortsUpsertArgs} args - Arguments to update or create a Training_cohorts.
+     * @example
+     * // Update or create a Training_cohorts
+     * const training_cohorts = await prisma.training_cohorts.upsert({
+     *   create: {
+     *     // ... data to create a Training_cohorts
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Training_cohorts we want to update
+     *   }
+     * })
+     */
+    upsert<T extends training_cohortsUpsertArgs>(args: SelectSubset<T, training_cohortsUpsertArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Training_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_cohortsCountArgs} args - Arguments to filter Training_cohorts to count.
+     * @example
+     * // Count the number of Training_cohorts
+     * const count = await prisma.training_cohorts.count({
+     *   where: {
+     *     // ... the filter for the Training_cohorts we want to count
+     *   }
+     * })
+    **/
+    count<T extends training_cohortsCountArgs>(
+      args?: Subset<T, training_cohortsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Training_cohortsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Training_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Training_cohortsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Training_cohortsAggregateArgs>(args: Subset<T, Training_cohortsAggregateArgs>): Prisma.PrismaPromise<GetTraining_cohortsAggregateType<T>>
+
+    /**
+     * Group by Training_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {training_cohortsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends training_cohortsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: training_cohortsGroupByArgs['orderBy'] }
+        : { orderBy?: training_cohortsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, training_cohortsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTraining_cohortsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the training_cohorts model
+   */
+  readonly fields: training_cohortsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for training_cohorts.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__training_cohortsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    training_program<T extends training_programsDefaultArgs<ExtArgs> = {}>(args?: Subset<T, training_programsDefaultArgs<ExtArgs>>): Prisma__training_programsClient<$Result.GetResult<Prisma.$training_programsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    members<T extends training_cohorts$membersArgs<ExtArgs> = {}>(args?: Subset<T, training_cohorts$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    folders<T extends training_cohorts$foldersArgs<ExtArgs> = {}>(args?: Subset<T, training_cohorts$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$report_foldersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the training_cohorts model
+   */
+  interface training_cohortsFieldRefs {
+    readonly id: FieldRef<"training_cohorts", 'String'>
+    readonly name: FieldRef<"training_cohorts", 'String'>
+    readonly training_program_id: FieldRef<"training_cohorts", 'String'>
+    readonly year: FieldRef<"training_cohorts", 'String'>
+    readonly start_date: FieldRef<"training_cohorts", 'DateTime'>
+    readonly end_date: FieldRef<"training_cohorts", 'DateTime'>
+    readonly max_participants: FieldRef<"training_cohorts", 'Int'>
+    readonly current_participants: FieldRef<"training_cohorts", 'Int'>
+    readonly status: FieldRef<"training_cohorts", 'CohortStatus'>
+    readonly description: FieldRef<"training_cohorts", 'String'>
+    readonly is_active: FieldRef<"training_cohorts", 'Boolean'>
+    readonly created_at: FieldRef<"training_cohorts", 'DateTime'>
+    readonly updated_at: FieldRef<"training_cohorts", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * training_cohorts findUnique
+   */
+  export type training_cohortsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_cohorts to fetch.
+     */
+    where: training_cohortsWhereUniqueInput
+  }
+
+  /**
+   * training_cohorts findUniqueOrThrow
+   */
+  export type training_cohortsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_cohorts to fetch.
+     */
+    where: training_cohortsWhereUniqueInput
+  }
+
+  /**
+   * training_cohorts findFirst
+   */
+  export type training_cohortsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_cohorts to fetch.
+     */
+    where?: training_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_cohorts to fetch.
+     */
+    orderBy?: training_cohortsOrderByWithRelationInput | training_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for training_cohorts.
+     */
+    cursor?: training_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_cohorts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of training_cohorts.
+     */
+    distinct?: Training_cohortsScalarFieldEnum | Training_cohortsScalarFieldEnum[]
+  }
+
+  /**
+   * training_cohorts findFirstOrThrow
+   */
+  export type training_cohortsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_cohorts to fetch.
+     */
+    where?: training_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_cohorts to fetch.
+     */
+    orderBy?: training_cohortsOrderByWithRelationInput | training_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for training_cohorts.
+     */
+    cursor?: training_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_cohorts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of training_cohorts.
+     */
+    distinct?: Training_cohortsScalarFieldEnum | Training_cohortsScalarFieldEnum[]
+  }
+
+  /**
+   * training_cohorts findMany
+   */
+  export type training_cohortsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * Filter, which training_cohorts to fetch.
+     */
+    where?: training_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of training_cohorts to fetch.
+     */
+    orderBy?: training_cohortsOrderByWithRelationInput | training_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing training_cohorts.
+     */
+    cursor?: training_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` training_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` training_cohorts.
+     */
+    skip?: number
+    distinct?: Training_cohortsScalarFieldEnum | Training_cohortsScalarFieldEnum[]
+  }
+
+  /**
+   * training_cohorts create
+   */
+  export type training_cohortsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a training_cohorts.
+     */
+    data: XOR<training_cohortsCreateInput, training_cohortsUncheckedCreateInput>
+  }
+
+  /**
+   * training_cohorts createMany
+   */
+  export type training_cohortsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many training_cohorts.
+     */
+    data: training_cohortsCreateManyInput | training_cohortsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * training_cohorts createManyAndReturn
+   */
+  export type training_cohortsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * The data used to create many training_cohorts.
+     */
+    data: training_cohortsCreateManyInput | training_cohortsCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * training_cohorts update
+   */
+  export type training_cohortsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a training_cohorts.
+     */
+    data: XOR<training_cohortsUpdateInput, training_cohortsUncheckedUpdateInput>
+    /**
+     * Choose, which training_cohorts to update.
+     */
+    where: training_cohortsWhereUniqueInput
+  }
+
+  /**
+   * training_cohorts updateMany
+   */
+  export type training_cohortsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update training_cohorts.
+     */
+    data: XOR<training_cohortsUpdateManyMutationInput, training_cohortsUncheckedUpdateManyInput>
+    /**
+     * Filter which training_cohorts to update
+     */
+    where?: training_cohortsWhereInput
+    /**
+     * Limit how many training_cohorts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * training_cohorts updateManyAndReturn
+   */
+  export type training_cohortsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * The data used to update training_cohorts.
+     */
+    data: XOR<training_cohortsUpdateManyMutationInput, training_cohortsUncheckedUpdateManyInput>
+    /**
+     * Filter which training_cohorts to update
+     */
+    where?: training_cohortsWhereInput
+    /**
+     * Limit how many training_cohorts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * training_cohorts upsert
+   */
+  export type training_cohortsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the training_cohorts to update in case it exists.
+     */
+    where: training_cohortsWhereUniqueInput
+    /**
+     * In case the training_cohorts found by the `where` argument doesn't exist, create a new training_cohorts with this data.
+     */
+    create: XOR<training_cohortsCreateInput, training_cohortsUncheckedCreateInput>
+    /**
+     * In case the training_cohorts was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<training_cohortsUpdateInput, training_cohortsUncheckedUpdateInput>
+  }
+
+  /**
+   * training_cohorts delete
+   */
+  export type training_cohortsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+    /**
+     * Filter which training_cohorts to delete.
+     */
+    where: training_cohortsWhereUniqueInput
+  }
+
+  /**
+   * training_cohorts deleteMany
+   */
+  export type training_cohortsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which training_cohorts to delete
+     */
+    where?: training_cohortsWhereInput
+    /**
+     * Limit how many training_cohorts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * training_cohorts.members
+   */
+  export type training_cohorts$membersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    where?: cohort_membersWhereInput
+    orderBy?: cohort_membersOrderByWithRelationInput | cohort_membersOrderByWithRelationInput[]
+    cursor?: cohort_membersWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Cohort_membersScalarFieldEnum | Cohort_membersScalarFieldEnum[]
+  }
+
+  /**
+   * training_cohorts.folders
+   */
+  export type training_cohorts$foldersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the report_folders
+     */
+    select?: report_foldersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the report_folders
+     */
+    omit?: report_foldersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: report_foldersInclude<ExtArgs> | null
+    where?: report_foldersWhereInput
+    orderBy?: report_foldersOrderByWithRelationInput | report_foldersOrderByWithRelationInput[]
+    cursor?: report_foldersWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Report_foldersScalarFieldEnum | Report_foldersScalarFieldEnum[]
+  }
+
+  /**
+   * training_cohorts without action
+   */
+  export type training_cohortsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the training_cohorts
+     */
+    select?: training_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the training_cohorts
+     */
+    omit?: training_cohortsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: training_cohortsInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model cohort_members
+   */
+
+  export type AggregateCohort_members = {
+    _count: Cohort_membersCountAggregateOutputType | null
+    _min: Cohort_membersMinAggregateOutputType | null
+    _max: Cohort_membersMaxAggregateOutputType | null
+  }
+
+  export type Cohort_membersMinAggregateOutputType = {
+    id: string | null
+    user_id: string | null
+    cohort_id: string | null
+    joined_at: Date | null
+    status: $Enums.MemberStatus | null
+    notes: string | null
+  }
+
+  export type Cohort_membersMaxAggregateOutputType = {
+    id: string | null
+    user_id: string | null
+    cohort_id: string | null
+    joined_at: Date | null
+    status: $Enums.MemberStatus | null
+    notes: string | null
+  }
+
+  export type Cohort_membersCountAggregateOutputType = {
+    id: number
+    user_id: number
+    cohort_id: number
+    joined_at: number
+    status: number
+    notes: number
+    _all: number
+  }
+
+
+  export type Cohort_membersMinAggregateInputType = {
+    id?: true
+    user_id?: true
+    cohort_id?: true
+    joined_at?: true
+    status?: true
+    notes?: true
+  }
+
+  export type Cohort_membersMaxAggregateInputType = {
+    id?: true
+    user_id?: true
+    cohort_id?: true
+    joined_at?: true
+    status?: true
+    notes?: true
+  }
+
+  export type Cohort_membersCountAggregateInputType = {
+    id?: true
+    user_id?: true
+    cohort_id?: true
+    joined_at?: true
+    status?: true
+    notes?: true
+    _all?: true
+  }
+
+  export type Cohort_membersAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cohort_members to aggregate.
+     */
+    where?: cohort_membersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cohort_members to fetch.
+     */
+    orderBy?: cohort_membersOrderByWithRelationInput | cohort_membersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: cohort_membersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cohort_members from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cohort_members.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned cohort_members
+    **/
+    _count?: true | Cohort_membersCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Cohort_membersMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Cohort_membersMaxAggregateInputType
+  }
+
+  export type GetCohort_membersAggregateType<T extends Cohort_membersAggregateArgs> = {
+        [P in keyof T & keyof AggregateCohort_members]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCohort_members[P]>
+      : GetScalarType<T[P], AggregateCohort_members[P]>
+  }
+
+
+
+
+  export type cohort_membersGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: cohort_membersWhereInput
+    orderBy?: cohort_membersOrderByWithAggregationInput | cohort_membersOrderByWithAggregationInput[]
+    by: Cohort_membersScalarFieldEnum[] | Cohort_membersScalarFieldEnum
+    having?: cohort_membersScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Cohort_membersCountAggregateInputType | true
+    _min?: Cohort_membersMinAggregateInputType
+    _max?: Cohort_membersMaxAggregateInputType
+  }
+
+  export type Cohort_membersGroupByOutputType = {
+    id: string
+    user_id: string
+    cohort_id: string
+    joined_at: Date
+    status: $Enums.MemberStatus
+    notes: string | null
+    _count: Cohort_membersCountAggregateOutputType | null
+    _min: Cohort_membersMinAggregateOutputType | null
+    _max: Cohort_membersMaxAggregateOutputType | null
+  }
+
+  type GetCohort_membersGroupByPayload<T extends cohort_membersGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Cohort_membersGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Cohort_membersGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Cohort_membersGroupByOutputType[P]>
+            : GetScalarType<T[P], Cohort_membersGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type cohort_membersSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    user_id?: boolean
+    cohort_id?: boolean
+    joined_at?: boolean
+    status?: boolean
+    notes?: boolean
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    cohort?: boolean | training_cohortsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cohort_members"]>
+
+  export type cohort_membersSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    user_id?: boolean
+    cohort_id?: boolean
+    joined_at?: boolean
+    status?: boolean
+    notes?: boolean
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    cohort?: boolean | training_cohortsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cohort_members"]>
+
+  export type cohort_membersSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    user_id?: boolean
+    cohort_id?: boolean
+    joined_at?: boolean
+    status?: boolean
+    notes?: boolean
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    cohort?: boolean | training_cohortsDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["cohort_members"]>
+
+  export type cohort_membersSelectScalar = {
+    id?: boolean
+    user_id?: boolean
+    cohort_id?: boolean
+    joined_at?: boolean
+    status?: boolean
+    notes?: boolean
+  }
+
+  export type cohort_membersOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "user_id" | "cohort_id" | "joined_at" | "status" | "notes", ExtArgs["result"]["cohort_members"]>
+  export type cohort_membersInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    cohort?: boolean | training_cohortsDefaultArgs<ExtArgs>
+  }
+  export type cohort_membersIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    cohort?: boolean | training_cohortsDefaultArgs<ExtArgs>
+  }
+  export type cohort_membersIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | usersDefaultArgs<ExtArgs>
+    cohort?: boolean | training_cohortsDefaultArgs<ExtArgs>
+  }
+
+  export type $cohort_membersPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "cohort_members"
+    objects: {
+      user: Prisma.$usersPayload<ExtArgs>
+      cohort: Prisma.$training_cohortsPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      user_id: string
+      cohort_id: string
+      joined_at: Date
+      status: $Enums.MemberStatus
+      notes: string | null
+    }, ExtArgs["result"]["cohort_members"]>
+    composites: {}
+  }
+
+  type cohort_membersGetPayload<S extends boolean | null | undefined | cohort_membersDefaultArgs> = $Result.GetResult<Prisma.$cohort_membersPayload, S>
+
+  type cohort_membersCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<cohort_membersFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Cohort_membersCountAggregateInputType | true
+    }
+
+  export interface cohort_membersDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['cohort_members'], meta: { name: 'cohort_members' } }
+    /**
+     * Find zero or one Cohort_members that matches the filter.
+     * @param {cohort_membersFindUniqueArgs} args - Arguments to find a Cohort_members
+     * @example
+     * // Get one Cohort_members
+     * const cohort_members = await prisma.cohort_members.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends cohort_membersFindUniqueArgs>(args: SelectSubset<T, cohort_membersFindUniqueArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Cohort_members that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {cohort_membersFindUniqueOrThrowArgs} args - Arguments to find a Cohort_members
+     * @example
+     * // Get one Cohort_members
+     * const cohort_members = await prisma.cohort_members.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends cohort_membersFindUniqueOrThrowArgs>(args: SelectSubset<T, cohort_membersFindUniqueOrThrowArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cohort_members that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cohort_membersFindFirstArgs} args - Arguments to find a Cohort_members
+     * @example
+     * // Get one Cohort_members
+     * const cohort_members = await prisma.cohort_members.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends cohort_membersFindFirstArgs>(args?: SelectSubset<T, cohort_membersFindFirstArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Cohort_members that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cohort_membersFindFirstOrThrowArgs} args - Arguments to find a Cohort_members
+     * @example
+     * // Get one Cohort_members
+     * const cohort_members = await prisma.cohort_members.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends cohort_membersFindFirstOrThrowArgs>(args?: SelectSubset<T, cohort_membersFindFirstOrThrowArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Cohort_members that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cohort_membersFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Cohort_members
+     * const cohort_members = await prisma.cohort_members.findMany()
+     * 
+     * // Get first 10 Cohort_members
+     * const cohort_members = await prisma.cohort_members.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cohort_membersWithIdOnly = await prisma.cohort_members.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends cohort_membersFindManyArgs>(args?: SelectSubset<T, cohort_membersFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Cohort_members.
+     * @param {cohort_membersCreateArgs} args - Arguments to create a Cohort_members.
+     * @example
+     * // Create one Cohort_members
+     * const Cohort_members = await prisma.cohort_members.create({
+     *   data: {
+     *     // ... data to create a Cohort_members
+     *   }
+     * })
+     * 
+     */
+    create<T extends cohort_membersCreateArgs>(args: SelectSubset<T, cohort_membersCreateArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Cohort_members.
+     * @param {cohort_membersCreateManyArgs} args - Arguments to create many Cohort_members.
+     * @example
+     * // Create many Cohort_members
+     * const cohort_members = await prisma.cohort_members.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends cohort_membersCreateManyArgs>(args?: SelectSubset<T, cohort_membersCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Cohort_members and returns the data saved in the database.
+     * @param {cohort_membersCreateManyAndReturnArgs} args - Arguments to create many Cohort_members.
+     * @example
+     * // Create many Cohort_members
+     * const cohort_members = await prisma.cohort_members.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Cohort_members and only return the `id`
+     * const cohort_membersWithIdOnly = await prisma.cohort_members.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends cohort_membersCreateManyAndReturnArgs>(args?: SelectSubset<T, cohort_membersCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Cohort_members.
+     * @param {cohort_membersDeleteArgs} args - Arguments to delete one Cohort_members.
+     * @example
+     * // Delete one Cohort_members
+     * const Cohort_members = await prisma.cohort_members.delete({
+     *   where: {
+     *     // ... filter to delete one Cohort_members
+     *   }
+     * })
+     * 
+     */
+    delete<T extends cohort_membersDeleteArgs>(args: SelectSubset<T, cohort_membersDeleteArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Cohort_members.
+     * @param {cohort_membersUpdateArgs} args - Arguments to update one Cohort_members.
+     * @example
+     * // Update one Cohort_members
+     * const cohort_members = await prisma.cohort_members.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends cohort_membersUpdateArgs>(args: SelectSubset<T, cohort_membersUpdateArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Cohort_members.
+     * @param {cohort_membersDeleteManyArgs} args - Arguments to filter Cohort_members to delete.
+     * @example
+     * // Delete a few Cohort_members
+     * const { count } = await prisma.cohort_members.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends cohort_membersDeleteManyArgs>(args?: SelectSubset<T, cohort_membersDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cohort_members.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cohort_membersUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Cohort_members
+     * const cohort_members = await prisma.cohort_members.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends cohort_membersUpdateManyArgs>(args: SelectSubset<T, cohort_membersUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Cohort_members and returns the data updated in the database.
+     * @param {cohort_membersUpdateManyAndReturnArgs} args - Arguments to update many Cohort_members.
+     * @example
+     * // Update many Cohort_members
+     * const cohort_members = await prisma.cohort_members.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Cohort_members and only return the `id`
+     * const cohort_membersWithIdOnly = await prisma.cohort_members.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends cohort_membersUpdateManyAndReturnArgs>(args: SelectSubset<T, cohort_membersUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Cohort_members.
+     * @param {cohort_membersUpsertArgs} args - Arguments to update or create a Cohort_members.
+     * @example
+     * // Update or create a Cohort_members
+     * const cohort_members = await prisma.cohort_members.upsert({
+     *   create: {
+     *     // ... data to create a Cohort_members
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Cohort_members we want to update
+     *   }
+     * })
+     */
+    upsert<T extends cohort_membersUpsertArgs>(args: SelectSubset<T, cohort_membersUpsertArgs<ExtArgs>>): Prisma__cohort_membersClient<$Result.GetResult<Prisma.$cohort_membersPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Cohort_members.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cohort_membersCountArgs} args - Arguments to filter Cohort_members to count.
+     * @example
+     * // Count the number of Cohort_members
+     * const count = await prisma.cohort_members.count({
+     *   where: {
+     *     // ... the filter for the Cohort_members we want to count
+     *   }
+     * })
+    **/
+    count<T extends cohort_membersCountArgs>(
+      args?: Subset<T, cohort_membersCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Cohort_membersCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Cohort_members.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Cohort_membersAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Cohort_membersAggregateArgs>(args: Subset<T, Cohort_membersAggregateArgs>): Prisma.PrismaPromise<GetCohort_membersAggregateType<T>>
+
+    /**
+     * Group by Cohort_members.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {cohort_membersGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends cohort_membersGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: cohort_membersGroupByArgs['orderBy'] }
+        : { orderBy?: cohort_membersGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, cohort_membersGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCohort_membersGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the cohort_members model
+   */
+  readonly fields: cohort_membersFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for cohort_members.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__cohort_membersClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends usersDefaultArgs<ExtArgs> = {}>(args?: Subset<T, usersDefaultArgs<ExtArgs>>): Prisma__usersClient<$Result.GetResult<Prisma.$usersPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    cohort<T extends training_cohortsDefaultArgs<ExtArgs> = {}>(args?: Subset<T, training_cohortsDefaultArgs<ExtArgs>>): Prisma__training_cohortsClient<$Result.GetResult<Prisma.$training_cohortsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the cohort_members model
+   */
+  interface cohort_membersFieldRefs {
+    readonly id: FieldRef<"cohort_members", 'String'>
+    readonly user_id: FieldRef<"cohort_members", 'String'>
+    readonly cohort_id: FieldRef<"cohort_members", 'String'>
+    readonly joined_at: FieldRef<"cohort_members", 'DateTime'>
+    readonly status: FieldRef<"cohort_members", 'MemberStatus'>
+    readonly notes: FieldRef<"cohort_members", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * cohort_members findUnique
+   */
+  export type cohort_membersFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * Filter, which cohort_members to fetch.
+     */
+    where: cohort_membersWhereUniqueInput
+  }
+
+  /**
+   * cohort_members findUniqueOrThrow
+   */
+  export type cohort_membersFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * Filter, which cohort_members to fetch.
+     */
+    where: cohort_membersWhereUniqueInput
+  }
+
+  /**
+   * cohort_members findFirst
+   */
+  export type cohort_membersFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * Filter, which cohort_members to fetch.
+     */
+    where?: cohort_membersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cohort_members to fetch.
+     */
+    orderBy?: cohort_membersOrderByWithRelationInput | cohort_membersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cohort_members.
+     */
+    cursor?: cohort_membersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cohort_members from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cohort_members.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cohort_members.
+     */
+    distinct?: Cohort_membersScalarFieldEnum | Cohort_membersScalarFieldEnum[]
+  }
+
+  /**
+   * cohort_members findFirstOrThrow
+   */
+  export type cohort_membersFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * Filter, which cohort_members to fetch.
+     */
+    where?: cohort_membersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cohort_members to fetch.
+     */
+    orderBy?: cohort_membersOrderByWithRelationInput | cohort_membersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for cohort_members.
+     */
+    cursor?: cohort_membersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cohort_members from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cohort_members.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of cohort_members.
+     */
+    distinct?: Cohort_membersScalarFieldEnum | Cohort_membersScalarFieldEnum[]
+  }
+
+  /**
+   * cohort_members findMany
+   */
+  export type cohort_membersFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * Filter, which cohort_members to fetch.
+     */
+    where?: cohort_membersWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of cohort_members to fetch.
+     */
+    orderBy?: cohort_membersOrderByWithRelationInput | cohort_membersOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing cohort_members.
+     */
+    cursor?: cohort_membersWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` cohort_members from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` cohort_members.
+     */
+    skip?: number
+    distinct?: Cohort_membersScalarFieldEnum | Cohort_membersScalarFieldEnum[]
+  }
+
+  /**
+   * cohort_members create
+   */
+  export type cohort_membersCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * The data needed to create a cohort_members.
+     */
+    data: XOR<cohort_membersCreateInput, cohort_membersUncheckedCreateInput>
+  }
+
+  /**
+   * cohort_members createMany
+   */
+  export type cohort_membersCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many cohort_members.
+     */
+    data: cohort_membersCreateManyInput | cohort_membersCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * cohort_members createManyAndReturn
+   */
+  export type cohort_membersCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * The data used to create many cohort_members.
+     */
+    data: cohort_membersCreateManyInput | cohort_membersCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cohort_members update
+   */
+  export type cohort_membersUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * The data needed to update a cohort_members.
+     */
+    data: XOR<cohort_membersUpdateInput, cohort_membersUncheckedUpdateInput>
+    /**
+     * Choose, which cohort_members to update.
+     */
+    where: cohort_membersWhereUniqueInput
+  }
+
+  /**
+   * cohort_members updateMany
+   */
+  export type cohort_membersUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update cohort_members.
+     */
+    data: XOR<cohort_membersUpdateManyMutationInput, cohort_membersUncheckedUpdateManyInput>
+    /**
+     * Filter which cohort_members to update
+     */
+    where?: cohort_membersWhereInput
+    /**
+     * Limit how many cohort_members to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * cohort_members updateManyAndReturn
+   */
+  export type cohort_membersUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * The data used to update cohort_members.
+     */
+    data: XOR<cohort_membersUpdateManyMutationInput, cohort_membersUncheckedUpdateManyInput>
+    /**
+     * Filter which cohort_members to update
+     */
+    where?: cohort_membersWhereInput
+    /**
+     * Limit how many cohort_members to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * cohort_members upsert
+   */
+  export type cohort_membersUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * The filter to search for the cohort_members to update in case it exists.
+     */
+    where: cohort_membersWhereUniqueInput
+    /**
+     * In case the cohort_members found by the `where` argument doesn't exist, create a new cohort_members with this data.
+     */
+    create: XOR<cohort_membersCreateInput, cohort_membersUncheckedCreateInput>
+    /**
+     * In case the cohort_members was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<cohort_membersUpdateInput, cohort_membersUncheckedUpdateInput>
+  }
+
+  /**
+   * cohort_members delete
+   */
+  export type cohort_membersDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+    /**
+     * Filter which cohort_members to delete.
+     */
+    where: cohort_membersWhereUniqueInput
+  }
+
+  /**
+   * cohort_members deleteMany
+   */
+  export type cohort_membersDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which cohort_members to delete
+     */
+    where?: cohort_membersWhereInput
+    /**
+     * Limit how many cohort_members to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * cohort_members without action
+   */
+  export type cohort_membersDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the cohort_members
+     */
+    select?: cohort_membersSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the cohort_members
+     */
+    omit?: cohort_membersOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: cohort_membersInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model master_years
+   */
+
+  export type AggregateMaster_years = {
+    _count: Master_yearsCountAggregateOutputType | null
+    _min: Master_yearsMinAggregateOutputType | null
+    _max: Master_yearsMaxAggregateOutputType | null
+  }
+
+  export type Master_yearsMinAggregateOutputType = {
+    id: string | null
+    year: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Master_yearsMaxAggregateOutputType = {
+    id: string | null
+    year: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Master_yearsCountAggregateOutputType = {
+    id: number
+    year: number
+    is_active: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type Master_yearsMinAggregateInputType = {
+    id?: true
+    year?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Master_yearsMaxAggregateInputType = {
+    id?: true
+    year?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Master_yearsCountAggregateInputType = {
+    id?: true
+    year?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type Master_yearsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which master_years to aggregate.
+     */
+    where?: master_yearsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_years to fetch.
+     */
+    orderBy?: master_yearsOrderByWithRelationInput | master_yearsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: master_yearsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_years from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_years.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned master_years
+    **/
+    _count?: true | Master_yearsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Master_yearsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Master_yearsMaxAggregateInputType
+  }
+
+  export type GetMaster_yearsAggregateType<T extends Master_yearsAggregateArgs> = {
+        [P in keyof T & keyof AggregateMaster_years]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMaster_years[P]>
+      : GetScalarType<T[P], AggregateMaster_years[P]>
+  }
+
+
+
+
+  export type master_yearsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: master_yearsWhereInput
+    orderBy?: master_yearsOrderByWithAggregationInput | master_yearsOrderByWithAggregationInput[]
+    by: Master_yearsScalarFieldEnum[] | Master_yearsScalarFieldEnum
+    having?: master_yearsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Master_yearsCountAggregateInputType | true
+    _min?: Master_yearsMinAggregateInputType
+    _max?: Master_yearsMaxAggregateInputType
+  }
+
+  export type Master_yearsGroupByOutputType = {
+    id: string
+    year: string
+    is_active: boolean
+    created_at: Date
+    updated_at: Date
+    _count: Master_yearsCountAggregateOutputType | null
+    _min: Master_yearsMinAggregateOutputType | null
+    _max: Master_yearsMaxAggregateOutputType | null
+  }
+
+  type GetMaster_yearsGroupByPayload<T extends master_yearsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Master_yearsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Master_yearsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Master_yearsGroupByOutputType[P]>
+            : GetScalarType<T[P], Master_yearsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type master_yearsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    year?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["master_years"]>
+
+  export type master_yearsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    year?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["master_years"]>
+
+  export type master_yearsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    year?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["master_years"]>
+
+  export type master_yearsSelectScalar = {
+    id?: boolean
+    year?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type master_yearsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "year" | "is_active" | "created_at" | "updated_at", ExtArgs["result"]["master_years"]>
+
+  export type $master_yearsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "master_years"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      year: string
+      is_active: boolean
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["master_years"]>
+    composites: {}
+  }
+
+  type master_yearsGetPayload<S extends boolean | null | undefined | master_yearsDefaultArgs> = $Result.GetResult<Prisma.$master_yearsPayload, S>
+
+  type master_yearsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<master_yearsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Master_yearsCountAggregateInputType | true
+    }
+
+  export interface master_yearsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['master_years'], meta: { name: 'master_years' } }
+    /**
+     * Find zero or one Master_years that matches the filter.
+     * @param {master_yearsFindUniqueArgs} args - Arguments to find a Master_years
+     * @example
+     * // Get one Master_years
+     * const master_years = await prisma.master_years.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends master_yearsFindUniqueArgs>(args: SelectSubset<T, master_yearsFindUniqueArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Master_years that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {master_yearsFindUniqueOrThrowArgs} args - Arguments to find a Master_years
+     * @example
+     * // Get one Master_years
+     * const master_years = await prisma.master_years.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends master_yearsFindUniqueOrThrowArgs>(args: SelectSubset<T, master_yearsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Master_years that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_yearsFindFirstArgs} args - Arguments to find a Master_years
+     * @example
+     * // Get one Master_years
+     * const master_years = await prisma.master_years.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends master_yearsFindFirstArgs>(args?: SelectSubset<T, master_yearsFindFirstArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Master_years that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_yearsFindFirstOrThrowArgs} args - Arguments to find a Master_years
+     * @example
+     * // Get one Master_years
+     * const master_years = await prisma.master_years.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends master_yearsFindFirstOrThrowArgs>(args?: SelectSubset<T, master_yearsFindFirstOrThrowArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Master_years that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_yearsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Master_years
+     * const master_years = await prisma.master_years.findMany()
+     * 
+     * // Get first 10 Master_years
+     * const master_years = await prisma.master_years.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const master_yearsWithIdOnly = await prisma.master_years.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends master_yearsFindManyArgs>(args?: SelectSubset<T, master_yearsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Master_years.
+     * @param {master_yearsCreateArgs} args - Arguments to create a Master_years.
+     * @example
+     * // Create one Master_years
+     * const Master_years = await prisma.master_years.create({
+     *   data: {
+     *     // ... data to create a Master_years
+     *   }
+     * })
+     * 
+     */
+    create<T extends master_yearsCreateArgs>(args: SelectSubset<T, master_yearsCreateArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Master_years.
+     * @param {master_yearsCreateManyArgs} args - Arguments to create many Master_years.
+     * @example
+     * // Create many Master_years
+     * const master_years = await prisma.master_years.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends master_yearsCreateManyArgs>(args?: SelectSubset<T, master_yearsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Master_years and returns the data saved in the database.
+     * @param {master_yearsCreateManyAndReturnArgs} args - Arguments to create many Master_years.
+     * @example
+     * // Create many Master_years
+     * const master_years = await prisma.master_years.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Master_years and only return the `id`
+     * const master_yearsWithIdOnly = await prisma.master_years.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends master_yearsCreateManyAndReturnArgs>(args?: SelectSubset<T, master_yearsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Master_years.
+     * @param {master_yearsDeleteArgs} args - Arguments to delete one Master_years.
+     * @example
+     * // Delete one Master_years
+     * const Master_years = await prisma.master_years.delete({
+     *   where: {
+     *     // ... filter to delete one Master_years
+     *   }
+     * })
+     * 
+     */
+    delete<T extends master_yearsDeleteArgs>(args: SelectSubset<T, master_yearsDeleteArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Master_years.
+     * @param {master_yearsUpdateArgs} args - Arguments to update one Master_years.
+     * @example
+     * // Update one Master_years
+     * const master_years = await prisma.master_years.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends master_yearsUpdateArgs>(args: SelectSubset<T, master_yearsUpdateArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Master_years.
+     * @param {master_yearsDeleteManyArgs} args - Arguments to filter Master_years to delete.
+     * @example
+     * // Delete a few Master_years
+     * const { count } = await prisma.master_years.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends master_yearsDeleteManyArgs>(args?: SelectSubset<T, master_yearsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Master_years.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_yearsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Master_years
+     * const master_years = await prisma.master_years.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends master_yearsUpdateManyArgs>(args: SelectSubset<T, master_yearsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Master_years and returns the data updated in the database.
+     * @param {master_yearsUpdateManyAndReturnArgs} args - Arguments to update many Master_years.
+     * @example
+     * // Update many Master_years
+     * const master_years = await prisma.master_years.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Master_years and only return the `id`
+     * const master_yearsWithIdOnly = await prisma.master_years.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends master_yearsUpdateManyAndReturnArgs>(args: SelectSubset<T, master_yearsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Master_years.
+     * @param {master_yearsUpsertArgs} args - Arguments to update or create a Master_years.
+     * @example
+     * // Update or create a Master_years
+     * const master_years = await prisma.master_years.upsert({
+     *   create: {
+     *     // ... data to create a Master_years
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Master_years we want to update
+     *   }
+     * })
+     */
+    upsert<T extends master_yearsUpsertArgs>(args: SelectSubset<T, master_yearsUpsertArgs<ExtArgs>>): Prisma__master_yearsClient<$Result.GetResult<Prisma.$master_yearsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Master_years.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_yearsCountArgs} args - Arguments to filter Master_years to count.
+     * @example
+     * // Count the number of Master_years
+     * const count = await prisma.master_years.count({
+     *   where: {
+     *     // ... the filter for the Master_years we want to count
+     *   }
+     * })
+    **/
+    count<T extends master_yearsCountArgs>(
+      args?: Subset<T, master_yearsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Master_yearsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Master_years.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Master_yearsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Master_yearsAggregateArgs>(args: Subset<T, Master_yearsAggregateArgs>): Prisma.PrismaPromise<GetMaster_yearsAggregateType<T>>
+
+    /**
+     * Group by Master_years.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_yearsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends master_yearsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: master_yearsGroupByArgs['orderBy'] }
+        : { orderBy?: master_yearsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, master_yearsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMaster_yearsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the master_years model
+   */
+  readonly fields: master_yearsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for master_years.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__master_yearsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the master_years model
+   */
+  interface master_yearsFieldRefs {
+    readonly id: FieldRef<"master_years", 'String'>
+    readonly year: FieldRef<"master_years", 'String'>
+    readonly is_active: FieldRef<"master_years", 'Boolean'>
+    readonly created_at: FieldRef<"master_years", 'DateTime'>
+    readonly updated_at: FieldRef<"master_years", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * master_years findUnique
+   */
+  export type master_yearsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_years to fetch.
+     */
+    where: master_yearsWhereUniqueInput
+  }
+
+  /**
+   * master_years findUniqueOrThrow
+   */
+  export type master_yearsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_years to fetch.
+     */
+    where: master_yearsWhereUniqueInput
+  }
+
+  /**
+   * master_years findFirst
+   */
+  export type master_yearsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_years to fetch.
+     */
+    where?: master_yearsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_years to fetch.
+     */
+    orderBy?: master_yearsOrderByWithRelationInput | master_yearsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for master_years.
+     */
+    cursor?: master_yearsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_years from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_years.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of master_years.
+     */
+    distinct?: Master_yearsScalarFieldEnum | Master_yearsScalarFieldEnum[]
+  }
+
+  /**
+   * master_years findFirstOrThrow
+   */
+  export type master_yearsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_years to fetch.
+     */
+    where?: master_yearsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_years to fetch.
+     */
+    orderBy?: master_yearsOrderByWithRelationInput | master_yearsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for master_years.
+     */
+    cursor?: master_yearsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_years from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_years.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of master_years.
+     */
+    distinct?: Master_yearsScalarFieldEnum | Master_yearsScalarFieldEnum[]
+  }
+
+  /**
+   * master_years findMany
+   */
+  export type master_yearsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_years to fetch.
+     */
+    where?: master_yearsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_years to fetch.
+     */
+    orderBy?: master_yearsOrderByWithRelationInput | master_yearsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing master_years.
+     */
+    cursor?: master_yearsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_years from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_years.
+     */
+    skip?: number
+    distinct?: Master_yearsScalarFieldEnum | Master_yearsScalarFieldEnum[]
+  }
+
+  /**
+   * master_years create
+   */
+  export type master_yearsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a master_years.
+     */
+    data: XOR<master_yearsCreateInput, master_yearsUncheckedCreateInput>
+  }
+
+  /**
+   * master_years createMany
+   */
+  export type master_yearsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many master_years.
+     */
+    data: master_yearsCreateManyInput | master_yearsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * master_years createManyAndReturn
+   */
+  export type master_yearsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * The data used to create many master_years.
+     */
+    data: master_yearsCreateManyInput | master_yearsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * master_years update
+   */
+  export type master_yearsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a master_years.
+     */
+    data: XOR<master_yearsUpdateInput, master_yearsUncheckedUpdateInput>
+    /**
+     * Choose, which master_years to update.
+     */
+    where: master_yearsWhereUniqueInput
+  }
+
+  /**
+   * master_years updateMany
+   */
+  export type master_yearsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update master_years.
+     */
+    data: XOR<master_yearsUpdateManyMutationInput, master_yearsUncheckedUpdateManyInput>
+    /**
+     * Filter which master_years to update
+     */
+    where?: master_yearsWhereInput
+    /**
+     * Limit how many master_years to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * master_years updateManyAndReturn
+   */
+  export type master_yearsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * The data used to update master_years.
+     */
+    data: XOR<master_yearsUpdateManyMutationInput, master_yearsUncheckedUpdateManyInput>
+    /**
+     * Filter which master_years to update
+     */
+    where?: master_yearsWhereInput
+    /**
+     * Limit how many master_years to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * master_years upsert
+   */
+  export type master_yearsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the master_years to update in case it exists.
+     */
+    where: master_yearsWhereUniqueInput
+    /**
+     * In case the master_years found by the `where` argument doesn't exist, create a new master_years with this data.
+     */
+    create: XOR<master_yearsCreateInput, master_yearsUncheckedCreateInput>
+    /**
+     * In case the master_years was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<master_yearsUpdateInput, master_yearsUncheckedUpdateInput>
+  }
+
+  /**
+   * master_years delete
+   */
+  export type master_yearsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+    /**
+     * Filter which master_years to delete.
+     */
+    where: master_yearsWhereUniqueInput
+  }
+
+  /**
+   * master_years deleteMany
+   */
+  export type master_yearsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which master_years to delete
+     */
+    where?: master_yearsWhereInput
+    /**
+     * Limit how many master_years to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * master_years without action
+   */
+  export type master_yearsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_years
+     */
+    select?: master_yearsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_years
+     */
+    omit?: master_yearsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model master_cohorts
+   */
+
+  export type AggregateMaster_cohorts = {
+    _count: Master_cohortsCountAggregateOutputType | null
+    _min: Master_cohortsMinAggregateOutputType | null
+    _max: Master_cohortsMaxAggregateOutputType | null
+  }
+
+  export type Master_cohortsMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Master_cohortsMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    is_active: boolean | null
+    created_at: Date | null
+    updated_at: Date | null
+  }
+
+  export type Master_cohortsCountAggregateOutputType = {
+    id: number
+    name: number
+    is_active: number
+    created_at: number
+    updated_at: number
+    _all: number
+  }
+
+
+  export type Master_cohortsMinAggregateInputType = {
+    id?: true
+    name?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Master_cohortsMaxAggregateInputType = {
+    id?: true
+    name?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+  }
+
+  export type Master_cohortsCountAggregateInputType = {
+    id?: true
+    name?: true
+    is_active?: true
+    created_at?: true
+    updated_at?: true
+    _all?: true
+  }
+
+  export type Master_cohortsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which master_cohorts to aggregate.
+     */
+    where?: master_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_cohorts to fetch.
+     */
+    orderBy?: master_cohortsOrderByWithRelationInput | master_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: master_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_cohorts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned master_cohorts
+    **/
+    _count?: true | Master_cohortsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: Master_cohortsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: Master_cohortsMaxAggregateInputType
+  }
+
+  export type GetMaster_cohortsAggregateType<T extends Master_cohortsAggregateArgs> = {
+        [P in keyof T & keyof AggregateMaster_cohorts]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMaster_cohorts[P]>
+      : GetScalarType<T[P], AggregateMaster_cohorts[P]>
+  }
+
+
+
+
+  export type master_cohortsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: master_cohortsWhereInput
+    orderBy?: master_cohortsOrderByWithAggregationInput | master_cohortsOrderByWithAggregationInput[]
+    by: Master_cohortsScalarFieldEnum[] | Master_cohortsScalarFieldEnum
+    having?: master_cohortsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: Master_cohortsCountAggregateInputType | true
+    _min?: Master_cohortsMinAggregateInputType
+    _max?: Master_cohortsMaxAggregateInputType
+  }
+
+  export type Master_cohortsGroupByOutputType = {
+    id: string
+    name: string
+    is_active: boolean
+    created_at: Date
+    updated_at: Date
+    _count: Master_cohortsCountAggregateOutputType | null
+    _min: Master_cohortsMinAggregateOutputType | null
+    _max: Master_cohortsMaxAggregateOutputType | null
+  }
+
+  type GetMaster_cohortsGroupByPayload<T extends master_cohortsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<Master_cohortsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof Master_cohortsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], Master_cohortsGroupByOutputType[P]>
+            : GetScalarType<T[P], Master_cohortsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type master_cohortsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["master_cohorts"]>
+
+  export type master_cohortsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["master_cohorts"]>
+
+  export type master_cohortsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }, ExtArgs["result"]["master_cohorts"]>
+
+  export type master_cohortsSelectScalar = {
+    id?: boolean
+    name?: boolean
+    is_active?: boolean
+    created_at?: boolean
+    updated_at?: boolean
+  }
+
+  export type master_cohortsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "is_active" | "created_at" | "updated_at", ExtArgs["result"]["master_cohorts"]>
+
+  export type $master_cohortsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "master_cohorts"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      is_active: boolean
+      created_at: Date
+      updated_at: Date
+    }, ExtArgs["result"]["master_cohorts"]>
+    composites: {}
+  }
+
+  type master_cohortsGetPayload<S extends boolean | null | undefined | master_cohortsDefaultArgs> = $Result.GetResult<Prisma.$master_cohortsPayload, S>
+
+  type master_cohortsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<master_cohortsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: Master_cohortsCountAggregateInputType | true
+    }
+
+  export interface master_cohortsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['master_cohorts'], meta: { name: 'master_cohorts' } }
+    /**
+     * Find zero or one Master_cohorts that matches the filter.
+     * @param {master_cohortsFindUniqueArgs} args - Arguments to find a Master_cohorts
+     * @example
+     * // Get one Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends master_cohortsFindUniqueArgs>(args: SelectSubset<T, master_cohortsFindUniqueArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Master_cohorts that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {master_cohortsFindUniqueOrThrowArgs} args - Arguments to find a Master_cohorts
+     * @example
+     * // Get one Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends master_cohortsFindUniqueOrThrowArgs>(args: SelectSubset<T, master_cohortsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Master_cohorts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_cohortsFindFirstArgs} args - Arguments to find a Master_cohorts
+     * @example
+     * // Get one Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends master_cohortsFindFirstArgs>(args?: SelectSubset<T, master_cohortsFindFirstArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Master_cohorts that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_cohortsFindFirstOrThrowArgs} args - Arguments to find a Master_cohorts
+     * @example
+     * // Get one Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends master_cohortsFindFirstOrThrowArgs>(args?: SelectSubset<T, master_cohortsFindFirstOrThrowArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Master_cohorts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_cohortsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.findMany()
+     * 
+     * // Get first 10 Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const master_cohortsWithIdOnly = await prisma.master_cohorts.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends master_cohortsFindManyArgs>(args?: SelectSubset<T, master_cohortsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Master_cohorts.
+     * @param {master_cohortsCreateArgs} args - Arguments to create a Master_cohorts.
+     * @example
+     * // Create one Master_cohorts
+     * const Master_cohorts = await prisma.master_cohorts.create({
+     *   data: {
+     *     // ... data to create a Master_cohorts
+     *   }
+     * })
+     * 
+     */
+    create<T extends master_cohortsCreateArgs>(args: SelectSubset<T, master_cohortsCreateArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Master_cohorts.
+     * @param {master_cohortsCreateManyArgs} args - Arguments to create many Master_cohorts.
+     * @example
+     * // Create many Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends master_cohortsCreateManyArgs>(args?: SelectSubset<T, master_cohortsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Master_cohorts and returns the data saved in the database.
+     * @param {master_cohortsCreateManyAndReturnArgs} args - Arguments to create many Master_cohorts.
+     * @example
+     * // Create many Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Master_cohorts and only return the `id`
+     * const master_cohortsWithIdOnly = await prisma.master_cohorts.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends master_cohortsCreateManyAndReturnArgs>(args?: SelectSubset<T, master_cohortsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Master_cohorts.
+     * @param {master_cohortsDeleteArgs} args - Arguments to delete one Master_cohorts.
+     * @example
+     * // Delete one Master_cohorts
+     * const Master_cohorts = await prisma.master_cohorts.delete({
+     *   where: {
+     *     // ... filter to delete one Master_cohorts
+     *   }
+     * })
+     * 
+     */
+    delete<T extends master_cohortsDeleteArgs>(args: SelectSubset<T, master_cohortsDeleteArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Master_cohorts.
+     * @param {master_cohortsUpdateArgs} args - Arguments to update one Master_cohorts.
+     * @example
+     * // Update one Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends master_cohortsUpdateArgs>(args: SelectSubset<T, master_cohortsUpdateArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Master_cohorts.
+     * @param {master_cohortsDeleteManyArgs} args - Arguments to filter Master_cohorts to delete.
+     * @example
+     * // Delete a few Master_cohorts
+     * const { count } = await prisma.master_cohorts.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends master_cohortsDeleteManyArgs>(args?: SelectSubset<T, master_cohortsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Master_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_cohortsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends master_cohortsUpdateManyArgs>(args: SelectSubset<T, master_cohortsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Master_cohorts and returns the data updated in the database.
+     * @param {master_cohortsUpdateManyAndReturnArgs} args - Arguments to update many Master_cohorts.
+     * @example
+     * // Update many Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Master_cohorts and only return the `id`
+     * const master_cohortsWithIdOnly = await prisma.master_cohorts.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends master_cohortsUpdateManyAndReturnArgs>(args: SelectSubset<T, master_cohortsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Master_cohorts.
+     * @param {master_cohortsUpsertArgs} args - Arguments to update or create a Master_cohorts.
+     * @example
+     * // Update or create a Master_cohorts
+     * const master_cohorts = await prisma.master_cohorts.upsert({
+     *   create: {
+     *     // ... data to create a Master_cohorts
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Master_cohorts we want to update
+     *   }
+     * })
+     */
+    upsert<T extends master_cohortsUpsertArgs>(args: SelectSubset<T, master_cohortsUpsertArgs<ExtArgs>>): Prisma__master_cohortsClient<$Result.GetResult<Prisma.$master_cohortsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Master_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_cohortsCountArgs} args - Arguments to filter Master_cohorts to count.
+     * @example
+     * // Count the number of Master_cohorts
+     * const count = await prisma.master_cohorts.count({
+     *   where: {
+     *     // ... the filter for the Master_cohorts we want to count
+     *   }
+     * })
+    **/
+    count<T extends master_cohortsCountArgs>(
+      args?: Subset<T, master_cohortsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], Master_cohortsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Master_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {Master_cohortsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends Master_cohortsAggregateArgs>(args: Subset<T, Master_cohortsAggregateArgs>): Prisma.PrismaPromise<GetMaster_cohortsAggregateType<T>>
+
+    /**
+     * Group by Master_cohorts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {master_cohortsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends master_cohortsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: master_cohortsGroupByArgs['orderBy'] }
+        : { orderBy?: master_cohortsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, master_cohortsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMaster_cohortsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the master_cohorts model
+   */
+  readonly fields: master_cohortsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for master_cohorts.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__master_cohortsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the master_cohorts model
+   */
+  interface master_cohortsFieldRefs {
+    readonly id: FieldRef<"master_cohorts", 'String'>
+    readonly name: FieldRef<"master_cohorts", 'String'>
+    readonly is_active: FieldRef<"master_cohorts", 'Boolean'>
+    readonly created_at: FieldRef<"master_cohorts", 'DateTime'>
+    readonly updated_at: FieldRef<"master_cohorts", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * master_cohorts findUnique
+   */
+  export type master_cohortsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_cohorts to fetch.
+     */
+    where: master_cohortsWhereUniqueInput
+  }
+
+  /**
+   * master_cohorts findUniqueOrThrow
+   */
+  export type master_cohortsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_cohorts to fetch.
+     */
+    where: master_cohortsWhereUniqueInput
+  }
+
+  /**
+   * master_cohorts findFirst
+   */
+  export type master_cohortsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_cohorts to fetch.
+     */
+    where?: master_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_cohorts to fetch.
+     */
+    orderBy?: master_cohortsOrderByWithRelationInput | master_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for master_cohorts.
+     */
+    cursor?: master_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_cohorts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of master_cohorts.
+     */
+    distinct?: Master_cohortsScalarFieldEnum | Master_cohortsScalarFieldEnum[]
+  }
+
+  /**
+   * master_cohorts findFirstOrThrow
+   */
+  export type master_cohortsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_cohorts to fetch.
+     */
+    where?: master_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_cohorts to fetch.
+     */
+    orderBy?: master_cohortsOrderByWithRelationInput | master_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for master_cohorts.
+     */
+    cursor?: master_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_cohorts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of master_cohorts.
+     */
+    distinct?: Master_cohortsScalarFieldEnum | Master_cohortsScalarFieldEnum[]
+  }
+
+  /**
+   * master_cohorts findMany
+   */
+  export type master_cohortsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * Filter, which master_cohorts to fetch.
+     */
+    where?: master_cohortsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of master_cohorts to fetch.
+     */
+    orderBy?: master_cohortsOrderByWithRelationInput | master_cohortsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing master_cohorts.
+     */
+    cursor?: master_cohortsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` master_cohorts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` master_cohorts.
+     */
+    skip?: number
+    distinct?: Master_cohortsScalarFieldEnum | Master_cohortsScalarFieldEnum[]
+  }
+
+  /**
+   * master_cohorts create
+   */
+  export type master_cohortsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a master_cohorts.
+     */
+    data: XOR<master_cohortsCreateInput, master_cohortsUncheckedCreateInput>
+  }
+
+  /**
+   * master_cohorts createMany
+   */
+  export type master_cohortsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many master_cohorts.
+     */
+    data: master_cohortsCreateManyInput | master_cohortsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * master_cohorts createManyAndReturn
+   */
+  export type master_cohortsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * The data used to create many master_cohorts.
+     */
+    data: master_cohortsCreateManyInput | master_cohortsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * master_cohorts update
+   */
+  export type master_cohortsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a master_cohorts.
+     */
+    data: XOR<master_cohortsUpdateInput, master_cohortsUncheckedUpdateInput>
+    /**
+     * Choose, which master_cohorts to update.
+     */
+    where: master_cohortsWhereUniqueInput
+  }
+
+  /**
+   * master_cohorts updateMany
+   */
+  export type master_cohortsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update master_cohorts.
+     */
+    data: XOR<master_cohortsUpdateManyMutationInput, master_cohortsUncheckedUpdateManyInput>
+    /**
+     * Filter which master_cohorts to update
+     */
+    where?: master_cohortsWhereInput
+    /**
+     * Limit how many master_cohorts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * master_cohorts updateManyAndReturn
+   */
+  export type master_cohortsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * The data used to update master_cohorts.
+     */
+    data: XOR<master_cohortsUpdateManyMutationInput, master_cohortsUncheckedUpdateManyInput>
+    /**
+     * Filter which master_cohorts to update
+     */
+    where?: master_cohortsWhereInput
+    /**
+     * Limit how many master_cohorts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * master_cohorts upsert
+   */
+  export type master_cohortsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the master_cohorts to update in case it exists.
+     */
+    where: master_cohortsWhereUniqueInput
+    /**
+     * In case the master_cohorts found by the `where` argument doesn't exist, create a new master_cohorts with this data.
+     */
+    create: XOR<master_cohortsCreateInput, master_cohortsUncheckedCreateInput>
+    /**
+     * In case the master_cohorts was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<master_cohortsUpdateInput, master_cohortsUncheckedUpdateInput>
+  }
+
+  /**
+   * master_cohorts delete
+   */
+  export type master_cohortsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+    /**
+     * Filter which master_cohorts to delete.
+     */
+    where: master_cohortsWhereUniqueInput
+  }
+
+  /**
+   * master_cohorts deleteMany
+   */
+  export type master_cohortsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which master_cohorts to delete
+     */
+    where?: master_cohortsWhereInput
+    /**
+     * Limit how many master_cohorts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * master_cohorts without action
+   */
+  export type master_cohortsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the master_cohorts
+     */
+    select?: master_cohortsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the master_cohorts
+     */
+    omit?: master_cohortsOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -11251,23 +15028,6 @@ export namespace Prisma {
   };
 
   export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
-
-
-  export const CollectionsScalarFieldEnum: {
-    id: 'id',
-    title: 'title',
-    description: 'description',
-    content: 'content',
-    image_url: 'image_url',
-    category: 'category',
-    tags: 'tags',
-    is_public: 'is_public',
-    author_id: 'author_id',
-    created_at: 'created_at',
-    updated_at: 'updated_at'
-  };
-
-  export type CollectionsScalarFieldEnum = (typeof CollectionsScalarFieldEnum)[keyof typeof CollectionsScalarFieldEnum]
 
 
   export const Visitor_analyticsScalarFieldEnum: {
@@ -11300,25 +15060,6 @@ export namespace Prisma {
   export type Guestbook_entriesScalarFieldEnum = (typeof Guestbook_entriesScalarFieldEnum)[keyof typeof Guestbook_entriesScalarFieldEnum]
 
 
-  export const Limited_collectionsScalarFieldEnum: {
-    id: 'id',
-    title: 'title',
-    description: 'description',
-    content: 'content',
-    image_url: 'image_url',
-    category: 'category',
-    tags: 'tags',
-    max_access: 'max_access',
-    current_access: 'current_access',
-    is_active: 'is_active',
-    author_id: 'author_id',
-    created_at: 'created_at',
-    updated_at: 'updated_at'
-  };
-
-  export type Limited_collectionsScalarFieldEnum = (typeof Limited_collectionsScalarFieldEnum)[keyof typeof Limited_collectionsScalarFieldEnum]
-
-
   export const ReportsScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -11328,6 +15069,10 @@ export namespace Prisma {
     status: 'status',
     category: 'category',
     priority: 'priority',
+    is_public: 'is_public',
+    max_access: 'max_access',
+    current_access: 'current_access',
+    tags: 'tags',
     author_id: 'author_id',
     assignee_id: 'assignee_id',
     feedback: 'feedback',
@@ -11370,6 +15115,7 @@ export namespace Prisma {
     avatar: 'avatar',
     training: 'training',
     angkatan: 'angkatan',
+    training_program_id: 'training_program_id',
     phone: 'phone',
     created_at: 'created_at',
     updated_at: 'updated_at'
@@ -11382,14 +15128,84 @@ export namespace Prisma {
     id: 'id',
     year: 'year',
     batch: 'batch',
+    report_type: 'report_type',
     description: 'description',
     created_by: 'created_by',
+    training_program_id: 'training_program_id',
+    cohort_id: 'cohort_id',
     is_active: 'is_active',
     created_at: 'created_at',
     updated_at: 'updated_at'
   };
 
   export type Report_foldersScalarFieldEnum = (typeof Report_foldersScalarFieldEnum)[keyof typeof Report_foldersScalarFieldEnum]
+
+
+  export const Training_programsScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    full_name: 'full_name',
+    description: 'description',
+    duration_days: 'duration_days',
+    is_active: 'is_active',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type Training_programsScalarFieldEnum = (typeof Training_programsScalarFieldEnum)[keyof typeof Training_programsScalarFieldEnum]
+
+
+  export const Training_cohortsScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    training_program_id: 'training_program_id',
+    year: 'year',
+    start_date: 'start_date',
+    end_date: 'end_date',
+    max_participants: 'max_participants',
+    current_participants: 'current_participants',
+    status: 'status',
+    description: 'description',
+    is_active: 'is_active',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type Training_cohortsScalarFieldEnum = (typeof Training_cohortsScalarFieldEnum)[keyof typeof Training_cohortsScalarFieldEnum]
+
+
+  export const Cohort_membersScalarFieldEnum: {
+    id: 'id',
+    user_id: 'user_id',
+    cohort_id: 'cohort_id',
+    joined_at: 'joined_at',
+    status: 'status',
+    notes: 'notes'
+  };
+
+  export type Cohort_membersScalarFieldEnum = (typeof Cohort_membersScalarFieldEnum)[keyof typeof Cohort_membersScalarFieldEnum]
+
+
+  export const Master_yearsScalarFieldEnum: {
+    id: 'id',
+    year: 'year',
+    is_active: 'is_active',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type Master_yearsScalarFieldEnum = (typeof Master_yearsScalarFieldEnum)[keyof typeof Master_yearsScalarFieldEnum]
+
+
+  export const Master_cohortsScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    is_active: 'is_active',
+    created_at: 'created_at',
+    updated_at: 'updated_at'
+  };
+
+  export type Master_cohortsScalarFieldEnum = (typeof Master_cohortsScalarFieldEnum)[keyof typeof Master_cohortsScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11436,9 +15252,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
+   * Reference to a field of type 'Int'
    */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -11457,16 +15280,9 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
+   * Reference to a field of type 'Boolean'
    */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -11513,6 +15329,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'CohortStatus'
+   */
+  export type EnumCohortStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CohortStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'CohortStatus[]'
+   */
+  export type ListEnumCohortStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CohortStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'MemberStatus'
+   */
+  export type EnumMemberStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MemberStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'MemberStatus[]'
+   */
+  export type ListEnumMemberStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MemberStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -11528,91 +15372,6 @@ export namespace Prisma {
    * Deep Input Types
    */
 
-
-  export type collectionsWhereInput = {
-    AND?: collectionsWhereInput | collectionsWhereInput[]
-    OR?: collectionsWhereInput[]
-    NOT?: collectionsWhereInput | collectionsWhereInput[]
-    id?: StringFilter<"collections"> | string
-    title?: StringFilter<"collections"> | string
-    description?: StringNullableFilter<"collections"> | string | null
-    content?: StringFilter<"collections"> | string
-    image_url?: StringNullableFilter<"collections"> | string | null
-    category?: StringNullableFilter<"collections"> | string | null
-    tags?: StringNullableFilter<"collections"> | string | null
-    is_public?: BoolFilter<"collections"> | boolean
-    author_id?: StringFilter<"collections"> | string
-    created_at?: DateTimeFilter<"collections"> | Date | string
-    updated_at?: DateTimeFilter<"collections"> | Date | string
-    users?: XOR<UsersScalarRelationFilter, usersWhereInput>
-  }
-
-  export type collectionsOrderByWithRelationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrderInput | SortOrder
-    content?: SortOrder
-    image_url?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
-    tags?: SortOrderInput | SortOrder
-    is_public?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-    users?: usersOrderByWithRelationInput
-  }
-
-  export type collectionsWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: collectionsWhereInput | collectionsWhereInput[]
-    OR?: collectionsWhereInput[]
-    NOT?: collectionsWhereInput | collectionsWhereInput[]
-    title?: StringFilter<"collections"> | string
-    description?: StringNullableFilter<"collections"> | string | null
-    content?: StringFilter<"collections"> | string
-    image_url?: StringNullableFilter<"collections"> | string | null
-    category?: StringNullableFilter<"collections"> | string | null
-    tags?: StringNullableFilter<"collections"> | string | null
-    is_public?: BoolFilter<"collections"> | boolean
-    author_id?: StringFilter<"collections"> | string
-    created_at?: DateTimeFilter<"collections"> | Date | string
-    updated_at?: DateTimeFilter<"collections"> | Date | string
-    users?: XOR<UsersScalarRelationFilter, usersWhereInput>
-  }, "id">
-
-  export type collectionsOrderByWithAggregationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrderInput | SortOrder
-    content?: SortOrder
-    image_url?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
-    tags?: SortOrderInput | SortOrder
-    is_public?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-    _count?: collectionsCountOrderByAggregateInput
-    _max?: collectionsMaxOrderByAggregateInput
-    _min?: collectionsMinOrderByAggregateInput
-  }
-
-  export type collectionsScalarWhereWithAggregatesInput = {
-    AND?: collectionsScalarWhereWithAggregatesInput | collectionsScalarWhereWithAggregatesInput[]
-    OR?: collectionsScalarWhereWithAggregatesInput[]
-    NOT?: collectionsScalarWhereWithAggregatesInput | collectionsScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"collections"> | string
-    title?: StringWithAggregatesFilter<"collections"> | string
-    description?: StringNullableWithAggregatesFilter<"collections"> | string | null
-    content?: StringWithAggregatesFilter<"collections"> | string
-    image_url?: StringNullableWithAggregatesFilter<"collections"> | string | null
-    category?: StringNullableWithAggregatesFilter<"collections"> | string | null
-    tags?: StringNullableWithAggregatesFilter<"collections"> | string | null
-    is_public?: BoolWithAggregatesFilter<"collections"> | boolean
-    author_id?: StringWithAggregatesFilter<"collections"> | string
-    created_at?: DateTimeWithAggregatesFilter<"collections"> | Date | string
-    updated_at?: DateTimeWithAggregatesFilter<"collections"> | Date | string
-  }
 
   export type visitor_analyticsWhereInput = {
     AND?: visitor_analyticsWhereInput | visitor_analyticsWhereInput[]
@@ -11766,103 +15525,6 @@ export namespace Prisma {
     updated_at?: DateTimeWithAggregatesFilter<"guestbook_entries"> | Date | string
   }
 
-  export type limited_collectionsWhereInput = {
-    AND?: limited_collectionsWhereInput | limited_collectionsWhereInput[]
-    OR?: limited_collectionsWhereInput[]
-    NOT?: limited_collectionsWhereInput | limited_collectionsWhereInput[]
-    id?: StringFilter<"limited_collections"> | string
-    title?: StringFilter<"limited_collections"> | string
-    description?: StringNullableFilter<"limited_collections"> | string | null
-    content?: StringFilter<"limited_collections"> | string
-    image_url?: StringNullableFilter<"limited_collections"> | string | null
-    category?: StringNullableFilter<"limited_collections"> | string | null
-    tags?: StringNullableFilter<"limited_collections"> | string | null
-    max_access?: IntFilter<"limited_collections"> | number
-    current_access?: IntFilter<"limited_collections"> | number
-    is_active?: BoolFilter<"limited_collections"> | boolean
-    author_id?: StringFilter<"limited_collections"> | string
-    created_at?: DateTimeFilter<"limited_collections"> | Date | string
-    updated_at?: DateTimeFilter<"limited_collections"> | Date | string
-    users?: XOR<UsersScalarRelationFilter, usersWhereInput>
-  }
-
-  export type limited_collectionsOrderByWithRelationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrderInput | SortOrder
-    content?: SortOrder
-    image_url?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
-    tags?: SortOrderInput | SortOrder
-    max_access?: SortOrder
-    current_access?: SortOrder
-    is_active?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-    users?: usersOrderByWithRelationInput
-  }
-
-  export type limited_collectionsWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: limited_collectionsWhereInput | limited_collectionsWhereInput[]
-    OR?: limited_collectionsWhereInput[]
-    NOT?: limited_collectionsWhereInput | limited_collectionsWhereInput[]
-    title?: StringFilter<"limited_collections"> | string
-    description?: StringNullableFilter<"limited_collections"> | string | null
-    content?: StringFilter<"limited_collections"> | string
-    image_url?: StringNullableFilter<"limited_collections"> | string | null
-    category?: StringNullableFilter<"limited_collections"> | string | null
-    tags?: StringNullableFilter<"limited_collections"> | string | null
-    max_access?: IntFilter<"limited_collections"> | number
-    current_access?: IntFilter<"limited_collections"> | number
-    is_active?: BoolFilter<"limited_collections"> | boolean
-    author_id?: StringFilter<"limited_collections"> | string
-    created_at?: DateTimeFilter<"limited_collections"> | Date | string
-    updated_at?: DateTimeFilter<"limited_collections"> | Date | string
-    users?: XOR<UsersScalarRelationFilter, usersWhereInput>
-  }, "id">
-
-  export type limited_collectionsOrderByWithAggregationInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrderInput | SortOrder
-    content?: SortOrder
-    image_url?: SortOrderInput | SortOrder
-    category?: SortOrderInput | SortOrder
-    tags?: SortOrderInput | SortOrder
-    max_access?: SortOrder
-    current_access?: SortOrder
-    is_active?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-    _count?: limited_collectionsCountOrderByAggregateInput
-    _avg?: limited_collectionsAvgOrderByAggregateInput
-    _max?: limited_collectionsMaxOrderByAggregateInput
-    _min?: limited_collectionsMinOrderByAggregateInput
-    _sum?: limited_collectionsSumOrderByAggregateInput
-  }
-
-  export type limited_collectionsScalarWhereWithAggregatesInput = {
-    AND?: limited_collectionsScalarWhereWithAggregatesInput | limited_collectionsScalarWhereWithAggregatesInput[]
-    OR?: limited_collectionsScalarWhereWithAggregatesInput[]
-    NOT?: limited_collectionsScalarWhereWithAggregatesInput | limited_collectionsScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"limited_collections"> | string
-    title?: StringWithAggregatesFilter<"limited_collections"> | string
-    description?: StringNullableWithAggregatesFilter<"limited_collections"> | string | null
-    content?: StringWithAggregatesFilter<"limited_collections"> | string
-    image_url?: StringNullableWithAggregatesFilter<"limited_collections"> | string | null
-    category?: StringNullableWithAggregatesFilter<"limited_collections"> | string | null
-    tags?: StringNullableWithAggregatesFilter<"limited_collections"> | string | null
-    max_access?: IntWithAggregatesFilter<"limited_collections"> | number
-    current_access?: IntWithAggregatesFilter<"limited_collections"> | number
-    is_active?: BoolWithAggregatesFilter<"limited_collections"> | boolean
-    author_id?: StringWithAggregatesFilter<"limited_collections"> | string
-    created_at?: DateTimeWithAggregatesFilter<"limited_collections"> | Date | string
-    updated_at?: DateTimeWithAggregatesFilter<"limited_collections"> | Date | string
-  }
-
   export type reportsWhereInput = {
     AND?: reportsWhereInput | reportsWhereInput[]
     OR?: reportsWhereInput[]
@@ -11875,6 +15537,10 @@ export namespace Prisma {
     status?: EnumReportStatusFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableFilter<"reports"> | string | null
     priority?: EnumPriorityFilter<"reports"> | $Enums.Priority
+    is_public?: BoolFilter<"reports"> | boolean
+    max_access?: IntNullableFilter<"reports"> | number | null
+    current_access?: IntNullableFilter<"reports"> | number | null
+    tags?: StringNullableFilter<"reports"> | string | null
     author_id?: StringFilter<"reports"> | string
     assignee_id?: StringNullableFilter<"reports"> | string | null
     feedback?: StringNullableFilter<"reports"> | string | null
@@ -11896,6 +15562,10 @@ export namespace Prisma {
     status?: SortOrder
     category?: SortOrderInput | SortOrder
     priority?: SortOrder
+    is_public?: SortOrder
+    max_access?: SortOrderInput | SortOrder
+    current_access?: SortOrderInput | SortOrder
+    tags?: SortOrderInput | SortOrder
     author_id?: SortOrder
     assignee_id?: SortOrderInput | SortOrder
     feedback?: SortOrderInput | SortOrder
@@ -11920,6 +15590,10 @@ export namespace Prisma {
     status?: EnumReportStatusFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableFilter<"reports"> | string | null
     priority?: EnumPriorityFilter<"reports"> | $Enums.Priority
+    is_public?: BoolFilter<"reports"> | boolean
+    max_access?: IntNullableFilter<"reports"> | number | null
+    current_access?: IntNullableFilter<"reports"> | number | null
+    tags?: StringNullableFilter<"reports"> | string | null
     author_id?: StringFilter<"reports"> | string
     assignee_id?: StringNullableFilter<"reports"> | string | null
     feedback?: StringNullableFilter<"reports"> | string | null
@@ -11941,6 +15615,10 @@ export namespace Prisma {
     status?: SortOrder
     category?: SortOrderInput | SortOrder
     priority?: SortOrder
+    is_public?: SortOrder
+    max_access?: SortOrderInput | SortOrder
+    current_access?: SortOrderInput | SortOrder
+    tags?: SortOrderInput | SortOrder
     author_id?: SortOrder
     assignee_id?: SortOrderInput | SortOrder
     feedback?: SortOrderInput | SortOrder
@@ -11949,8 +15627,10 @@ export namespace Prisma {
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: reportsCountOrderByAggregateInput
+    _avg?: reportsAvgOrderByAggregateInput
     _max?: reportsMaxOrderByAggregateInput
     _min?: reportsMinOrderByAggregateInput
+    _sum?: reportsSumOrderByAggregateInput
   }
 
   export type reportsScalarWhereWithAggregatesInput = {
@@ -11965,6 +15645,10 @@ export namespace Prisma {
     status?: EnumReportStatusWithAggregatesFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableWithAggregatesFilter<"reports"> | string | null
     priority?: EnumPriorityWithAggregatesFilter<"reports"> | $Enums.Priority
+    is_public?: BoolWithAggregatesFilter<"reports"> | boolean
+    max_access?: IntNullableWithAggregatesFilter<"reports"> | number | null
+    current_access?: IntNullableWithAggregatesFilter<"reports"> | number | null
+    tags?: StringNullableWithAggregatesFilter<"reports"> | string | null
     author_id?: StringWithAggregatesFilter<"reports"> | string
     assignee_id?: StringNullableWithAggregatesFilter<"reports"> | string | null
     feedback?: StringNullableWithAggregatesFilter<"reports"> | string | null
@@ -12092,17 +15776,18 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"users"> | string | null
     training?: StringNullableFilter<"users"> | string | null
     angkatan?: StringNullableFilter<"users"> | string | null
+    training_program_id?: StringNullableFilter<"users"> | string | null
     phone?: StringNullableFilter<"users"> | string | null
     created_at?: DateTimeFilter<"users"> | Date | string
     updated_at?: DateTimeFilter<"users"> | Date | string
-    collections?: CollectionsListRelationFilter
     visitor_analytics?: Visitor_analyticsListRelationFilter
     guestbook_entries?: Guestbook_entriesListRelationFilter
-    limited_collections?: Limited_collectionsListRelationFilter
     reports_reports_assignee_idTousers?: ReportsListRelationFilter
     reports_reports_author_idTousers?: ReportsListRelationFilter
     uploaded_files?: Uploaded_filesListRelationFilter
     created_folders?: Report_foldersListRelationFilter
+    training_program?: XOR<Training_programsNullableScalarRelationFilter, training_programsWhereInput> | null
+    cohort_memberships?: Cohort_membersListRelationFilter
   }
 
   export type usersOrderByWithRelationInput = {
@@ -12115,17 +15800,18 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     training?: SortOrderInput | SortOrder
     angkatan?: SortOrderInput | SortOrder
+    training_program_id?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
-    collections?: collectionsOrderByRelationAggregateInput
     visitor_analytics?: visitor_analyticsOrderByRelationAggregateInput
     guestbook_entries?: guestbook_entriesOrderByRelationAggregateInput
-    limited_collections?: limited_collectionsOrderByRelationAggregateInput
     reports_reports_assignee_idTousers?: reportsOrderByRelationAggregateInput
     reports_reports_author_idTousers?: reportsOrderByRelationAggregateInput
     uploaded_files?: uploaded_filesOrderByRelationAggregateInput
     created_folders?: report_foldersOrderByRelationAggregateInput
+    training_program?: training_programsOrderByWithRelationInput
+    cohort_memberships?: cohort_membersOrderByRelationAggregateInput
   }
 
   export type usersWhereUniqueInput = Prisma.AtLeast<{
@@ -12141,17 +15827,18 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"users"> | string | null
     training?: StringNullableFilter<"users"> | string | null
     angkatan?: StringNullableFilter<"users"> | string | null
+    training_program_id?: StringNullableFilter<"users"> | string | null
     phone?: StringNullableFilter<"users"> | string | null
     created_at?: DateTimeFilter<"users"> | Date | string
     updated_at?: DateTimeFilter<"users"> | Date | string
-    collections?: CollectionsListRelationFilter
     visitor_analytics?: Visitor_analyticsListRelationFilter
     guestbook_entries?: Guestbook_entriesListRelationFilter
-    limited_collections?: Limited_collectionsListRelationFilter
     reports_reports_assignee_idTousers?: ReportsListRelationFilter
     reports_reports_author_idTousers?: ReportsListRelationFilter
     uploaded_files?: Uploaded_filesListRelationFilter
     created_folders?: Report_foldersListRelationFilter
+    training_program?: XOR<Training_programsNullableScalarRelationFilter, training_programsWhereInput> | null
+    cohort_memberships?: Cohort_membersListRelationFilter
   }, "id" | "username" | "email">
 
   export type usersOrderByWithAggregationInput = {
@@ -12164,6 +15851,7 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     training?: SortOrderInput | SortOrder
     angkatan?: SortOrderInput | SortOrder
+    training_program_id?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -12185,6 +15873,7 @@ export namespace Prisma {
     avatar?: StringNullableWithAggregatesFilter<"users"> | string | null
     training?: StringNullableWithAggregatesFilter<"users"> | string | null
     angkatan?: StringNullableWithAggregatesFilter<"users"> | string | null
+    training_program_id?: StringNullableWithAggregatesFilter<"users"> | string | null
     phone?: StringNullableWithAggregatesFilter<"users"> | string | null
     created_at?: DateTimeWithAggregatesFilter<"users"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"users"> | Date | string
@@ -12197,48 +15886,66 @@ export namespace Prisma {
     id?: StringFilter<"report_folders"> | string
     year?: StringFilter<"report_folders"> | string
     batch?: StringFilter<"report_folders"> | string
+    report_type?: StringFilter<"report_folders"> | string
     description?: StringNullableFilter<"report_folders"> | string | null
     created_by?: StringFilter<"report_folders"> | string
+    training_program_id?: StringNullableFilter<"report_folders"> | string | null
+    cohort_id?: StringNullableFilter<"report_folders"> | string | null
     is_active?: BoolFilter<"report_folders"> | boolean
     created_at?: DateTimeFilter<"report_folders"> | Date | string
     updated_at?: DateTimeFilter<"report_folders"> | Date | string
     creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    training_program?: XOR<Training_programsNullableScalarRelationFilter, training_programsWhereInput> | null
+    cohort?: XOR<Training_cohortsNullableScalarRelationFilter, training_cohortsWhereInput> | null
   }
 
   export type report_foldersOrderByWithRelationInput = {
     id?: SortOrder
     year?: SortOrder
     batch?: SortOrder
+    report_type?: SortOrder
     description?: SortOrderInput | SortOrder
     created_by?: SortOrder
+    training_program_id?: SortOrderInput | SortOrder
+    cohort_id?: SortOrderInput | SortOrder
     is_active?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     creator?: usersOrderByWithRelationInput
+    training_program?: training_programsOrderByWithRelationInput
+    cohort?: training_cohortsOrderByWithRelationInput
   }
 
   export type report_foldersWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    year_batch?: report_foldersYearBatchCompoundUniqueInput
+    year_batch_report_type?: report_foldersYearBatchReport_typeCompoundUniqueInput
     AND?: report_foldersWhereInput | report_foldersWhereInput[]
     OR?: report_foldersWhereInput[]
     NOT?: report_foldersWhereInput | report_foldersWhereInput[]
     year?: StringFilter<"report_folders"> | string
     batch?: StringFilter<"report_folders"> | string
+    report_type?: StringFilter<"report_folders"> | string
     description?: StringNullableFilter<"report_folders"> | string | null
     created_by?: StringFilter<"report_folders"> | string
+    training_program_id?: StringNullableFilter<"report_folders"> | string | null
+    cohort_id?: StringNullableFilter<"report_folders"> | string | null
     is_active?: BoolFilter<"report_folders"> | boolean
     created_at?: DateTimeFilter<"report_folders"> | Date | string
     updated_at?: DateTimeFilter<"report_folders"> | Date | string
     creator?: XOR<UsersScalarRelationFilter, usersWhereInput>
-  }, "id" | "year_batch">
+    training_program?: XOR<Training_programsNullableScalarRelationFilter, training_programsWhereInput> | null
+    cohort?: XOR<Training_cohortsNullableScalarRelationFilter, training_cohortsWhereInput> | null
+  }, "id" | "year_batch_report_type">
 
   export type report_foldersOrderByWithAggregationInput = {
     id?: SortOrder
     year?: SortOrder
     batch?: SortOrder
+    report_type?: SortOrder
     description?: SortOrderInput | SortOrder
     created_by?: SortOrder
+    training_program_id?: SortOrderInput | SortOrder
+    cohort_id?: SortOrderInput | SortOrder
     is_active?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -12254,108 +15961,364 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"report_folders"> | string
     year?: StringWithAggregatesFilter<"report_folders"> | string
     batch?: StringWithAggregatesFilter<"report_folders"> | string
+    report_type?: StringWithAggregatesFilter<"report_folders"> | string
     description?: StringNullableWithAggregatesFilter<"report_folders"> | string | null
     created_by?: StringWithAggregatesFilter<"report_folders"> | string
+    training_program_id?: StringNullableWithAggregatesFilter<"report_folders"> | string | null
+    cohort_id?: StringNullableWithAggregatesFilter<"report_folders"> | string | null
     is_active?: BoolWithAggregatesFilter<"report_folders"> | boolean
     created_at?: DateTimeWithAggregatesFilter<"report_folders"> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<"report_folders"> | Date | string
   }
 
-  export type collectionsCreateInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    is_public?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-    users: usersCreateNestedOneWithoutCollectionsInput
+  export type training_programsWhereInput = {
+    AND?: training_programsWhereInput | training_programsWhereInput[]
+    OR?: training_programsWhereInput[]
+    NOT?: training_programsWhereInput | training_programsWhereInput[]
+    id?: StringFilter<"training_programs"> | string
+    name?: StringFilter<"training_programs"> | string
+    full_name?: StringFilter<"training_programs"> | string
+    description?: StringNullableFilter<"training_programs"> | string | null
+    duration_days?: IntNullableFilter<"training_programs"> | number | null
+    is_active?: BoolFilter<"training_programs"> | boolean
+    created_at?: DateTimeFilter<"training_programs"> | Date | string
+    updated_at?: DateTimeFilter<"training_programs"> | Date | string
+    users?: UsersListRelationFilter
+    cohorts?: Training_cohortsListRelationFilter
+    folders?: Report_foldersListRelationFilter
   }
 
-  export type collectionsUncheckedCreateInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    is_public?: boolean
-    author_id: string
-    created_at?: Date | string
-    updated_at: Date | string
+  export type training_programsOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    full_name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    duration_days?: SortOrderInput | SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    users?: usersOrderByRelationAggregateInput
+    cohorts?: training_cohortsOrderByRelationAggregateInput
+    folders?: report_foldersOrderByRelationAggregateInput
   }
 
-  export type collectionsUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    is_public?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: usersUpdateOneRequiredWithoutCollectionsNestedInput
+  export type training_programsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: training_programsWhereInput | training_programsWhereInput[]
+    OR?: training_programsWhereInput[]
+    NOT?: training_programsWhereInput | training_programsWhereInput[]
+    full_name?: StringFilter<"training_programs"> | string
+    description?: StringNullableFilter<"training_programs"> | string | null
+    duration_days?: IntNullableFilter<"training_programs"> | number | null
+    is_active?: BoolFilter<"training_programs"> | boolean
+    created_at?: DateTimeFilter<"training_programs"> | Date | string
+    updated_at?: DateTimeFilter<"training_programs"> | Date | string
+    users?: UsersListRelationFilter
+    cohorts?: Training_cohortsListRelationFilter
+    folders?: Report_foldersListRelationFilter
+  }, "id" | "name">
+
+  export type training_programsOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    full_name?: SortOrder
+    description?: SortOrderInput | SortOrder
+    duration_days?: SortOrderInput | SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: training_programsCountOrderByAggregateInput
+    _avg?: training_programsAvgOrderByAggregateInput
+    _max?: training_programsMaxOrderByAggregateInput
+    _min?: training_programsMinOrderByAggregateInput
+    _sum?: training_programsSumOrderByAggregateInput
   }
 
-  export type collectionsUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    is_public?: BoolFieldUpdateOperationsInput | boolean
-    author_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type training_programsScalarWhereWithAggregatesInput = {
+    AND?: training_programsScalarWhereWithAggregatesInput | training_programsScalarWhereWithAggregatesInput[]
+    OR?: training_programsScalarWhereWithAggregatesInput[]
+    NOT?: training_programsScalarWhereWithAggregatesInput | training_programsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"training_programs"> | string
+    name?: StringWithAggregatesFilter<"training_programs"> | string
+    full_name?: StringWithAggregatesFilter<"training_programs"> | string
+    description?: StringNullableWithAggregatesFilter<"training_programs"> | string | null
+    duration_days?: IntNullableWithAggregatesFilter<"training_programs"> | number | null
+    is_active?: BoolWithAggregatesFilter<"training_programs"> | boolean
+    created_at?: DateTimeWithAggregatesFilter<"training_programs"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"training_programs"> | Date | string
   }
 
-  export type collectionsCreateManyInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    is_public?: boolean
-    author_id: string
-    created_at?: Date | string
-    updated_at: Date | string
+  export type training_cohortsWhereInput = {
+    AND?: training_cohortsWhereInput | training_cohortsWhereInput[]
+    OR?: training_cohortsWhereInput[]
+    NOT?: training_cohortsWhereInput | training_cohortsWhereInput[]
+    id?: StringFilter<"training_cohorts"> | string
+    name?: StringFilter<"training_cohorts"> | string
+    training_program_id?: StringFilter<"training_cohorts"> | string
+    year?: StringFilter<"training_cohorts"> | string
+    start_date?: DateTimeNullableFilter<"training_cohorts"> | Date | string | null
+    end_date?: DateTimeNullableFilter<"training_cohorts"> | Date | string | null
+    max_participants?: IntNullableFilter<"training_cohorts"> | number | null
+    current_participants?: IntFilter<"training_cohorts"> | number
+    status?: EnumCohortStatusFilter<"training_cohorts"> | $Enums.CohortStatus
+    description?: StringNullableFilter<"training_cohorts"> | string | null
+    is_active?: BoolFilter<"training_cohorts"> | boolean
+    created_at?: DateTimeFilter<"training_cohorts"> | Date | string
+    updated_at?: DateTimeFilter<"training_cohorts"> | Date | string
+    training_program?: XOR<Training_programsScalarRelationFilter, training_programsWhereInput>
+    members?: Cohort_membersListRelationFilter
+    folders?: Report_foldersListRelationFilter
   }
 
-  export type collectionsUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    is_public?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type training_cohortsOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    training_program_id?: SortOrder
+    year?: SortOrder
+    start_date?: SortOrderInput | SortOrder
+    end_date?: SortOrderInput | SortOrder
+    max_participants?: SortOrderInput | SortOrder
+    current_participants?: SortOrder
+    status?: SortOrder
+    description?: SortOrderInput | SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    training_program?: training_programsOrderByWithRelationInput
+    members?: cohort_membersOrderByRelationAggregateInput
+    folders?: report_foldersOrderByRelationAggregateInput
   }
 
-  export type collectionsUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    is_public?: BoolFieldUpdateOperationsInput | boolean
-    author_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type training_cohortsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    training_program_id_name_year?: training_cohortsTraining_program_idNameYearCompoundUniqueInput
+    AND?: training_cohortsWhereInput | training_cohortsWhereInput[]
+    OR?: training_cohortsWhereInput[]
+    NOT?: training_cohortsWhereInput | training_cohortsWhereInput[]
+    name?: StringFilter<"training_cohorts"> | string
+    training_program_id?: StringFilter<"training_cohorts"> | string
+    year?: StringFilter<"training_cohorts"> | string
+    start_date?: DateTimeNullableFilter<"training_cohorts"> | Date | string | null
+    end_date?: DateTimeNullableFilter<"training_cohorts"> | Date | string | null
+    max_participants?: IntNullableFilter<"training_cohorts"> | number | null
+    current_participants?: IntFilter<"training_cohorts"> | number
+    status?: EnumCohortStatusFilter<"training_cohorts"> | $Enums.CohortStatus
+    description?: StringNullableFilter<"training_cohorts"> | string | null
+    is_active?: BoolFilter<"training_cohorts"> | boolean
+    created_at?: DateTimeFilter<"training_cohorts"> | Date | string
+    updated_at?: DateTimeFilter<"training_cohorts"> | Date | string
+    training_program?: XOR<Training_programsScalarRelationFilter, training_programsWhereInput>
+    members?: Cohort_membersListRelationFilter
+    folders?: Report_foldersListRelationFilter
+  }, "id" | "training_program_id_name_year">
+
+  export type training_cohortsOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    training_program_id?: SortOrder
+    year?: SortOrder
+    start_date?: SortOrderInput | SortOrder
+    end_date?: SortOrderInput | SortOrder
+    max_participants?: SortOrderInput | SortOrder
+    current_participants?: SortOrder
+    status?: SortOrder
+    description?: SortOrderInput | SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: training_cohortsCountOrderByAggregateInput
+    _avg?: training_cohortsAvgOrderByAggregateInput
+    _max?: training_cohortsMaxOrderByAggregateInput
+    _min?: training_cohortsMinOrderByAggregateInput
+    _sum?: training_cohortsSumOrderByAggregateInput
+  }
+
+  export type training_cohortsScalarWhereWithAggregatesInput = {
+    AND?: training_cohortsScalarWhereWithAggregatesInput | training_cohortsScalarWhereWithAggregatesInput[]
+    OR?: training_cohortsScalarWhereWithAggregatesInput[]
+    NOT?: training_cohortsScalarWhereWithAggregatesInput | training_cohortsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"training_cohorts"> | string
+    name?: StringWithAggregatesFilter<"training_cohorts"> | string
+    training_program_id?: StringWithAggregatesFilter<"training_cohorts"> | string
+    year?: StringWithAggregatesFilter<"training_cohorts"> | string
+    start_date?: DateTimeNullableWithAggregatesFilter<"training_cohorts"> | Date | string | null
+    end_date?: DateTimeNullableWithAggregatesFilter<"training_cohorts"> | Date | string | null
+    max_participants?: IntNullableWithAggregatesFilter<"training_cohorts"> | number | null
+    current_participants?: IntWithAggregatesFilter<"training_cohorts"> | number
+    status?: EnumCohortStatusWithAggregatesFilter<"training_cohorts"> | $Enums.CohortStatus
+    description?: StringNullableWithAggregatesFilter<"training_cohorts"> | string | null
+    is_active?: BoolWithAggregatesFilter<"training_cohorts"> | boolean
+    created_at?: DateTimeWithAggregatesFilter<"training_cohorts"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"training_cohorts"> | Date | string
+  }
+
+  export type cohort_membersWhereInput = {
+    AND?: cohort_membersWhereInput | cohort_membersWhereInput[]
+    OR?: cohort_membersWhereInput[]
+    NOT?: cohort_membersWhereInput | cohort_membersWhereInput[]
+    id?: StringFilter<"cohort_members"> | string
+    user_id?: StringFilter<"cohort_members"> | string
+    cohort_id?: StringFilter<"cohort_members"> | string
+    joined_at?: DateTimeFilter<"cohort_members"> | Date | string
+    status?: EnumMemberStatusFilter<"cohort_members"> | $Enums.MemberStatus
+    notes?: StringNullableFilter<"cohort_members"> | string | null
+    user?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    cohort?: XOR<Training_cohortsScalarRelationFilter, training_cohortsWhereInput>
+  }
+
+  export type cohort_membersOrderByWithRelationInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    cohort_id?: SortOrder
+    joined_at?: SortOrder
+    status?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    user?: usersOrderByWithRelationInput
+    cohort?: training_cohortsOrderByWithRelationInput
+  }
+
+  export type cohort_membersWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    user_id_cohort_id?: cohort_membersUser_idCohort_idCompoundUniqueInput
+    AND?: cohort_membersWhereInput | cohort_membersWhereInput[]
+    OR?: cohort_membersWhereInput[]
+    NOT?: cohort_membersWhereInput | cohort_membersWhereInput[]
+    user_id?: StringFilter<"cohort_members"> | string
+    cohort_id?: StringFilter<"cohort_members"> | string
+    joined_at?: DateTimeFilter<"cohort_members"> | Date | string
+    status?: EnumMemberStatusFilter<"cohort_members"> | $Enums.MemberStatus
+    notes?: StringNullableFilter<"cohort_members"> | string | null
+    user?: XOR<UsersScalarRelationFilter, usersWhereInput>
+    cohort?: XOR<Training_cohortsScalarRelationFilter, training_cohortsWhereInput>
+  }, "id" | "user_id_cohort_id">
+
+  export type cohort_membersOrderByWithAggregationInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    cohort_id?: SortOrder
+    joined_at?: SortOrder
+    status?: SortOrder
+    notes?: SortOrderInput | SortOrder
+    _count?: cohort_membersCountOrderByAggregateInput
+    _max?: cohort_membersMaxOrderByAggregateInput
+    _min?: cohort_membersMinOrderByAggregateInput
+  }
+
+  export type cohort_membersScalarWhereWithAggregatesInput = {
+    AND?: cohort_membersScalarWhereWithAggregatesInput | cohort_membersScalarWhereWithAggregatesInput[]
+    OR?: cohort_membersScalarWhereWithAggregatesInput[]
+    NOT?: cohort_membersScalarWhereWithAggregatesInput | cohort_membersScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"cohort_members"> | string
+    user_id?: StringWithAggregatesFilter<"cohort_members"> | string
+    cohort_id?: StringWithAggregatesFilter<"cohort_members"> | string
+    joined_at?: DateTimeWithAggregatesFilter<"cohort_members"> | Date | string
+    status?: EnumMemberStatusWithAggregatesFilter<"cohort_members"> | $Enums.MemberStatus
+    notes?: StringNullableWithAggregatesFilter<"cohort_members"> | string | null
+  }
+
+  export type master_yearsWhereInput = {
+    AND?: master_yearsWhereInput | master_yearsWhereInput[]
+    OR?: master_yearsWhereInput[]
+    NOT?: master_yearsWhereInput | master_yearsWhereInput[]
+    id?: StringFilter<"master_years"> | string
+    year?: StringFilter<"master_years"> | string
+    is_active?: BoolFilter<"master_years"> | boolean
+    created_at?: DateTimeFilter<"master_years"> | Date | string
+    updated_at?: DateTimeFilter<"master_years"> | Date | string
+  }
+
+  export type master_yearsOrderByWithRelationInput = {
+    id?: SortOrder
+    year?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type master_yearsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    year?: string
+    AND?: master_yearsWhereInput | master_yearsWhereInput[]
+    OR?: master_yearsWhereInput[]
+    NOT?: master_yearsWhereInput | master_yearsWhereInput[]
+    is_active?: BoolFilter<"master_years"> | boolean
+    created_at?: DateTimeFilter<"master_years"> | Date | string
+    updated_at?: DateTimeFilter<"master_years"> | Date | string
+  }, "id" | "year">
+
+  export type master_yearsOrderByWithAggregationInput = {
+    id?: SortOrder
+    year?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: master_yearsCountOrderByAggregateInput
+    _max?: master_yearsMaxOrderByAggregateInput
+    _min?: master_yearsMinOrderByAggregateInput
+  }
+
+  export type master_yearsScalarWhereWithAggregatesInput = {
+    AND?: master_yearsScalarWhereWithAggregatesInput | master_yearsScalarWhereWithAggregatesInput[]
+    OR?: master_yearsScalarWhereWithAggregatesInput[]
+    NOT?: master_yearsScalarWhereWithAggregatesInput | master_yearsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"master_years"> | string
+    year?: StringWithAggregatesFilter<"master_years"> | string
+    is_active?: BoolWithAggregatesFilter<"master_years"> | boolean
+    created_at?: DateTimeWithAggregatesFilter<"master_years"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"master_years"> | Date | string
+  }
+
+  export type master_cohortsWhereInput = {
+    AND?: master_cohortsWhereInput | master_cohortsWhereInput[]
+    OR?: master_cohortsWhereInput[]
+    NOT?: master_cohortsWhereInput | master_cohortsWhereInput[]
+    id?: StringFilter<"master_cohorts"> | string
+    name?: StringFilter<"master_cohorts"> | string
+    is_active?: BoolFilter<"master_cohorts"> | boolean
+    created_at?: DateTimeFilter<"master_cohorts"> | Date | string
+    updated_at?: DateTimeFilter<"master_cohorts"> | Date | string
+  }
+
+  export type master_cohortsOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type master_cohortsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: master_cohortsWhereInput | master_cohortsWhereInput[]
+    OR?: master_cohortsWhereInput[]
+    NOT?: master_cohortsWhereInput | master_cohortsWhereInput[]
+    is_active?: BoolFilter<"master_cohorts"> | boolean
+    created_at?: DateTimeFilter<"master_cohorts"> | Date | string
+    updated_at?: DateTimeFilter<"master_cohorts"> | Date | string
+  }, "id" | "name">
+
+  export type master_cohortsOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+    _count?: master_cohortsCountOrderByAggregateInput
+    _max?: master_cohortsMaxOrderByAggregateInput
+    _min?: master_cohortsMinOrderByAggregateInput
+  }
+
+  export type master_cohortsScalarWhereWithAggregatesInput = {
+    AND?: master_cohortsScalarWhereWithAggregatesInput | master_cohortsScalarWhereWithAggregatesInput[]
+    OR?: master_cohortsScalarWhereWithAggregatesInput[]
+    NOT?: master_cohortsScalarWhereWithAggregatesInput | master_cohortsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"master_cohorts"> | string
+    name?: StringWithAggregatesFilter<"master_cohorts"> | string
+    is_active?: BoolWithAggregatesFilter<"master_cohorts"> | boolean
+    created_at?: DateTimeWithAggregatesFilter<"master_cohorts"> | Date | string
+    updated_at?: DateTimeWithAggregatesFilter<"master_cohorts"> | Date | string
   }
 
   export type visitor_analyticsCreateInput = {
@@ -12524,117 +16487,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type limited_collectionsCreateInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    max_access?: number
-    current_access?: number
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-    users: usersCreateNestedOneWithoutLimited_collectionsInput
-  }
-
-  export type limited_collectionsUncheckedCreateInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    max_access?: number
-    current_access?: number
-    is_active?: boolean
-    author_id: string
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
-  export type limited_collectionsUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    max_access?: IntFieldUpdateOperationsInput | number
-    current_access?: IntFieldUpdateOperationsInput | number
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    users?: usersUpdateOneRequiredWithoutLimited_collectionsNestedInput
-  }
-
-  export type limited_collectionsUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    max_access?: IntFieldUpdateOperationsInput | number
-    current_access?: IntFieldUpdateOperationsInput | number
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    author_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type limited_collectionsCreateManyInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    max_access?: number
-    current_access?: number
-    is_active?: boolean
-    author_id: string
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
-  export type limited_collectionsUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    max_access?: IntFieldUpdateOperationsInput | number
-    current_access?: IntFieldUpdateOperationsInput | number
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type limited_collectionsUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    max_access?: IntFieldUpdateOperationsInput | number
-    current_access?: IntFieldUpdateOperationsInput | number
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    author_id?: StringFieldUpdateOperationsInput | string
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type reportsCreateInput = {
     id: string
     title: string
@@ -12644,6 +16496,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     feedback?: string | null
     verified_at?: Date | string | null
     rejected_at?: Date | string | null
@@ -12663,6 +16519,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     author_id: string
     assignee_id?: string | null
     feedback?: string | null
@@ -12682,6 +16542,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejected_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -12701,6 +16565,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     author_id?: StringFieldUpdateOperationsInput | string
     assignee_id?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12720,6 +16588,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     author_id: string
     assignee_id?: string | null
     feedback?: string | null
@@ -12738,6 +16610,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejected_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -12754,6 +16630,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     author_id?: StringFieldUpdateOperationsInput | string
     assignee_id?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
@@ -12893,14 +16773,14 @@ export namespace Prisma {
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateInput = {
@@ -12913,17 +16793,17 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersUpdateInput = {
@@ -12939,14 +16819,14 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateInput = {
@@ -12959,17 +16839,17 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type usersCreateManyInput = {
@@ -12982,6 +16862,7 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
@@ -13012,6 +16893,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13021,19 +16903,25 @@ export namespace Prisma {
     id?: string
     year: string
     batch: string
+    report_type: string
     description?: string | null
     is_active?: boolean
     created_at?: Date | string
     updated_at?: Date | string
     creator: usersCreateNestedOneWithoutCreated_foldersInput
+    training_program?: training_programsCreateNestedOneWithoutFoldersInput
+    cohort?: training_cohortsCreateNestedOneWithoutFoldersInput
   }
 
   export type report_foldersUncheckedCreateInput = {
     id?: string
     year: string
     batch: string
+    report_type: string
     description?: string | null
     created_by: string
+    training_program_id?: string | null
+    cohort_id?: string | null
     is_active?: boolean
     created_at?: Date | string
     updated_at?: Date | string
@@ -13043,19 +16931,25 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     year?: StringFieldUpdateOperationsInput | string
     batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     creator?: usersUpdateOneRequiredWithoutCreated_foldersNestedInput
+    training_program?: training_programsUpdateOneWithoutFoldersNestedInput
+    cohort?: training_cohortsUpdateOneWithoutFoldersNestedInput
   }
 
   export type report_foldersUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     year?: StringFieldUpdateOperationsInput | string
     batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     created_by?: StringFieldUpdateOperationsInput | string
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
+    cohort_id?: NullableStringFieldUpdateOperationsInput | string | null
     is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13065,8 +16959,11 @@ export namespace Prisma {
     id?: string
     year: string
     batch: string
+    report_type: string
     description?: string | null
     created_by: string
+    training_program_id?: string | null
+    cohort_id?: string | null
     is_active?: boolean
     created_at?: Date | string
     updated_at?: Date | string
@@ -13076,6 +16973,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     year?: StringFieldUpdateOperationsInput | string
     batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13086,8 +16984,392 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     year?: StringFieldUpdateOperationsInput | string
     batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     created_by?: StringFieldUpdateOperationsInput | string
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
+    cohort_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type training_programsCreateInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    users?: usersCreateNestedManyWithoutTraining_programInput
+    cohorts?: training_cohortsCreateNestedManyWithoutTraining_programInput
+    folders?: report_foldersCreateNestedManyWithoutTraining_programInput
+  }
+
+  export type training_programsUncheckedCreateInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    users?: usersUncheckedCreateNestedManyWithoutTraining_programInput
+    cohorts?: training_cohortsUncheckedCreateNestedManyWithoutTraining_programInput
+    folders?: report_foldersUncheckedCreateNestedManyWithoutTraining_programInput
+  }
+
+  export type training_programsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: usersUpdateManyWithoutTraining_programNestedInput
+    cohorts?: training_cohortsUpdateManyWithoutTraining_programNestedInput
+    folders?: report_foldersUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type training_programsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: usersUncheckedUpdateManyWithoutTraining_programNestedInput
+    cohorts?: training_cohortsUncheckedUpdateManyWithoutTraining_programNestedInput
+    folders?: report_foldersUncheckedUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type training_programsCreateManyInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type training_programsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type training_programsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type training_cohortsCreateInput = {
+    id?: string
+    name: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    training_program: training_programsCreateNestedOneWithoutCohortsInput
+    members?: cohort_membersCreateNestedManyWithoutCohortInput
+    folders?: report_foldersCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsUncheckedCreateInput = {
+    id?: string
+    name: string
+    training_program_id: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    members?: cohort_membersUncheckedCreateNestedManyWithoutCohortInput
+    folders?: report_foldersUncheckedCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    training_program?: training_programsUpdateOneRequiredWithoutCohortsNestedInput
+    members?: cohort_membersUpdateManyWithoutCohortNestedInput
+    folders?: report_foldersUpdateManyWithoutCohortNestedInput
+  }
+
+  export type training_cohortsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    training_program_id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: cohort_membersUncheckedUpdateManyWithoutCohortNestedInput
+    folders?: report_foldersUncheckedUpdateManyWithoutCohortNestedInput
+  }
+
+  export type training_cohortsCreateManyInput = {
+    id?: string
+    name: string
+    training_program_id: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type training_cohortsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type training_cohortsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    training_program_id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type cohort_membersCreateInput = {
+    id?: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+    user: usersCreateNestedOneWithoutCohort_membershipsInput
+    cohort: training_cohortsCreateNestedOneWithoutMembersInput
+  }
+
+  export type cohort_membersUncheckedCreateInput = {
+    id?: string
+    user_id: string
+    cohort_id: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+  }
+
+  export type cohort_membersUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: usersUpdateOneRequiredWithoutCohort_membershipsNestedInput
+    cohort?: training_cohortsUpdateOneRequiredWithoutMembersNestedInput
+  }
+
+  export type cohort_membersUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    cohort_id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type cohort_membersCreateManyInput = {
+    id?: string
+    user_id: string
+    cohort_id: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+  }
+
+  export type cohort_membersUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type cohort_membersUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    cohort_id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type master_yearsCreateInput = {
+    id?: string
+    year: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type master_yearsUncheckedCreateInput = {
+    id?: string
+    year: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type master_yearsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type master_yearsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type master_yearsCreateManyInput = {
+    id?: string
+    year: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type master_yearsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type master_yearsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type master_cohortsCreateInput = {
+    id?: string
+    name: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type master_cohortsUncheckedCreateInput = {
+    id?: string
+    name: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type master_cohortsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type master_cohortsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type master_cohortsCreateManyInput = {
+    id?: string
+    name: string
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type master_cohortsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type master_cohortsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
     is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13123,9 +17405,15 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type DateTimeFilter<$PrismaModel = never> = {
@@ -13139,130 +17427,14 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type UsersScalarRelationFilter = {
-    is?: usersWhereInput
-    isNot?: usersWhereInput
+  export type UsersNullableScalarRelationFilter = {
+    is?: usersWhereInput | null
+    isNot?: usersWhereInput | null
   }
 
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
-  }
-
-  export type collectionsCountOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    content?: SortOrder
-    image_url?: SortOrder
-    category?: SortOrder
-    tags?: SortOrder
-    is_public?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type collectionsMaxOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    content?: SortOrder
-    image_url?: SortOrder
-    category?: SortOrder
-    tags?: SortOrder
-    is_public?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type collectionsMinOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    content?: SortOrder
-    image_url?: SortOrder
-    category?: SortOrder
-    tags?: SortOrder
-    is_public?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type StringWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel>
-    in?: string[] | ListStringFieldRefInput<$PrismaModel>
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedStringFilter<$PrismaModel>
-    _max?: NestedStringFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type UsersNullableScalarRelationFilter = {
-    is?: usersWhereInput | null
-    isNot?: usersWhereInput | null
   }
 
   export type visitor_analyticsCountOrderByAggregateInput = {
@@ -13312,6 +17484,42 @@ export namespace Prisma {
     visit_duration?: SortOrder
   }
 
+  export type StringWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel>
+    in?: string[] | ListStringFieldRefInput<$PrismaModel>
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel>
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringWithAggregatesFilter<$PrismaModel> | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedStringFilter<$PrismaModel>
+    _max?: NestedStringFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -13326,6 +17534,25 @@ export namespace Prisma {
     _sum?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedIntNullableFilter<$PrismaModel>
     _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type guestbook_entriesCountOrderByAggregateInput = {
@@ -13361,89 +17588,12 @@ export namespace Prisma {
     updated_at?: SortOrder
   }
 
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
-  export type limited_collectionsCountOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    content?: SortOrder
-    image_url?: SortOrder
-    category?: SortOrder
-    tags?: SortOrder
-    max_access?: SortOrder
-    current_access?: SortOrder
-    is_active?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type limited_collectionsAvgOrderByAggregateInput = {
-    max_access?: SortOrder
-    current_access?: SortOrder
-  }
-
-  export type limited_collectionsMaxOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    content?: SortOrder
-    image_url?: SortOrder
-    category?: SortOrder
-    tags?: SortOrder
-    max_access?: SortOrder
-    current_access?: SortOrder
-    is_active?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type limited_collectionsMinOrderByAggregateInput = {
-    id?: SortOrder
-    title?: SortOrder
-    description?: SortOrder
-    content?: SortOrder
-    image_url?: SortOrder
-    category?: SortOrder
-    tags?: SortOrder
-    max_access?: SortOrder
-    current_access?: SortOrder
-    is_active?: SortOrder
-    author_id?: SortOrder
-    created_at?: SortOrder
-    updated_at?: SortOrder
-  }
-
-  export type limited_collectionsSumOrderByAggregateInput = {
-    max_access?: SortOrder
-    current_access?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
     _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type EnumReportStatusFilter<$PrismaModel = never> = {
@@ -13471,6 +17621,11 @@ export namespace Prisma {
     not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
+  export type UsersScalarRelationFilter = {
+    is?: usersWhereInput
+    isNot?: usersWhereInput
+  }
+
   export type Uploaded_filesListRelationFilter = {
     every?: uploaded_filesWhereInput
     some?: uploaded_filesWhereInput
@@ -13490,6 +17645,10 @@ export namespace Prisma {
     status?: SortOrder
     category?: SortOrder
     priority?: SortOrder
+    is_public?: SortOrder
+    max_access?: SortOrder
+    current_access?: SortOrder
+    tags?: SortOrder
     author_id?: SortOrder
     assignee_id?: SortOrder
     feedback?: SortOrder
@@ -13497,6 +17656,11 @@ export namespace Prisma {
     rejected_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+  }
+
+  export type reportsAvgOrderByAggregateInput = {
+    max_access?: SortOrder
+    current_access?: SortOrder
   }
 
   export type reportsMaxOrderByAggregateInput = {
@@ -13508,6 +17672,10 @@ export namespace Prisma {
     status?: SortOrder
     category?: SortOrder
     priority?: SortOrder
+    is_public?: SortOrder
+    max_access?: SortOrder
+    current_access?: SortOrder
+    tags?: SortOrder
     author_id?: SortOrder
     assignee_id?: SortOrder
     feedback?: SortOrder
@@ -13526,6 +17694,10 @@ export namespace Prisma {
     status?: SortOrder
     category?: SortOrder
     priority?: SortOrder
+    is_public?: SortOrder
+    max_access?: SortOrder
+    current_access?: SortOrder
+    tags?: SortOrder
     author_id?: SortOrder
     assignee_id?: SortOrder
     feedback?: SortOrder
@@ -13533,6 +17705,11 @@ export namespace Prisma {
     rejected_at?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
+  }
+
+  export type reportsSumOrderByAggregateInput = {
+    max_access?: SortOrder
+    current_access?: SortOrder
   }
 
   export type EnumReportStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -13567,6 +17744,17 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type ReportsNullableScalarRelationFilter = {
@@ -13633,17 +17821,27 @@ export namespace Prisma {
     file_size?: SortOrder
   }
 
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type EnumRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
     not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
-  export type CollectionsListRelationFilter = {
-    every?: collectionsWhereInput
-    some?: collectionsWhereInput
-    none?: collectionsWhereInput
   }
 
   export type Visitor_analyticsListRelationFilter = {
@@ -13658,12 +17856,6 @@ export namespace Prisma {
     none?: guestbook_entriesWhereInput
   }
 
-  export type Limited_collectionsListRelationFilter = {
-    every?: limited_collectionsWhereInput
-    some?: limited_collectionsWhereInput
-    none?: limited_collectionsWhereInput
-  }
-
   export type ReportsListRelationFilter = {
     every?: reportsWhereInput
     some?: reportsWhereInput
@@ -13676,8 +17868,15 @@ export namespace Prisma {
     none?: report_foldersWhereInput
   }
 
-  export type collectionsOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type Training_programsNullableScalarRelationFilter = {
+    is?: training_programsWhereInput | null
+    isNot?: training_programsWhereInput | null
+  }
+
+  export type Cohort_membersListRelationFilter = {
+    every?: cohort_membersWhereInput
+    some?: cohort_membersWhereInput
+    none?: cohort_membersWhereInput
   }
 
   export type visitor_analyticsOrderByRelationAggregateInput = {
@@ -13688,15 +17887,15 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type limited_collectionsOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type reportsOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type report_foldersOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type cohort_membersOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -13710,6 +17909,7 @@ export namespace Prisma {
     avatar?: SortOrder
     training?: SortOrder
     angkatan?: SortOrder
+    training_program_id?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13725,6 +17925,7 @@ export namespace Prisma {
     avatar?: SortOrder
     training?: SortOrder
     angkatan?: SortOrder
+    training_program_id?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13740,6 +17941,7 @@ export namespace Prisma {
     avatar?: SortOrder
     training?: SortOrder
     angkatan?: SortOrder
+    training_program_id?: SortOrder
     phone?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13755,17 +17957,26 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
-  export type report_foldersYearBatchCompoundUniqueInput = {
+  export type Training_cohortsNullableScalarRelationFilter = {
+    is?: training_cohortsWhereInput | null
+    isNot?: training_cohortsWhereInput | null
+  }
+
+  export type report_foldersYearBatchReport_typeCompoundUniqueInput = {
     year: string
     batch: string
+    report_type: string
   }
 
   export type report_foldersCountOrderByAggregateInput = {
     id?: SortOrder
     year?: SortOrder
     batch?: SortOrder
+    report_type?: SortOrder
     description?: SortOrder
     created_by?: SortOrder
+    training_program_id?: SortOrder
+    cohort_id?: SortOrder
     is_active?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13775,8 +17986,11 @@ export namespace Prisma {
     id?: SortOrder
     year?: SortOrder
     batch?: SortOrder
+    report_type?: SortOrder
     description?: SortOrder
     created_by?: SortOrder
+    training_program_id?: SortOrder
+    cohort_id?: SortOrder
     is_active?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
@@ -13786,16 +18000,268 @@ export namespace Prisma {
     id?: SortOrder
     year?: SortOrder
     batch?: SortOrder
+    report_type?: SortOrder
     description?: SortOrder
     created_by?: SortOrder
+    training_program_id?: SortOrder
+    cohort_id?: SortOrder
     is_active?: SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
   }
 
-  export type usersCreateNestedOneWithoutCollectionsInput = {
-    create?: XOR<usersCreateWithoutCollectionsInput, usersUncheckedCreateWithoutCollectionsInput>
-    connectOrCreate?: usersCreateOrConnectWithoutCollectionsInput
+  export type UsersListRelationFilter = {
+    every?: usersWhereInput
+    some?: usersWhereInput
+    none?: usersWhereInput
+  }
+
+  export type Training_cohortsListRelationFilter = {
+    every?: training_cohortsWhereInput
+    some?: training_cohortsWhereInput
+    none?: training_cohortsWhereInput
+  }
+
+  export type usersOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type training_cohortsOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type training_programsCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    full_name?: SortOrder
+    description?: SortOrder
+    duration_days?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type training_programsAvgOrderByAggregateInput = {
+    duration_days?: SortOrder
+  }
+
+  export type training_programsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    full_name?: SortOrder
+    description?: SortOrder
+    duration_days?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type training_programsMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    full_name?: SortOrder
+    description?: SortOrder
+    duration_days?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type training_programsSumOrderByAggregateInput = {
+    duration_days?: SortOrder
+  }
+
+  export type EnumCohortStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CohortStatus | EnumCohortStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCohortStatusFilter<$PrismaModel> | $Enums.CohortStatus
+  }
+
+  export type Training_programsScalarRelationFilter = {
+    is?: training_programsWhereInput
+    isNot?: training_programsWhereInput
+  }
+
+  export type training_cohortsTraining_program_idNameYearCompoundUniqueInput = {
+    training_program_id: string
+    name: string
+    year: string
+  }
+
+  export type training_cohortsCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    training_program_id?: SortOrder
+    year?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    max_participants?: SortOrder
+    current_participants?: SortOrder
+    status?: SortOrder
+    description?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type training_cohortsAvgOrderByAggregateInput = {
+    max_participants?: SortOrder
+    current_participants?: SortOrder
+  }
+
+  export type training_cohortsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    training_program_id?: SortOrder
+    year?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    max_participants?: SortOrder
+    current_participants?: SortOrder
+    status?: SortOrder
+    description?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type training_cohortsMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    training_program_id?: SortOrder
+    year?: SortOrder
+    start_date?: SortOrder
+    end_date?: SortOrder
+    max_participants?: SortOrder
+    current_participants?: SortOrder
+    status?: SortOrder
+    description?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type training_cohortsSumOrderByAggregateInput = {
+    max_participants?: SortOrder
+    current_participants?: SortOrder
+  }
+
+  export type EnumCohortStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CohortStatus | EnumCohortStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCohortStatusWithAggregatesFilter<$PrismaModel> | $Enums.CohortStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCohortStatusFilter<$PrismaModel>
+    _max?: NestedEnumCohortStatusFilter<$PrismaModel>
+  }
+
+  export type EnumMemberStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MemberStatus | EnumMemberStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMemberStatusFilter<$PrismaModel> | $Enums.MemberStatus
+  }
+
+  export type Training_cohortsScalarRelationFilter = {
+    is?: training_cohortsWhereInput
+    isNot?: training_cohortsWhereInput
+  }
+
+  export type cohort_membersUser_idCohort_idCompoundUniqueInput = {
+    user_id: string
+    cohort_id: string
+  }
+
+  export type cohort_membersCountOrderByAggregateInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    cohort_id?: SortOrder
+    joined_at?: SortOrder
+    status?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type cohort_membersMaxOrderByAggregateInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    cohort_id?: SortOrder
+    joined_at?: SortOrder
+    status?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type cohort_membersMinOrderByAggregateInput = {
+    id?: SortOrder
+    user_id?: SortOrder
+    cohort_id?: SortOrder
+    joined_at?: SortOrder
+    status?: SortOrder
+    notes?: SortOrder
+  }
+
+  export type EnumMemberStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MemberStatus | EnumMemberStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMemberStatusWithAggregatesFilter<$PrismaModel> | $Enums.MemberStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMemberStatusFilter<$PrismaModel>
+    _max?: NestedEnumMemberStatusFilter<$PrismaModel>
+  }
+
+  export type master_yearsCountOrderByAggregateInput = {
+    id?: SortOrder
+    year?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type master_yearsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    year?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type master_yearsMinOrderByAggregateInput = {
+    id?: SortOrder
+    year?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type master_cohortsCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type master_cohortsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type master_cohortsMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    is_active?: SortOrder
+    created_at?: SortOrder
+    updated_at?: SortOrder
+  }
+
+  export type usersCreateNestedOneWithoutVisitor_analyticsInput = {
+    create?: XOR<usersCreateWithoutVisitor_analyticsInput, usersUncheckedCreateWithoutVisitor_analyticsInput>
+    connectOrCreate?: usersCreateOrConnectWithoutVisitor_analyticsInput
     connect?: usersWhereUniqueInput
   }
 
@@ -13807,34 +18273,16 @@ export namespace Prisma {
     set?: string | null
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
-  }
-
-  export type usersUpdateOneRequiredWithoutCollectionsNestedInput = {
-    create?: XOR<usersCreateWithoutCollectionsInput, usersUncheckedCreateWithoutCollectionsInput>
-    connectOrCreate?: usersCreateOrConnectWithoutCollectionsInput
-    upsert?: usersUpsertWithoutCollectionsInput
-    connect?: usersWhereUniqueInput
-    update?: XOR<XOR<usersUpdateToOneWithWhereWithoutCollectionsInput, usersUpdateWithoutCollectionsInput>, usersUncheckedUpdateWithoutCollectionsInput>
-  }
-
-  export type usersCreateNestedOneWithoutVisitor_analyticsInput = {
-    create?: XOR<usersCreateWithoutVisitor_analyticsInput, usersUncheckedCreateWithoutVisitor_analyticsInput>
-    connectOrCreate?: usersCreateOrConnectWithoutVisitor_analyticsInput
-    connect?: usersWhereUniqueInput
-  }
-
   export type NullableIntFieldUpdateOperationsInput = {
     set?: number | null
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type usersUpdateOneWithoutVisitor_analyticsNestedInput = {
@@ -13853,6 +18301,10 @@ export namespace Prisma {
     connect?: usersWhereUniqueInput
   }
 
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type usersUpdateOneWithoutGuestbook_entriesNestedInput = {
     create?: XOR<usersCreateWithoutGuestbook_entriesInput, usersUncheckedCreateWithoutGuestbook_entriesInput>
     connectOrCreate?: usersCreateOrConnectWithoutGuestbook_entriesInput
@@ -13861,28 +18313,6 @@ export namespace Prisma {
     delete?: usersWhereInput | boolean
     connect?: usersWhereUniqueInput
     update?: XOR<XOR<usersUpdateToOneWithWhereWithoutGuestbook_entriesInput, usersUpdateWithoutGuestbook_entriesInput>, usersUncheckedUpdateWithoutGuestbook_entriesInput>
-  }
-
-  export type usersCreateNestedOneWithoutLimited_collectionsInput = {
-    create?: XOR<usersCreateWithoutLimited_collectionsInput, usersUncheckedCreateWithoutLimited_collectionsInput>
-    connectOrCreate?: usersCreateOrConnectWithoutLimited_collectionsInput
-    connect?: usersWhereUniqueInput
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
-  }
-
-  export type usersUpdateOneRequiredWithoutLimited_collectionsNestedInput = {
-    create?: XOR<usersCreateWithoutLimited_collectionsInput, usersUncheckedCreateWithoutLimited_collectionsInput>
-    connectOrCreate?: usersCreateOrConnectWithoutLimited_collectionsInput
-    upsert?: usersUpsertWithoutLimited_collectionsInput
-    connect?: usersWhereUniqueInput
-    update?: XOR<XOR<usersUpdateToOneWithWhereWithoutLimited_collectionsInput, usersUpdateWithoutLimited_collectionsInput>, usersUncheckedUpdateWithoutLimited_collectionsInput>
   }
 
   export type usersCreateNestedOneWithoutReports_reports_assignee_idTousersInput = {
@@ -13981,6 +18411,14 @@ export namespace Prisma {
     connect?: reportsWhereUniqueInput
   }
 
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type usersUpdateOneRequiredWithoutUploaded_filesNestedInput = {
     create?: XOR<usersCreateWithoutUploaded_filesInput, usersUncheckedCreateWithoutUploaded_filesInput>
     connectOrCreate?: usersCreateOrConnectWithoutUploaded_filesInput
@@ -13999,13 +18437,6 @@ export namespace Prisma {
     update?: XOR<XOR<reportsUpdateToOneWithWhereWithoutFilesInput, reportsUpdateWithoutFilesInput>, reportsUncheckedUpdateWithoutFilesInput>
   }
 
-  export type collectionsCreateNestedManyWithoutUsersInput = {
-    create?: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput> | collectionsCreateWithoutUsersInput[] | collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: collectionsCreateOrConnectWithoutUsersInput | collectionsCreateOrConnectWithoutUsersInput[]
-    createMany?: collectionsCreateManyUsersInputEnvelope
-    connect?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-  }
-
   export type visitor_analyticsCreateNestedManyWithoutUsersInput = {
     create?: XOR<visitor_analyticsCreateWithoutUsersInput, visitor_analyticsUncheckedCreateWithoutUsersInput> | visitor_analyticsCreateWithoutUsersInput[] | visitor_analyticsUncheckedCreateWithoutUsersInput[]
     connectOrCreate?: visitor_analyticsCreateOrConnectWithoutUsersInput | visitor_analyticsCreateOrConnectWithoutUsersInput[]
@@ -14018,13 +18449,6 @@ export namespace Prisma {
     connectOrCreate?: guestbook_entriesCreateOrConnectWithoutUsersInput | guestbook_entriesCreateOrConnectWithoutUsersInput[]
     createMany?: guestbook_entriesCreateManyUsersInputEnvelope
     connect?: guestbook_entriesWhereUniqueInput | guestbook_entriesWhereUniqueInput[]
-  }
-
-  export type limited_collectionsCreateNestedManyWithoutUsersInput = {
-    create?: XOR<limited_collectionsCreateWithoutUsersInput, limited_collectionsUncheckedCreateWithoutUsersInput> | limited_collectionsCreateWithoutUsersInput[] | limited_collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: limited_collectionsCreateOrConnectWithoutUsersInput | limited_collectionsCreateOrConnectWithoutUsersInput[]
-    createMany?: limited_collectionsCreateManyUsersInputEnvelope
-    connect?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
   }
 
   export type reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput = {
@@ -14055,11 +18479,17 @@ export namespace Prisma {
     connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
   }
 
-  export type collectionsUncheckedCreateNestedManyWithoutUsersInput = {
-    create?: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput> | collectionsCreateWithoutUsersInput[] | collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: collectionsCreateOrConnectWithoutUsersInput | collectionsCreateOrConnectWithoutUsersInput[]
-    createMany?: collectionsCreateManyUsersInputEnvelope
-    connect?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
+  export type training_programsCreateNestedOneWithoutUsersInput = {
+    create?: XOR<training_programsCreateWithoutUsersInput, training_programsUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: training_programsCreateOrConnectWithoutUsersInput
+    connect?: training_programsWhereUniqueInput
+  }
+
+  export type cohort_membersCreateNestedManyWithoutUserInput = {
+    create?: XOR<cohort_membersCreateWithoutUserInput, cohort_membersUncheckedCreateWithoutUserInput> | cohort_membersCreateWithoutUserInput[] | cohort_membersUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutUserInput | cohort_membersCreateOrConnectWithoutUserInput[]
+    createMany?: cohort_membersCreateManyUserInputEnvelope
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
   }
 
   export type visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput = {
@@ -14074,13 +18504,6 @@ export namespace Prisma {
     connectOrCreate?: guestbook_entriesCreateOrConnectWithoutUsersInput | guestbook_entriesCreateOrConnectWithoutUsersInput[]
     createMany?: guestbook_entriesCreateManyUsersInputEnvelope
     connect?: guestbook_entriesWhereUniqueInput | guestbook_entriesWhereUniqueInput[]
-  }
-
-  export type limited_collectionsUncheckedCreateNestedManyWithoutUsersInput = {
-    create?: XOR<limited_collectionsCreateWithoutUsersInput, limited_collectionsUncheckedCreateWithoutUsersInput> | limited_collectionsCreateWithoutUsersInput[] | limited_collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: limited_collectionsCreateOrConnectWithoutUsersInput | limited_collectionsCreateOrConnectWithoutUsersInput[]
-    createMany?: limited_collectionsCreateManyUsersInputEnvelope
-    connect?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
   }
 
   export type reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput = {
@@ -14111,22 +18534,15 @@ export namespace Prisma {
     connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
   }
 
-  export type EnumRoleFieldUpdateOperationsInput = {
-    set?: $Enums.Role
+  export type cohort_membersUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<cohort_membersCreateWithoutUserInput, cohort_membersUncheckedCreateWithoutUserInput> | cohort_membersCreateWithoutUserInput[] | cohort_membersUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutUserInput | cohort_membersCreateOrConnectWithoutUserInput[]
+    createMany?: cohort_membersCreateManyUserInputEnvelope
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
   }
 
-  export type collectionsUpdateManyWithoutUsersNestedInput = {
-    create?: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput> | collectionsCreateWithoutUsersInput[] | collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: collectionsCreateOrConnectWithoutUsersInput | collectionsCreateOrConnectWithoutUsersInput[]
-    upsert?: collectionsUpsertWithWhereUniqueWithoutUsersInput | collectionsUpsertWithWhereUniqueWithoutUsersInput[]
-    createMany?: collectionsCreateManyUsersInputEnvelope
-    set?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    disconnect?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    delete?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    connect?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    update?: collectionsUpdateWithWhereUniqueWithoutUsersInput | collectionsUpdateWithWhereUniqueWithoutUsersInput[]
-    updateMany?: collectionsUpdateManyWithWhereWithoutUsersInput | collectionsUpdateManyWithWhereWithoutUsersInput[]
-    deleteMany?: collectionsScalarWhereInput | collectionsScalarWhereInput[]
+  export type EnumRoleFieldUpdateOperationsInput = {
+    set?: $Enums.Role
   }
 
   export type visitor_analyticsUpdateManyWithoutUsersNestedInput = {
@@ -14155,20 +18571,6 @@ export namespace Prisma {
     update?: guestbook_entriesUpdateWithWhereUniqueWithoutUsersInput | guestbook_entriesUpdateWithWhereUniqueWithoutUsersInput[]
     updateMany?: guestbook_entriesUpdateManyWithWhereWithoutUsersInput | guestbook_entriesUpdateManyWithWhereWithoutUsersInput[]
     deleteMany?: guestbook_entriesScalarWhereInput | guestbook_entriesScalarWhereInput[]
-  }
-
-  export type limited_collectionsUpdateManyWithoutUsersNestedInput = {
-    create?: XOR<limited_collectionsCreateWithoutUsersInput, limited_collectionsUncheckedCreateWithoutUsersInput> | limited_collectionsCreateWithoutUsersInput[] | limited_collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: limited_collectionsCreateOrConnectWithoutUsersInput | limited_collectionsCreateOrConnectWithoutUsersInput[]
-    upsert?: limited_collectionsUpsertWithWhereUniqueWithoutUsersInput | limited_collectionsUpsertWithWhereUniqueWithoutUsersInput[]
-    createMany?: limited_collectionsCreateManyUsersInputEnvelope
-    set?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    disconnect?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    delete?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    connect?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    update?: limited_collectionsUpdateWithWhereUniqueWithoutUsersInput | limited_collectionsUpdateWithWhereUniqueWithoutUsersInput[]
-    updateMany?: limited_collectionsUpdateManyWithWhereWithoutUsersInput | limited_collectionsUpdateManyWithWhereWithoutUsersInput[]
-    deleteMany?: limited_collectionsScalarWhereInput | limited_collectionsScalarWhereInput[]
   }
 
   export type reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput = {
@@ -14227,18 +18629,28 @@ export namespace Prisma {
     deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
   }
 
-  export type collectionsUncheckedUpdateManyWithoutUsersNestedInput = {
-    create?: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput> | collectionsCreateWithoutUsersInput[] | collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: collectionsCreateOrConnectWithoutUsersInput | collectionsCreateOrConnectWithoutUsersInput[]
-    upsert?: collectionsUpsertWithWhereUniqueWithoutUsersInput | collectionsUpsertWithWhereUniqueWithoutUsersInput[]
-    createMany?: collectionsCreateManyUsersInputEnvelope
-    set?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    disconnect?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    delete?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    connect?: collectionsWhereUniqueInput | collectionsWhereUniqueInput[]
-    update?: collectionsUpdateWithWhereUniqueWithoutUsersInput | collectionsUpdateWithWhereUniqueWithoutUsersInput[]
-    updateMany?: collectionsUpdateManyWithWhereWithoutUsersInput | collectionsUpdateManyWithWhereWithoutUsersInput[]
-    deleteMany?: collectionsScalarWhereInput | collectionsScalarWhereInput[]
+  export type training_programsUpdateOneWithoutUsersNestedInput = {
+    create?: XOR<training_programsCreateWithoutUsersInput, training_programsUncheckedCreateWithoutUsersInput>
+    connectOrCreate?: training_programsCreateOrConnectWithoutUsersInput
+    upsert?: training_programsUpsertWithoutUsersInput
+    disconnect?: training_programsWhereInput | boolean
+    delete?: training_programsWhereInput | boolean
+    connect?: training_programsWhereUniqueInput
+    update?: XOR<XOR<training_programsUpdateToOneWithWhereWithoutUsersInput, training_programsUpdateWithoutUsersInput>, training_programsUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type cohort_membersUpdateManyWithoutUserNestedInput = {
+    create?: XOR<cohort_membersCreateWithoutUserInput, cohort_membersUncheckedCreateWithoutUserInput> | cohort_membersCreateWithoutUserInput[] | cohort_membersUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutUserInput | cohort_membersCreateOrConnectWithoutUserInput[]
+    upsert?: cohort_membersUpsertWithWhereUniqueWithoutUserInput | cohort_membersUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: cohort_membersCreateManyUserInputEnvelope
+    set?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    disconnect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    delete?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    update?: cohort_membersUpdateWithWhereUniqueWithoutUserInput | cohort_membersUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: cohort_membersUpdateManyWithWhereWithoutUserInput | cohort_membersUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: cohort_membersScalarWhereInput | cohort_membersScalarWhereInput[]
   }
 
   export type visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput = {
@@ -14267,20 +18679,6 @@ export namespace Prisma {
     update?: guestbook_entriesUpdateWithWhereUniqueWithoutUsersInput | guestbook_entriesUpdateWithWhereUniqueWithoutUsersInput[]
     updateMany?: guestbook_entriesUpdateManyWithWhereWithoutUsersInput | guestbook_entriesUpdateManyWithWhereWithoutUsersInput[]
     deleteMany?: guestbook_entriesScalarWhereInput | guestbook_entriesScalarWhereInput[]
-  }
-
-  export type limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput = {
-    create?: XOR<limited_collectionsCreateWithoutUsersInput, limited_collectionsUncheckedCreateWithoutUsersInput> | limited_collectionsCreateWithoutUsersInput[] | limited_collectionsUncheckedCreateWithoutUsersInput[]
-    connectOrCreate?: limited_collectionsCreateOrConnectWithoutUsersInput | limited_collectionsCreateOrConnectWithoutUsersInput[]
-    upsert?: limited_collectionsUpsertWithWhereUniqueWithoutUsersInput | limited_collectionsUpsertWithWhereUniqueWithoutUsersInput[]
-    createMany?: limited_collectionsCreateManyUsersInputEnvelope
-    set?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    disconnect?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    delete?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    connect?: limited_collectionsWhereUniqueInput | limited_collectionsWhereUniqueInput[]
-    update?: limited_collectionsUpdateWithWhereUniqueWithoutUsersInput | limited_collectionsUpdateWithWhereUniqueWithoutUsersInput[]
-    updateMany?: limited_collectionsUpdateManyWithWhereWithoutUsersInput | limited_collectionsUpdateManyWithWhereWithoutUsersInput[]
-    deleteMany?: limited_collectionsScalarWhereInput | limited_collectionsScalarWhereInput[]
   }
 
   export type reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput = {
@@ -14339,10 +18737,36 @@ export namespace Prisma {
     deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
   }
 
+  export type cohort_membersUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<cohort_membersCreateWithoutUserInput, cohort_membersUncheckedCreateWithoutUserInput> | cohort_membersCreateWithoutUserInput[] | cohort_membersUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutUserInput | cohort_membersCreateOrConnectWithoutUserInput[]
+    upsert?: cohort_membersUpsertWithWhereUniqueWithoutUserInput | cohort_membersUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: cohort_membersCreateManyUserInputEnvelope
+    set?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    disconnect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    delete?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    update?: cohort_membersUpdateWithWhereUniqueWithoutUserInput | cohort_membersUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: cohort_membersUpdateManyWithWhereWithoutUserInput | cohort_membersUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: cohort_membersScalarWhereInput | cohort_membersScalarWhereInput[]
+  }
+
   export type usersCreateNestedOneWithoutCreated_foldersInput = {
     create?: XOR<usersCreateWithoutCreated_foldersInput, usersUncheckedCreateWithoutCreated_foldersInput>
     connectOrCreate?: usersCreateOrConnectWithoutCreated_foldersInput
     connect?: usersWhereUniqueInput
+  }
+
+  export type training_programsCreateNestedOneWithoutFoldersInput = {
+    create?: XOR<training_programsCreateWithoutFoldersInput, training_programsUncheckedCreateWithoutFoldersInput>
+    connectOrCreate?: training_programsCreateOrConnectWithoutFoldersInput
+    connect?: training_programsWhereUniqueInput
+  }
+
+  export type training_cohortsCreateNestedOneWithoutFoldersInput = {
+    create?: XOR<training_cohortsCreateWithoutFoldersInput, training_cohortsUncheckedCreateWithoutFoldersInput>
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutFoldersInput
+    connect?: training_cohortsWhereUniqueInput
   }
 
   export type usersUpdateOneRequiredWithoutCreated_foldersNestedInput = {
@@ -14351,6 +18775,286 @@ export namespace Prisma {
     upsert?: usersUpsertWithoutCreated_foldersInput
     connect?: usersWhereUniqueInput
     update?: XOR<XOR<usersUpdateToOneWithWhereWithoutCreated_foldersInput, usersUpdateWithoutCreated_foldersInput>, usersUncheckedUpdateWithoutCreated_foldersInput>
+  }
+
+  export type training_programsUpdateOneWithoutFoldersNestedInput = {
+    create?: XOR<training_programsCreateWithoutFoldersInput, training_programsUncheckedCreateWithoutFoldersInput>
+    connectOrCreate?: training_programsCreateOrConnectWithoutFoldersInput
+    upsert?: training_programsUpsertWithoutFoldersInput
+    disconnect?: training_programsWhereInput | boolean
+    delete?: training_programsWhereInput | boolean
+    connect?: training_programsWhereUniqueInput
+    update?: XOR<XOR<training_programsUpdateToOneWithWhereWithoutFoldersInput, training_programsUpdateWithoutFoldersInput>, training_programsUncheckedUpdateWithoutFoldersInput>
+  }
+
+  export type training_cohortsUpdateOneWithoutFoldersNestedInput = {
+    create?: XOR<training_cohortsCreateWithoutFoldersInput, training_cohortsUncheckedCreateWithoutFoldersInput>
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutFoldersInput
+    upsert?: training_cohortsUpsertWithoutFoldersInput
+    disconnect?: training_cohortsWhereInput | boolean
+    delete?: training_cohortsWhereInput | boolean
+    connect?: training_cohortsWhereUniqueInput
+    update?: XOR<XOR<training_cohortsUpdateToOneWithWhereWithoutFoldersInput, training_cohortsUpdateWithoutFoldersInput>, training_cohortsUncheckedUpdateWithoutFoldersInput>
+  }
+
+  export type usersCreateNestedManyWithoutTraining_programInput = {
+    create?: XOR<usersCreateWithoutTraining_programInput, usersUncheckedCreateWithoutTraining_programInput> | usersCreateWithoutTraining_programInput[] | usersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: usersCreateOrConnectWithoutTraining_programInput | usersCreateOrConnectWithoutTraining_programInput[]
+    createMany?: usersCreateManyTraining_programInputEnvelope
+    connect?: usersWhereUniqueInput | usersWhereUniqueInput[]
+  }
+
+  export type training_cohortsCreateNestedManyWithoutTraining_programInput = {
+    create?: XOR<training_cohortsCreateWithoutTraining_programInput, training_cohortsUncheckedCreateWithoutTraining_programInput> | training_cohortsCreateWithoutTraining_programInput[] | training_cohortsUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutTraining_programInput | training_cohortsCreateOrConnectWithoutTraining_programInput[]
+    createMany?: training_cohortsCreateManyTraining_programInputEnvelope
+    connect?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+  }
+
+  export type report_foldersCreateNestedManyWithoutTraining_programInput = {
+    create?: XOR<report_foldersCreateWithoutTraining_programInput, report_foldersUncheckedCreateWithoutTraining_programInput> | report_foldersCreateWithoutTraining_programInput[] | report_foldersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutTraining_programInput | report_foldersCreateOrConnectWithoutTraining_programInput[]
+    createMany?: report_foldersCreateManyTraining_programInputEnvelope
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+  }
+
+  export type usersUncheckedCreateNestedManyWithoutTraining_programInput = {
+    create?: XOR<usersCreateWithoutTraining_programInput, usersUncheckedCreateWithoutTraining_programInput> | usersCreateWithoutTraining_programInput[] | usersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: usersCreateOrConnectWithoutTraining_programInput | usersCreateOrConnectWithoutTraining_programInput[]
+    createMany?: usersCreateManyTraining_programInputEnvelope
+    connect?: usersWhereUniqueInput | usersWhereUniqueInput[]
+  }
+
+  export type training_cohortsUncheckedCreateNestedManyWithoutTraining_programInput = {
+    create?: XOR<training_cohortsCreateWithoutTraining_programInput, training_cohortsUncheckedCreateWithoutTraining_programInput> | training_cohortsCreateWithoutTraining_programInput[] | training_cohortsUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutTraining_programInput | training_cohortsCreateOrConnectWithoutTraining_programInput[]
+    createMany?: training_cohortsCreateManyTraining_programInputEnvelope
+    connect?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+  }
+
+  export type report_foldersUncheckedCreateNestedManyWithoutTraining_programInput = {
+    create?: XOR<report_foldersCreateWithoutTraining_programInput, report_foldersUncheckedCreateWithoutTraining_programInput> | report_foldersCreateWithoutTraining_programInput[] | report_foldersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutTraining_programInput | report_foldersCreateOrConnectWithoutTraining_programInput[]
+    createMany?: report_foldersCreateManyTraining_programInputEnvelope
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+  }
+
+  export type usersUpdateManyWithoutTraining_programNestedInput = {
+    create?: XOR<usersCreateWithoutTraining_programInput, usersUncheckedCreateWithoutTraining_programInput> | usersCreateWithoutTraining_programInput[] | usersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: usersCreateOrConnectWithoutTraining_programInput | usersCreateOrConnectWithoutTraining_programInput[]
+    upsert?: usersUpsertWithWhereUniqueWithoutTraining_programInput | usersUpsertWithWhereUniqueWithoutTraining_programInput[]
+    createMany?: usersCreateManyTraining_programInputEnvelope
+    set?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    disconnect?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    delete?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    connect?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    update?: usersUpdateWithWhereUniqueWithoutTraining_programInput | usersUpdateWithWhereUniqueWithoutTraining_programInput[]
+    updateMany?: usersUpdateManyWithWhereWithoutTraining_programInput | usersUpdateManyWithWhereWithoutTraining_programInput[]
+    deleteMany?: usersScalarWhereInput | usersScalarWhereInput[]
+  }
+
+  export type training_cohortsUpdateManyWithoutTraining_programNestedInput = {
+    create?: XOR<training_cohortsCreateWithoutTraining_programInput, training_cohortsUncheckedCreateWithoutTraining_programInput> | training_cohortsCreateWithoutTraining_programInput[] | training_cohortsUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutTraining_programInput | training_cohortsCreateOrConnectWithoutTraining_programInput[]
+    upsert?: training_cohortsUpsertWithWhereUniqueWithoutTraining_programInput | training_cohortsUpsertWithWhereUniqueWithoutTraining_programInput[]
+    createMany?: training_cohortsCreateManyTraining_programInputEnvelope
+    set?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    disconnect?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    delete?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    connect?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    update?: training_cohortsUpdateWithWhereUniqueWithoutTraining_programInput | training_cohortsUpdateWithWhereUniqueWithoutTraining_programInput[]
+    updateMany?: training_cohortsUpdateManyWithWhereWithoutTraining_programInput | training_cohortsUpdateManyWithWhereWithoutTraining_programInput[]
+    deleteMany?: training_cohortsScalarWhereInput | training_cohortsScalarWhereInput[]
+  }
+
+  export type report_foldersUpdateManyWithoutTraining_programNestedInput = {
+    create?: XOR<report_foldersCreateWithoutTraining_programInput, report_foldersUncheckedCreateWithoutTraining_programInput> | report_foldersCreateWithoutTraining_programInput[] | report_foldersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutTraining_programInput | report_foldersCreateOrConnectWithoutTraining_programInput[]
+    upsert?: report_foldersUpsertWithWhereUniqueWithoutTraining_programInput | report_foldersUpsertWithWhereUniqueWithoutTraining_programInput[]
+    createMany?: report_foldersCreateManyTraining_programInputEnvelope
+    set?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    disconnect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    delete?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    update?: report_foldersUpdateWithWhereUniqueWithoutTraining_programInput | report_foldersUpdateWithWhereUniqueWithoutTraining_programInput[]
+    updateMany?: report_foldersUpdateManyWithWhereWithoutTraining_programInput | report_foldersUpdateManyWithWhereWithoutTraining_programInput[]
+    deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+  }
+
+  export type usersUncheckedUpdateManyWithoutTraining_programNestedInput = {
+    create?: XOR<usersCreateWithoutTraining_programInput, usersUncheckedCreateWithoutTraining_programInput> | usersCreateWithoutTraining_programInput[] | usersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: usersCreateOrConnectWithoutTraining_programInput | usersCreateOrConnectWithoutTraining_programInput[]
+    upsert?: usersUpsertWithWhereUniqueWithoutTraining_programInput | usersUpsertWithWhereUniqueWithoutTraining_programInput[]
+    createMany?: usersCreateManyTraining_programInputEnvelope
+    set?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    disconnect?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    delete?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    connect?: usersWhereUniqueInput | usersWhereUniqueInput[]
+    update?: usersUpdateWithWhereUniqueWithoutTraining_programInput | usersUpdateWithWhereUniqueWithoutTraining_programInput[]
+    updateMany?: usersUpdateManyWithWhereWithoutTraining_programInput | usersUpdateManyWithWhereWithoutTraining_programInput[]
+    deleteMany?: usersScalarWhereInput | usersScalarWhereInput[]
+  }
+
+  export type training_cohortsUncheckedUpdateManyWithoutTraining_programNestedInput = {
+    create?: XOR<training_cohortsCreateWithoutTraining_programInput, training_cohortsUncheckedCreateWithoutTraining_programInput> | training_cohortsCreateWithoutTraining_programInput[] | training_cohortsUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutTraining_programInput | training_cohortsCreateOrConnectWithoutTraining_programInput[]
+    upsert?: training_cohortsUpsertWithWhereUniqueWithoutTraining_programInput | training_cohortsUpsertWithWhereUniqueWithoutTraining_programInput[]
+    createMany?: training_cohortsCreateManyTraining_programInputEnvelope
+    set?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    disconnect?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    delete?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    connect?: training_cohortsWhereUniqueInput | training_cohortsWhereUniqueInput[]
+    update?: training_cohortsUpdateWithWhereUniqueWithoutTraining_programInput | training_cohortsUpdateWithWhereUniqueWithoutTraining_programInput[]
+    updateMany?: training_cohortsUpdateManyWithWhereWithoutTraining_programInput | training_cohortsUpdateManyWithWhereWithoutTraining_programInput[]
+    deleteMany?: training_cohortsScalarWhereInput | training_cohortsScalarWhereInput[]
+  }
+
+  export type report_foldersUncheckedUpdateManyWithoutTraining_programNestedInput = {
+    create?: XOR<report_foldersCreateWithoutTraining_programInput, report_foldersUncheckedCreateWithoutTraining_programInput> | report_foldersCreateWithoutTraining_programInput[] | report_foldersUncheckedCreateWithoutTraining_programInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutTraining_programInput | report_foldersCreateOrConnectWithoutTraining_programInput[]
+    upsert?: report_foldersUpsertWithWhereUniqueWithoutTraining_programInput | report_foldersUpsertWithWhereUniqueWithoutTraining_programInput[]
+    createMany?: report_foldersCreateManyTraining_programInputEnvelope
+    set?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    disconnect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    delete?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    update?: report_foldersUpdateWithWhereUniqueWithoutTraining_programInput | report_foldersUpdateWithWhereUniqueWithoutTraining_programInput[]
+    updateMany?: report_foldersUpdateManyWithWhereWithoutTraining_programInput | report_foldersUpdateManyWithWhereWithoutTraining_programInput[]
+    deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+  }
+
+  export type training_programsCreateNestedOneWithoutCohortsInput = {
+    create?: XOR<training_programsCreateWithoutCohortsInput, training_programsUncheckedCreateWithoutCohortsInput>
+    connectOrCreate?: training_programsCreateOrConnectWithoutCohortsInput
+    connect?: training_programsWhereUniqueInput
+  }
+
+  export type cohort_membersCreateNestedManyWithoutCohortInput = {
+    create?: XOR<cohort_membersCreateWithoutCohortInput, cohort_membersUncheckedCreateWithoutCohortInput> | cohort_membersCreateWithoutCohortInput[] | cohort_membersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutCohortInput | cohort_membersCreateOrConnectWithoutCohortInput[]
+    createMany?: cohort_membersCreateManyCohortInputEnvelope
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+  }
+
+  export type report_foldersCreateNestedManyWithoutCohortInput = {
+    create?: XOR<report_foldersCreateWithoutCohortInput, report_foldersUncheckedCreateWithoutCohortInput> | report_foldersCreateWithoutCohortInput[] | report_foldersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCohortInput | report_foldersCreateOrConnectWithoutCohortInput[]
+    createMany?: report_foldersCreateManyCohortInputEnvelope
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+  }
+
+  export type cohort_membersUncheckedCreateNestedManyWithoutCohortInput = {
+    create?: XOR<cohort_membersCreateWithoutCohortInput, cohort_membersUncheckedCreateWithoutCohortInput> | cohort_membersCreateWithoutCohortInput[] | cohort_membersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutCohortInput | cohort_membersCreateOrConnectWithoutCohortInput[]
+    createMany?: cohort_membersCreateManyCohortInputEnvelope
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+  }
+
+  export type report_foldersUncheckedCreateNestedManyWithoutCohortInput = {
+    create?: XOR<report_foldersCreateWithoutCohortInput, report_foldersUncheckedCreateWithoutCohortInput> | report_foldersCreateWithoutCohortInput[] | report_foldersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCohortInput | report_foldersCreateOrConnectWithoutCohortInput[]
+    createMany?: report_foldersCreateManyCohortInputEnvelope
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+  }
+
+  export type EnumCohortStatusFieldUpdateOperationsInput = {
+    set?: $Enums.CohortStatus
+  }
+
+  export type training_programsUpdateOneRequiredWithoutCohortsNestedInput = {
+    create?: XOR<training_programsCreateWithoutCohortsInput, training_programsUncheckedCreateWithoutCohortsInput>
+    connectOrCreate?: training_programsCreateOrConnectWithoutCohortsInput
+    upsert?: training_programsUpsertWithoutCohortsInput
+    connect?: training_programsWhereUniqueInput
+    update?: XOR<XOR<training_programsUpdateToOneWithWhereWithoutCohortsInput, training_programsUpdateWithoutCohortsInput>, training_programsUncheckedUpdateWithoutCohortsInput>
+  }
+
+  export type cohort_membersUpdateManyWithoutCohortNestedInput = {
+    create?: XOR<cohort_membersCreateWithoutCohortInput, cohort_membersUncheckedCreateWithoutCohortInput> | cohort_membersCreateWithoutCohortInput[] | cohort_membersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutCohortInput | cohort_membersCreateOrConnectWithoutCohortInput[]
+    upsert?: cohort_membersUpsertWithWhereUniqueWithoutCohortInput | cohort_membersUpsertWithWhereUniqueWithoutCohortInput[]
+    createMany?: cohort_membersCreateManyCohortInputEnvelope
+    set?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    disconnect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    delete?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    update?: cohort_membersUpdateWithWhereUniqueWithoutCohortInput | cohort_membersUpdateWithWhereUniqueWithoutCohortInput[]
+    updateMany?: cohort_membersUpdateManyWithWhereWithoutCohortInput | cohort_membersUpdateManyWithWhereWithoutCohortInput[]
+    deleteMany?: cohort_membersScalarWhereInput | cohort_membersScalarWhereInput[]
+  }
+
+  export type report_foldersUpdateManyWithoutCohortNestedInput = {
+    create?: XOR<report_foldersCreateWithoutCohortInput, report_foldersUncheckedCreateWithoutCohortInput> | report_foldersCreateWithoutCohortInput[] | report_foldersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCohortInput | report_foldersCreateOrConnectWithoutCohortInput[]
+    upsert?: report_foldersUpsertWithWhereUniqueWithoutCohortInput | report_foldersUpsertWithWhereUniqueWithoutCohortInput[]
+    createMany?: report_foldersCreateManyCohortInputEnvelope
+    set?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    disconnect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    delete?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    update?: report_foldersUpdateWithWhereUniqueWithoutCohortInput | report_foldersUpdateWithWhereUniqueWithoutCohortInput[]
+    updateMany?: report_foldersUpdateManyWithWhereWithoutCohortInput | report_foldersUpdateManyWithWhereWithoutCohortInput[]
+    deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+  }
+
+  export type cohort_membersUncheckedUpdateManyWithoutCohortNestedInput = {
+    create?: XOR<cohort_membersCreateWithoutCohortInput, cohort_membersUncheckedCreateWithoutCohortInput> | cohort_membersCreateWithoutCohortInput[] | cohort_membersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: cohort_membersCreateOrConnectWithoutCohortInput | cohort_membersCreateOrConnectWithoutCohortInput[]
+    upsert?: cohort_membersUpsertWithWhereUniqueWithoutCohortInput | cohort_membersUpsertWithWhereUniqueWithoutCohortInput[]
+    createMany?: cohort_membersCreateManyCohortInputEnvelope
+    set?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    disconnect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    delete?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    connect?: cohort_membersWhereUniqueInput | cohort_membersWhereUniqueInput[]
+    update?: cohort_membersUpdateWithWhereUniqueWithoutCohortInput | cohort_membersUpdateWithWhereUniqueWithoutCohortInput[]
+    updateMany?: cohort_membersUpdateManyWithWhereWithoutCohortInput | cohort_membersUpdateManyWithWhereWithoutCohortInput[]
+    deleteMany?: cohort_membersScalarWhereInput | cohort_membersScalarWhereInput[]
+  }
+
+  export type report_foldersUncheckedUpdateManyWithoutCohortNestedInput = {
+    create?: XOR<report_foldersCreateWithoutCohortInput, report_foldersUncheckedCreateWithoutCohortInput> | report_foldersCreateWithoutCohortInput[] | report_foldersUncheckedCreateWithoutCohortInput[]
+    connectOrCreate?: report_foldersCreateOrConnectWithoutCohortInput | report_foldersCreateOrConnectWithoutCohortInput[]
+    upsert?: report_foldersUpsertWithWhereUniqueWithoutCohortInput | report_foldersUpsertWithWhereUniqueWithoutCohortInput[]
+    createMany?: report_foldersCreateManyCohortInputEnvelope
+    set?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    disconnect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    delete?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    connect?: report_foldersWhereUniqueInput | report_foldersWhereUniqueInput[]
+    update?: report_foldersUpdateWithWhereUniqueWithoutCohortInput | report_foldersUpdateWithWhereUniqueWithoutCohortInput[]
+    updateMany?: report_foldersUpdateManyWithWhereWithoutCohortInput | report_foldersUpdateManyWithWhereWithoutCohortInput[]
+    deleteMany?: report_foldersScalarWhereInput | report_foldersScalarWhereInput[]
+  }
+
+  export type usersCreateNestedOneWithoutCohort_membershipsInput = {
+    create?: XOR<usersCreateWithoutCohort_membershipsInput, usersUncheckedCreateWithoutCohort_membershipsInput>
+    connectOrCreate?: usersCreateOrConnectWithoutCohort_membershipsInput
+    connect?: usersWhereUniqueInput
+  }
+
+  export type training_cohortsCreateNestedOneWithoutMembersInput = {
+    create?: XOR<training_cohortsCreateWithoutMembersInput, training_cohortsUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutMembersInput
+    connect?: training_cohortsWhereUniqueInput
+  }
+
+  export type EnumMemberStatusFieldUpdateOperationsInput = {
+    set?: $Enums.MemberStatus
+  }
+
+  export type usersUpdateOneRequiredWithoutCohort_membershipsNestedInput = {
+    create?: XOR<usersCreateWithoutCohort_membershipsInput, usersUncheckedCreateWithoutCohort_membershipsInput>
+    connectOrCreate?: usersCreateOrConnectWithoutCohort_membershipsInput
+    upsert?: usersUpsertWithoutCohort_membershipsInput
+    connect?: usersWhereUniqueInput
+    update?: XOR<XOR<usersUpdateToOneWithWhereWithoutCohort_membershipsInput, usersUpdateWithoutCohort_membershipsInput>, usersUncheckedUpdateWithoutCohort_membershipsInput>
+  }
+
+  export type training_cohortsUpdateOneRequiredWithoutMembersNestedInput = {
+    create?: XOR<training_cohortsCreateWithoutMembersInput, training_cohortsUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: training_cohortsCreateOrConnectWithoutMembersInput
+    upsert?: training_cohortsUpsertWithoutMembersInput
+    connect?: training_cohortsWhereUniqueInput
+    update?: XOR<XOR<training_cohortsUpdateToOneWithWhereWithoutMembersInput, training_cohortsUpdateWithoutMembersInput>, training_cohortsUncheckedUpdateWithoutMembersInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -14381,9 +19085,15 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -14442,39 +19152,6 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -14502,31 +19179,31 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
     _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedEnumReportStatusFilter<$PrismaModel = never> = {
@@ -14588,6 +19265,33 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
   export type NestedEnumRoleFilter<$PrismaModel = never> = {
     equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
     in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
@@ -14605,108 +19309,38 @@ export namespace Prisma {
     _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
-  export type usersCreateWithoutCollectionsInput = {
-    id: string
-    username: string
-    email: string
-    password: string
-    role?: $Enums.Role
-    name?: string | null
-    avatar?: string | null
-    training?: string | null
-    angkatan?: string | null
-    phone?: string | null
-    created_at?: Date | string
-    updated_at: Date | string
-    visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
-    guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
-    reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
-    reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
-    uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
-    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+  export type NestedEnumCohortStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.CohortStatus | EnumCohortStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCohortStatusFilter<$PrismaModel> | $Enums.CohortStatus
   }
 
-  export type usersUncheckedCreateWithoutCollectionsInput = {
-    id: string
-    username: string
-    email: string
-    password: string
-    role?: $Enums.Role
-    name?: string | null
-    avatar?: string | null
-    training?: string | null
-    angkatan?: string | null
-    phone?: string | null
-    created_at?: Date | string
-    updated_at: Date | string
-    visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
-    guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
-    reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
-    reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
-    uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
-    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+  export type NestedEnumCohortStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.CohortStatus | EnumCohortStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.CohortStatus[] | ListEnumCohortStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumCohortStatusWithAggregatesFilter<$PrismaModel> | $Enums.CohortStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumCohortStatusFilter<$PrismaModel>
+    _max?: NestedEnumCohortStatusFilter<$PrismaModel>
   }
 
-  export type usersCreateOrConnectWithoutCollectionsInput = {
-    where: usersWhereUniqueInput
-    create: XOR<usersCreateWithoutCollectionsInput, usersUncheckedCreateWithoutCollectionsInput>
+  export type NestedEnumMemberStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MemberStatus | EnumMemberStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMemberStatusFilter<$PrismaModel> | $Enums.MemberStatus
   }
 
-  export type usersUpsertWithoutCollectionsInput = {
-    update: XOR<usersUpdateWithoutCollectionsInput, usersUncheckedUpdateWithoutCollectionsInput>
-    create: XOR<usersCreateWithoutCollectionsInput, usersUncheckedCreateWithoutCollectionsInput>
-    where?: usersWhereInput
-  }
-
-  export type usersUpdateToOneWithWhereWithoutCollectionsInput = {
-    where?: usersWhereInput
-    data: XOR<usersUpdateWithoutCollectionsInput, usersUncheckedUpdateWithoutCollectionsInput>
-  }
-
-  export type usersUpdateWithoutCollectionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    training?: NullableStringFieldUpdateOperationsInput | string | null
-    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
-    guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
-    reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
-    reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
-    uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
-    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
-  }
-
-  export type usersUncheckedUpdateWithoutCollectionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    training?: NullableStringFieldUpdateOperationsInput | string | null
-    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
-    guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
-    reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
-    reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
-    uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
-    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+  export type NestedEnumMemberStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MemberStatus | EnumMemberStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MemberStatus[] | ListEnumMemberStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMemberStatusWithAggregatesFilter<$PrismaModel> | $Enums.MemberStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMemberStatusFilter<$PrismaModel>
+    _max?: NestedEnumMemberStatusFilter<$PrismaModel>
   }
 
   export type usersCreateWithoutVisitor_analyticsInput = {
@@ -14722,13 +19356,13 @@ export namespace Prisma {
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutVisitor_analyticsInput = {
@@ -14741,16 +19375,16 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutVisitor_analyticsInput = {
@@ -14782,13 +19416,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutVisitor_analyticsInput = {
@@ -14801,16 +19435,16 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type usersCreateWithoutGuestbook_entriesInput = {
@@ -14826,13 +19460,13 @@ export namespace Prisma {
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutGuestbook_entriesInput = {
@@ -14845,16 +19479,16 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutGuestbook_entriesInput = {
@@ -14886,13 +19520,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutGuestbook_entriesInput = {
@@ -14905,120 +19539,16 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
-  }
-
-  export type usersCreateWithoutLimited_collectionsInput = {
-    id: string
-    username: string
-    email: string
-    password: string
-    role?: $Enums.Role
-    name?: string | null
-    avatar?: string | null
-    training?: string | null
-    angkatan?: string | null
-    phone?: string | null
-    created_at?: Date | string
-    updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
-    visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
-    guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
-    reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
-    uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
-    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
-  }
-
-  export type usersUncheckedCreateWithoutLimited_collectionsInput = {
-    id: string
-    username: string
-    email: string
-    password: string
-    role?: $Enums.Role
-    name?: string | null
-    avatar?: string | null
-    training?: string | null
-    angkatan?: string | null
-    phone?: string | null
-    created_at?: Date | string
-    updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
-    visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
-    guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
-    reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
-    uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
-    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
-  }
-
-  export type usersCreateOrConnectWithoutLimited_collectionsInput = {
-    where: usersWhereUniqueInput
-    create: XOR<usersCreateWithoutLimited_collectionsInput, usersUncheckedCreateWithoutLimited_collectionsInput>
-  }
-
-  export type usersUpsertWithoutLimited_collectionsInput = {
-    update: XOR<usersUpdateWithoutLimited_collectionsInput, usersUncheckedUpdateWithoutLimited_collectionsInput>
-    create: XOR<usersCreateWithoutLimited_collectionsInput, usersUncheckedCreateWithoutLimited_collectionsInput>
-    where?: usersWhereInput
-  }
-
-  export type usersUpdateToOneWithWhereWithoutLimited_collectionsInput = {
-    where?: usersWhereInput
-    data: XOR<usersUpdateWithoutLimited_collectionsInput, usersUncheckedUpdateWithoutLimited_collectionsInput>
-  }
-
-  export type usersUpdateWithoutLimited_collectionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    training?: NullableStringFieldUpdateOperationsInput | string | null
-    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
-    visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
-    guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
-    reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
-    uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
-    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
-  }
-
-  export type usersUncheckedUpdateWithoutLimited_collectionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    name?: NullableStringFieldUpdateOperationsInput | string | null
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    training?: NullableStringFieldUpdateOperationsInput | string | null
-    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
-    phone?: NullableStringFieldUpdateOperationsInput | string | null
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
-    visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
-    guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
-    reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
-    uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
-    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type usersCreateWithoutReports_reports_assignee_idTousersInput = {
@@ -15034,13 +19564,13 @@ export namespace Prisma {
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutReports_reports_assignee_idTousersInput = {
@@ -15053,16 +19583,16 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutReports_reports_assignee_idTousersInput = {
@@ -15083,13 +19613,13 @@ export namespace Prisma {
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutReports_reports_author_idTousersInput = {
@@ -15102,16 +19632,16 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
     created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutReports_reports_author_idTousersInput = {
@@ -15185,13 +19715,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutReports_reports_assignee_idTousersInput = {
@@ -15204,16 +19734,16 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type usersUpsertWithoutReports_reports_author_idTousersInput = {
@@ -15240,13 +19770,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutReports_reports_author_idTousersInput = {
@@ -15259,16 +19789,16 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
     created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type uploaded_filesUpsertWithWhereUniqueWithoutReportsInput = {
@@ -15320,13 +19850,13 @@ export namespace Prisma {
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutUploaded_filesInput = {
@@ -15339,16 +19869,16 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutUploaded_filesInput = {
@@ -15365,6 +19895,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     feedback?: string | null
     verified_at?: Date | string | null
     rejected_at?: Date | string | null
@@ -15383,6 +19917,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     author_id: string
     assignee_id?: string | null
     feedback?: string | null
@@ -15421,13 +19959,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutUploaded_filesInput = {
@@ -15440,16 +19978,16 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type reportsUpsertWithoutFilesInput = {
@@ -15472,6 +20010,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejected_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -15490,6 +20032,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     author_id?: StringFieldUpdateOperationsInput | string
     assignee_id?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15497,42 +20043,6 @@ export namespace Prisma {
     rejected_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type collectionsCreateWithoutUsersInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    is_public?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
-  export type collectionsUncheckedCreateWithoutUsersInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    is_public?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
-  export type collectionsCreateOrConnectWithoutUsersInput = {
-    where: collectionsWhereUniqueInput
-    create: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput>
-  }
-
-  export type collectionsCreateManyUsersInputEnvelope = {
-    data: collectionsCreateManyUsersInput | collectionsCreateManyUsersInput[]
-    skipDuplicates?: boolean
   }
 
   export type visitor_analyticsCreateWithoutUsersInput = {
@@ -15599,46 +20109,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type limited_collectionsCreateWithoutUsersInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    max_access?: number
-    current_access?: number
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
-  export type limited_collectionsUncheckedCreateWithoutUsersInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    max_access?: number
-    current_access?: number
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
-  export type limited_collectionsCreateOrConnectWithoutUsersInput = {
-    where: limited_collectionsWhereUniqueInput
-    create: XOR<limited_collectionsCreateWithoutUsersInput, limited_collectionsUncheckedCreateWithoutUsersInput>
-  }
-
-  export type limited_collectionsCreateManyUsersInputEnvelope = {
-    data: limited_collectionsCreateManyUsersInput | limited_collectionsCreateManyUsersInput[]
-    skipDuplicates?: boolean
-  }
-
   export type reportsCreateWithoutUsers_reports_assignee_idTousersInput = {
     id: string
     title: string
@@ -15648,6 +20118,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     feedback?: string | null
     verified_at?: Date | string | null
     rejected_at?: Date | string | null
@@ -15666,6 +20140,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     author_id: string
     feedback?: string | null
     verified_at?: Date | string | null
@@ -15694,6 +20172,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     feedback?: string | null
     verified_at?: Date | string | null
     rejected_at?: Date | string | null
@@ -15712,6 +20194,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     assignee_id?: string | null
     feedback?: string | null
     verified_at?: Date | string | null
@@ -15777,17 +20263,23 @@ export namespace Prisma {
     id?: string
     year: string
     batch: string
+    report_type: string
     description?: string | null
     is_active?: boolean
     created_at?: Date | string
     updated_at?: Date | string
+    training_program?: training_programsCreateNestedOneWithoutFoldersInput
+    cohort?: training_cohortsCreateNestedOneWithoutFoldersInput
   }
 
   export type report_foldersUncheckedCreateWithoutCreatorInput = {
     id?: string
     year: string
     batch: string
+    report_type: string
     description?: string | null
+    training_program_id?: string | null
+    cohort_id?: string | null
     is_active?: boolean
     created_at?: Date | string
     updated_at?: Date | string
@@ -15803,37 +20295,61 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type collectionsUpsertWithWhereUniqueWithoutUsersInput = {
-    where: collectionsWhereUniqueInput
-    update: XOR<collectionsUpdateWithoutUsersInput, collectionsUncheckedUpdateWithoutUsersInput>
-    create: XOR<collectionsCreateWithoutUsersInput, collectionsUncheckedCreateWithoutUsersInput>
+  export type training_programsCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    cohorts?: training_cohortsCreateNestedManyWithoutTraining_programInput
+    folders?: report_foldersCreateNestedManyWithoutTraining_programInput
   }
 
-  export type collectionsUpdateWithWhereUniqueWithoutUsersInput = {
-    where: collectionsWhereUniqueInput
-    data: XOR<collectionsUpdateWithoutUsersInput, collectionsUncheckedUpdateWithoutUsersInput>
+  export type training_programsUncheckedCreateWithoutUsersInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    cohorts?: training_cohortsUncheckedCreateNestedManyWithoutTraining_programInput
+    folders?: report_foldersUncheckedCreateNestedManyWithoutTraining_programInput
   }
 
-  export type collectionsUpdateManyWithWhereWithoutUsersInput = {
-    where: collectionsScalarWhereInput
-    data: XOR<collectionsUpdateManyMutationInput, collectionsUncheckedUpdateManyWithoutUsersInput>
+  export type training_programsCreateOrConnectWithoutUsersInput = {
+    where: training_programsWhereUniqueInput
+    create: XOR<training_programsCreateWithoutUsersInput, training_programsUncheckedCreateWithoutUsersInput>
   }
 
-  export type collectionsScalarWhereInput = {
-    AND?: collectionsScalarWhereInput | collectionsScalarWhereInput[]
-    OR?: collectionsScalarWhereInput[]
-    NOT?: collectionsScalarWhereInput | collectionsScalarWhereInput[]
-    id?: StringFilter<"collections"> | string
-    title?: StringFilter<"collections"> | string
-    description?: StringNullableFilter<"collections"> | string | null
-    content?: StringFilter<"collections"> | string
-    image_url?: StringNullableFilter<"collections"> | string | null
-    category?: StringNullableFilter<"collections"> | string | null
-    tags?: StringNullableFilter<"collections"> | string | null
-    is_public?: BoolFilter<"collections"> | boolean
-    author_id?: StringFilter<"collections"> | string
-    created_at?: DateTimeFilter<"collections"> | Date | string
-    updated_at?: DateTimeFilter<"collections"> | Date | string
+  export type cohort_membersCreateWithoutUserInput = {
+    id?: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+    cohort: training_cohortsCreateNestedOneWithoutMembersInput
+  }
+
+  export type cohort_membersUncheckedCreateWithoutUserInput = {
+    id?: string
+    cohort_id: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+  }
+
+  export type cohort_membersCreateOrConnectWithoutUserInput = {
+    where: cohort_membersWhereUniqueInput
+    create: XOR<cohort_membersCreateWithoutUserInput, cohort_membersUncheckedCreateWithoutUserInput>
+  }
+
+  export type cohort_membersCreateManyUserInputEnvelope = {
+    data: cohort_membersCreateManyUserInput | cohort_membersCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type visitor_analyticsUpsertWithWhereUniqueWithoutUsersInput = {
@@ -15898,41 +20414,6 @@ export namespace Prisma {
     updated_at?: DateTimeFilter<"guestbook_entries"> | Date | string
   }
 
-  export type limited_collectionsUpsertWithWhereUniqueWithoutUsersInput = {
-    where: limited_collectionsWhereUniqueInput
-    update: XOR<limited_collectionsUpdateWithoutUsersInput, limited_collectionsUncheckedUpdateWithoutUsersInput>
-    create: XOR<limited_collectionsCreateWithoutUsersInput, limited_collectionsUncheckedCreateWithoutUsersInput>
-  }
-
-  export type limited_collectionsUpdateWithWhereUniqueWithoutUsersInput = {
-    where: limited_collectionsWhereUniqueInput
-    data: XOR<limited_collectionsUpdateWithoutUsersInput, limited_collectionsUncheckedUpdateWithoutUsersInput>
-  }
-
-  export type limited_collectionsUpdateManyWithWhereWithoutUsersInput = {
-    where: limited_collectionsScalarWhereInput
-    data: XOR<limited_collectionsUpdateManyMutationInput, limited_collectionsUncheckedUpdateManyWithoutUsersInput>
-  }
-
-  export type limited_collectionsScalarWhereInput = {
-    AND?: limited_collectionsScalarWhereInput | limited_collectionsScalarWhereInput[]
-    OR?: limited_collectionsScalarWhereInput[]
-    NOT?: limited_collectionsScalarWhereInput | limited_collectionsScalarWhereInput[]
-    id?: StringFilter<"limited_collections"> | string
-    title?: StringFilter<"limited_collections"> | string
-    description?: StringNullableFilter<"limited_collections"> | string | null
-    content?: StringFilter<"limited_collections"> | string
-    image_url?: StringNullableFilter<"limited_collections"> | string | null
-    category?: StringNullableFilter<"limited_collections"> | string | null
-    tags?: StringNullableFilter<"limited_collections"> | string | null
-    max_access?: IntFilter<"limited_collections"> | number
-    current_access?: IntFilter<"limited_collections"> | number
-    is_active?: BoolFilter<"limited_collections"> | boolean
-    author_id?: StringFilter<"limited_collections"> | string
-    created_at?: DateTimeFilter<"limited_collections"> | Date | string
-    updated_at?: DateTimeFilter<"limited_collections"> | Date | string
-  }
-
   export type reportsUpsertWithWhereUniqueWithoutUsers_reports_assignee_idTousersInput = {
     where: reportsWhereUniqueInput
     update: XOR<reportsUpdateWithoutUsers_reports_assignee_idTousersInput, reportsUncheckedUpdateWithoutUsers_reports_assignee_idTousersInput>
@@ -15961,6 +20442,10 @@ export namespace Prisma {
     status?: EnumReportStatusFilter<"reports"> | $Enums.ReportStatus
     category?: StringNullableFilter<"reports"> | string | null
     priority?: EnumPriorityFilter<"reports"> | $Enums.Priority
+    is_public?: BoolFilter<"reports"> | boolean
+    max_access?: IntNullableFilter<"reports"> | number | null
+    current_access?: IntNullableFilter<"reports"> | number | null
+    tags?: StringNullableFilter<"reports"> | string | null
     author_id?: StringFilter<"reports"> | string
     assignee_id?: StringNullableFilter<"reports"> | string | null
     feedback?: StringNullableFilter<"reports"> | string | null
@@ -16025,11 +20510,79 @@ export namespace Prisma {
     id?: StringFilter<"report_folders"> | string
     year?: StringFilter<"report_folders"> | string
     batch?: StringFilter<"report_folders"> | string
+    report_type?: StringFilter<"report_folders"> | string
     description?: StringNullableFilter<"report_folders"> | string | null
     created_by?: StringFilter<"report_folders"> | string
+    training_program_id?: StringNullableFilter<"report_folders"> | string | null
+    cohort_id?: StringNullableFilter<"report_folders"> | string | null
     is_active?: BoolFilter<"report_folders"> | boolean
     created_at?: DateTimeFilter<"report_folders"> | Date | string
     updated_at?: DateTimeFilter<"report_folders"> | Date | string
+  }
+
+  export type training_programsUpsertWithoutUsersInput = {
+    update: XOR<training_programsUpdateWithoutUsersInput, training_programsUncheckedUpdateWithoutUsersInput>
+    create: XOR<training_programsCreateWithoutUsersInput, training_programsUncheckedCreateWithoutUsersInput>
+    where?: training_programsWhereInput
+  }
+
+  export type training_programsUpdateToOneWithWhereWithoutUsersInput = {
+    where?: training_programsWhereInput
+    data: XOR<training_programsUpdateWithoutUsersInput, training_programsUncheckedUpdateWithoutUsersInput>
+  }
+
+  export type training_programsUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    cohorts?: training_cohortsUpdateManyWithoutTraining_programNestedInput
+    folders?: report_foldersUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type training_programsUncheckedUpdateWithoutUsersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    cohorts?: training_cohortsUncheckedUpdateManyWithoutTraining_programNestedInput
+    folders?: report_foldersUncheckedUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type cohort_membersUpsertWithWhereUniqueWithoutUserInput = {
+    where: cohort_membersWhereUniqueInput
+    update: XOR<cohort_membersUpdateWithoutUserInput, cohort_membersUncheckedUpdateWithoutUserInput>
+    create: XOR<cohort_membersCreateWithoutUserInput, cohort_membersUncheckedCreateWithoutUserInput>
+  }
+
+  export type cohort_membersUpdateWithWhereUniqueWithoutUserInput = {
+    where: cohort_membersWhereUniqueInput
+    data: XOR<cohort_membersUpdateWithoutUserInput, cohort_membersUncheckedUpdateWithoutUserInput>
+  }
+
+  export type cohort_membersUpdateManyWithWhereWithoutUserInput = {
+    where: cohort_membersScalarWhereInput
+    data: XOR<cohort_membersUpdateManyMutationInput, cohort_membersUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type cohort_membersScalarWhereInput = {
+    AND?: cohort_membersScalarWhereInput | cohort_membersScalarWhereInput[]
+    OR?: cohort_membersScalarWhereInput[]
+    NOT?: cohort_membersScalarWhereInput | cohort_membersScalarWhereInput[]
+    id?: StringFilter<"cohort_members"> | string
+    user_id?: StringFilter<"cohort_members"> | string
+    cohort_id?: StringFilter<"cohort_members"> | string
+    joined_at?: DateTimeFilter<"cohort_members"> | Date | string
+    status?: EnumMemberStatusFilter<"cohort_members"> | $Enums.MemberStatus
+    notes?: StringNullableFilter<"cohort_members"> | string | null
   }
 
   export type usersCreateWithoutCreated_foldersInput = {
@@ -16045,13 +20598,13 @@ export namespace Prisma {
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
   }
 
   export type usersUncheckedCreateWithoutCreated_foldersInput = {
@@ -16064,21 +20617,91 @@ export namespace Prisma {
     avatar?: string | null
     training?: string | null
     angkatan?: string | null
+    training_program_id?: string | null
     phone?: string | null
     created_at?: Date | string
     updated_at: Date | string
-    collections?: collectionsUncheckedCreateNestedManyWithoutUsersInput
     visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
     guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
-    limited_collections?: limited_collectionsUncheckedCreateNestedManyWithoutUsersInput
     reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
     reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
     uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type usersCreateOrConnectWithoutCreated_foldersInput = {
     where: usersWhereUniqueInput
     create: XOR<usersCreateWithoutCreated_foldersInput, usersUncheckedCreateWithoutCreated_foldersInput>
+  }
+
+  export type training_programsCreateWithoutFoldersInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    users?: usersCreateNestedManyWithoutTraining_programInput
+    cohorts?: training_cohortsCreateNestedManyWithoutTraining_programInput
+  }
+
+  export type training_programsUncheckedCreateWithoutFoldersInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    users?: usersUncheckedCreateNestedManyWithoutTraining_programInput
+    cohorts?: training_cohortsUncheckedCreateNestedManyWithoutTraining_programInput
+  }
+
+  export type training_programsCreateOrConnectWithoutFoldersInput = {
+    where: training_programsWhereUniqueInput
+    create: XOR<training_programsCreateWithoutFoldersInput, training_programsUncheckedCreateWithoutFoldersInput>
+  }
+
+  export type training_cohortsCreateWithoutFoldersInput = {
+    id?: string
+    name: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    training_program: training_programsCreateNestedOneWithoutCohortsInput
+    members?: cohort_membersCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsUncheckedCreateWithoutFoldersInput = {
+    id?: string
+    name: string
+    training_program_id: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    members?: cohort_membersUncheckedCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsCreateOrConnectWithoutFoldersInput = {
+    where: training_cohortsWhereUniqueInput
+    create: XOR<training_cohortsCreateWithoutFoldersInput, training_cohortsUncheckedCreateWithoutFoldersInput>
   }
 
   export type usersUpsertWithoutCreated_foldersInput = {
@@ -16105,13 +20728,13 @@ export namespace Prisma {
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
   }
 
   export type usersUncheckedUpdateWithoutCreated_foldersInput = {
@@ -16124,16 +20747,668 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     training?: NullableStringFieldUpdateOperationsInput | string | null
     angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    collections?: collectionsUncheckedUpdateManyWithoutUsersNestedInput
     visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
     guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
-    limited_collections?: limited_collectionsUncheckedUpdateManyWithoutUsersNestedInput
     reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
     reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
     uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type training_programsUpsertWithoutFoldersInput = {
+    update: XOR<training_programsUpdateWithoutFoldersInput, training_programsUncheckedUpdateWithoutFoldersInput>
+    create: XOR<training_programsCreateWithoutFoldersInput, training_programsUncheckedCreateWithoutFoldersInput>
+    where?: training_programsWhereInput
+  }
+
+  export type training_programsUpdateToOneWithWhereWithoutFoldersInput = {
+    where?: training_programsWhereInput
+    data: XOR<training_programsUpdateWithoutFoldersInput, training_programsUncheckedUpdateWithoutFoldersInput>
+  }
+
+  export type training_programsUpdateWithoutFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: usersUpdateManyWithoutTraining_programNestedInput
+    cohorts?: training_cohortsUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type training_programsUncheckedUpdateWithoutFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: usersUncheckedUpdateManyWithoutTraining_programNestedInput
+    cohorts?: training_cohortsUncheckedUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type training_cohortsUpsertWithoutFoldersInput = {
+    update: XOR<training_cohortsUpdateWithoutFoldersInput, training_cohortsUncheckedUpdateWithoutFoldersInput>
+    create: XOR<training_cohortsCreateWithoutFoldersInput, training_cohortsUncheckedCreateWithoutFoldersInput>
+    where?: training_cohortsWhereInput
+  }
+
+  export type training_cohortsUpdateToOneWithWhereWithoutFoldersInput = {
+    where?: training_cohortsWhereInput
+    data: XOR<training_cohortsUpdateWithoutFoldersInput, training_cohortsUncheckedUpdateWithoutFoldersInput>
+  }
+
+  export type training_cohortsUpdateWithoutFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    training_program?: training_programsUpdateOneRequiredWithoutCohortsNestedInput
+    members?: cohort_membersUpdateManyWithoutCohortNestedInput
+  }
+
+  export type training_cohortsUncheckedUpdateWithoutFoldersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    training_program_id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: cohort_membersUncheckedUpdateManyWithoutCohortNestedInput
+  }
+
+  export type usersCreateWithoutTraining_programInput = {
+    id: string
+    username: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    name?: string | null
+    avatar?: string | null
+    training?: string | null
+    angkatan?: string | null
+    phone?: string | null
+    created_at?: Date | string
+    updated_at: Date | string
+    visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
+    guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
+    reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
+    reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersCreateNestedManyWithoutUserInput
+  }
+
+  export type usersUncheckedCreateWithoutTraining_programInput = {
+    id: string
+    username: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    name?: string | null
+    avatar?: string | null
+    training?: string | null
+    angkatan?: string | null
+    phone?: string | null
+    created_at?: Date | string
+    updated_at: Date | string
+    visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
+    guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
+    reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
+    reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+    cohort_memberships?: cohort_membersUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type usersCreateOrConnectWithoutTraining_programInput = {
+    where: usersWhereUniqueInput
+    create: XOR<usersCreateWithoutTraining_programInput, usersUncheckedCreateWithoutTraining_programInput>
+  }
+
+  export type usersCreateManyTraining_programInputEnvelope = {
+    data: usersCreateManyTraining_programInput | usersCreateManyTraining_programInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type training_cohortsCreateWithoutTraining_programInput = {
+    id?: string
+    name: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    members?: cohort_membersCreateNestedManyWithoutCohortInput
+    folders?: report_foldersCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsUncheckedCreateWithoutTraining_programInput = {
+    id?: string
+    name: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    members?: cohort_membersUncheckedCreateNestedManyWithoutCohortInput
+    folders?: report_foldersUncheckedCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsCreateOrConnectWithoutTraining_programInput = {
+    where: training_cohortsWhereUniqueInput
+    create: XOR<training_cohortsCreateWithoutTraining_programInput, training_cohortsUncheckedCreateWithoutTraining_programInput>
+  }
+
+  export type training_cohortsCreateManyTraining_programInputEnvelope = {
+    data: training_cohortsCreateManyTraining_programInput | training_cohortsCreateManyTraining_programInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type report_foldersCreateWithoutTraining_programInput = {
+    id?: string
+    year: string
+    batch: string
+    report_type: string
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    creator: usersCreateNestedOneWithoutCreated_foldersInput
+    cohort?: training_cohortsCreateNestedOneWithoutFoldersInput
+  }
+
+  export type report_foldersUncheckedCreateWithoutTraining_programInput = {
+    id?: string
+    year: string
+    batch: string
+    report_type: string
+    description?: string | null
+    created_by: string
+    cohort_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type report_foldersCreateOrConnectWithoutTraining_programInput = {
+    where: report_foldersWhereUniqueInput
+    create: XOR<report_foldersCreateWithoutTraining_programInput, report_foldersUncheckedCreateWithoutTraining_programInput>
+  }
+
+  export type report_foldersCreateManyTraining_programInputEnvelope = {
+    data: report_foldersCreateManyTraining_programInput | report_foldersCreateManyTraining_programInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type usersUpsertWithWhereUniqueWithoutTraining_programInput = {
+    where: usersWhereUniqueInput
+    update: XOR<usersUpdateWithoutTraining_programInput, usersUncheckedUpdateWithoutTraining_programInput>
+    create: XOR<usersCreateWithoutTraining_programInput, usersUncheckedCreateWithoutTraining_programInput>
+  }
+
+  export type usersUpdateWithWhereUniqueWithoutTraining_programInput = {
+    where: usersWhereUniqueInput
+    data: XOR<usersUpdateWithoutTraining_programInput, usersUncheckedUpdateWithoutTraining_programInput>
+  }
+
+  export type usersUpdateManyWithWhereWithoutTraining_programInput = {
+    where: usersScalarWhereInput
+    data: XOR<usersUpdateManyMutationInput, usersUncheckedUpdateManyWithoutTraining_programInput>
+  }
+
+  export type usersScalarWhereInput = {
+    AND?: usersScalarWhereInput | usersScalarWhereInput[]
+    OR?: usersScalarWhereInput[]
+    NOT?: usersScalarWhereInput | usersScalarWhereInput[]
+    id?: StringFilter<"users"> | string
+    username?: StringFilter<"users"> | string
+    email?: StringFilter<"users"> | string
+    password?: StringFilter<"users"> | string
+    role?: EnumRoleFilter<"users"> | $Enums.Role
+    name?: StringNullableFilter<"users"> | string | null
+    avatar?: StringNullableFilter<"users"> | string | null
+    training?: StringNullableFilter<"users"> | string | null
+    angkatan?: StringNullableFilter<"users"> | string | null
+    training_program_id?: StringNullableFilter<"users"> | string | null
+    phone?: StringNullableFilter<"users"> | string | null
+    created_at?: DateTimeFilter<"users"> | Date | string
+    updated_at?: DateTimeFilter<"users"> | Date | string
+  }
+
+  export type training_cohortsUpsertWithWhereUniqueWithoutTraining_programInput = {
+    where: training_cohortsWhereUniqueInput
+    update: XOR<training_cohortsUpdateWithoutTraining_programInput, training_cohortsUncheckedUpdateWithoutTraining_programInput>
+    create: XOR<training_cohortsCreateWithoutTraining_programInput, training_cohortsUncheckedCreateWithoutTraining_programInput>
+  }
+
+  export type training_cohortsUpdateWithWhereUniqueWithoutTraining_programInput = {
+    where: training_cohortsWhereUniqueInput
+    data: XOR<training_cohortsUpdateWithoutTraining_programInput, training_cohortsUncheckedUpdateWithoutTraining_programInput>
+  }
+
+  export type training_cohortsUpdateManyWithWhereWithoutTraining_programInput = {
+    where: training_cohortsScalarWhereInput
+    data: XOR<training_cohortsUpdateManyMutationInput, training_cohortsUncheckedUpdateManyWithoutTraining_programInput>
+  }
+
+  export type training_cohortsScalarWhereInput = {
+    AND?: training_cohortsScalarWhereInput | training_cohortsScalarWhereInput[]
+    OR?: training_cohortsScalarWhereInput[]
+    NOT?: training_cohortsScalarWhereInput | training_cohortsScalarWhereInput[]
+    id?: StringFilter<"training_cohorts"> | string
+    name?: StringFilter<"training_cohorts"> | string
+    training_program_id?: StringFilter<"training_cohorts"> | string
+    year?: StringFilter<"training_cohorts"> | string
+    start_date?: DateTimeNullableFilter<"training_cohorts"> | Date | string | null
+    end_date?: DateTimeNullableFilter<"training_cohorts"> | Date | string | null
+    max_participants?: IntNullableFilter<"training_cohorts"> | number | null
+    current_participants?: IntFilter<"training_cohorts"> | number
+    status?: EnumCohortStatusFilter<"training_cohorts"> | $Enums.CohortStatus
+    description?: StringNullableFilter<"training_cohorts"> | string | null
+    is_active?: BoolFilter<"training_cohorts"> | boolean
+    created_at?: DateTimeFilter<"training_cohorts"> | Date | string
+    updated_at?: DateTimeFilter<"training_cohorts"> | Date | string
+  }
+
+  export type report_foldersUpsertWithWhereUniqueWithoutTraining_programInput = {
+    where: report_foldersWhereUniqueInput
+    update: XOR<report_foldersUpdateWithoutTraining_programInput, report_foldersUncheckedUpdateWithoutTraining_programInput>
+    create: XOR<report_foldersCreateWithoutTraining_programInput, report_foldersUncheckedCreateWithoutTraining_programInput>
+  }
+
+  export type report_foldersUpdateWithWhereUniqueWithoutTraining_programInput = {
+    where: report_foldersWhereUniqueInput
+    data: XOR<report_foldersUpdateWithoutTraining_programInput, report_foldersUncheckedUpdateWithoutTraining_programInput>
+  }
+
+  export type report_foldersUpdateManyWithWhereWithoutTraining_programInput = {
+    where: report_foldersScalarWhereInput
+    data: XOR<report_foldersUpdateManyMutationInput, report_foldersUncheckedUpdateManyWithoutTraining_programInput>
+  }
+
+  export type training_programsCreateWithoutCohortsInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    users?: usersCreateNestedManyWithoutTraining_programInput
+    folders?: report_foldersCreateNestedManyWithoutTraining_programInput
+  }
+
+  export type training_programsUncheckedCreateWithoutCohortsInput = {
+    id?: string
+    name: string
+    full_name: string
+    description?: string | null
+    duration_days?: number | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    users?: usersUncheckedCreateNestedManyWithoutTraining_programInput
+    folders?: report_foldersUncheckedCreateNestedManyWithoutTraining_programInput
+  }
+
+  export type training_programsCreateOrConnectWithoutCohortsInput = {
+    where: training_programsWhereUniqueInput
+    create: XOR<training_programsCreateWithoutCohortsInput, training_programsUncheckedCreateWithoutCohortsInput>
+  }
+
+  export type cohort_membersCreateWithoutCohortInput = {
+    id?: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+    user: usersCreateNestedOneWithoutCohort_membershipsInput
+  }
+
+  export type cohort_membersUncheckedCreateWithoutCohortInput = {
+    id?: string
+    user_id: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+  }
+
+  export type cohort_membersCreateOrConnectWithoutCohortInput = {
+    where: cohort_membersWhereUniqueInput
+    create: XOR<cohort_membersCreateWithoutCohortInput, cohort_membersUncheckedCreateWithoutCohortInput>
+  }
+
+  export type cohort_membersCreateManyCohortInputEnvelope = {
+    data: cohort_membersCreateManyCohortInput | cohort_membersCreateManyCohortInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type report_foldersCreateWithoutCohortInput = {
+    id?: string
+    year: string
+    batch: string
+    report_type: string
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    creator: usersCreateNestedOneWithoutCreated_foldersInput
+    training_program?: training_programsCreateNestedOneWithoutFoldersInput
+  }
+
+  export type report_foldersUncheckedCreateWithoutCohortInput = {
+    id?: string
+    year: string
+    batch: string
+    report_type: string
+    description?: string | null
+    created_by: string
+    training_program_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type report_foldersCreateOrConnectWithoutCohortInput = {
+    where: report_foldersWhereUniqueInput
+    create: XOR<report_foldersCreateWithoutCohortInput, report_foldersUncheckedCreateWithoutCohortInput>
+  }
+
+  export type report_foldersCreateManyCohortInputEnvelope = {
+    data: report_foldersCreateManyCohortInput | report_foldersCreateManyCohortInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type training_programsUpsertWithoutCohortsInput = {
+    update: XOR<training_programsUpdateWithoutCohortsInput, training_programsUncheckedUpdateWithoutCohortsInput>
+    create: XOR<training_programsCreateWithoutCohortsInput, training_programsUncheckedCreateWithoutCohortsInput>
+    where?: training_programsWhereInput
+  }
+
+  export type training_programsUpdateToOneWithWhereWithoutCohortsInput = {
+    where?: training_programsWhereInput
+    data: XOR<training_programsUpdateWithoutCohortsInput, training_programsUncheckedUpdateWithoutCohortsInput>
+  }
+
+  export type training_programsUpdateWithoutCohortsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: usersUpdateManyWithoutTraining_programNestedInput
+    folders?: report_foldersUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type training_programsUncheckedUpdateWithoutCohortsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    full_name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    duration_days?: NullableIntFieldUpdateOperationsInput | number | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    users?: usersUncheckedUpdateManyWithoutTraining_programNestedInput
+    folders?: report_foldersUncheckedUpdateManyWithoutTraining_programNestedInput
+  }
+
+  export type cohort_membersUpsertWithWhereUniqueWithoutCohortInput = {
+    where: cohort_membersWhereUniqueInput
+    update: XOR<cohort_membersUpdateWithoutCohortInput, cohort_membersUncheckedUpdateWithoutCohortInput>
+    create: XOR<cohort_membersCreateWithoutCohortInput, cohort_membersUncheckedCreateWithoutCohortInput>
+  }
+
+  export type cohort_membersUpdateWithWhereUniqueWithoutCohortInput = {
+    where: cohort_membersWhereUniqueInput
+    data: XOR<cohort_membersUpdateWithoutCohortInput, cohort_membersUncheckedUpdateWithoutCohortInput>
+  }
+
+  export type cohort_membersUpdateManyWithWhereWithoutCohortInput = {
+    where: cohort_membersScalarWhereInput
+    data: XOR<cohort_membersUpdateManyMutationInput, cohort_membersUncheckedUpdateManyWithoutCohortInput>
+  }
+
+  export type report_foldersUpsertWithWhereUniqueWithoutCohortInput = {
+    where: report_foldersWhereUniqueInput
+    update: XOR<report_foldersUpdateWithoutCohortInput, report_foldersUncheckedUpdateWithoutCohortInput>
+    create: XOR<report_foldersCreateWithoutCohortInput, report_foldersUncheckedCreateWithoutCohortInput>
+  }
+
+  export type report_foldersUpdateWithWhereUniqueWithoutCohortInput = {
+    where: report_foldersWhereUniqueInput
+    data: XOR<report_foldersUpdateWithoutCohortInput, report_foldersUncheckedUpdateWithoutCohortInput>
+  }
+
+  export type report_foldersUpdateManyWithWhereWithoutCohortInput = {
+    where: report_foldersScalarWhereInput
+    data: XOR<report_foldersUpdateManyMutationInput, report_foldersUncheckedUpdateManyWithoutCohortInput>
+  }
+
+  export type usersCreateWithoutCohort_membershipsInput = {
+    id: string
+    username: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    name?: string | null
+    avatar?: string | null
+    training?: string | null
+    angkatan?: string | null
+    phone?: string | null
+    created_at?: Date | string
+    updated_at: Date | string
+    visitor_analytics?: visitor_analyticsCreateNestedManyWithoutUsersInput
+    guestbook_entries?: guestbook_entriesCreateNestedManyWithoutUsersInput
+    reports_reports_assignee_idTousers?: reportsCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
+    reports_reports_author_idTousers?: reportsCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    uploaded_files?: uploaded_filesCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersCreateNestedManyWithoutCreatorInput
+    training_program?: training_programsCreateNestedOneWithoutUsersInput
+  }
+
+  export type usersUncheckedCreateWithoutCohort_membershipsInput = {
+    id: string
+    username: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    name?: string | null
+    avatar?: string | null
+    training?: string | null
+    angkatan?: string | null
+    training_program_id?: string | null
+    phone?: string | null
+    created_at?: Date | string
+    updated_at: Date | string
+    visitor_analytics?: visitor_analyticsUncheckedCreateNestedManyWithoutUsersInput
+    guestbook_entries?: guestbook_entriesUncheckedCreateNestedManyWithoutUsersInput
+    reports_reports_assignee_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_assignee_idTousersInput
+    reports_reports_author_idTousers?: reportsUncheckedCreateNestedManyWithoutUsers_reports_author_idTousersInput
+    uploaded_files?: uploaded_filesUncheckedCreateNestedManyWithoutUsersInput
+    created_folders?: report_foldersUncheckedCreateNestedManyWithoutCreatorInput
+  }
+
+  export type usersCreateOrConnectWithoutCohort_membershipsInput = {
+    where: usersWhereUniqueInput
+    create: XOR<usersCreateWithoutCohort_membershipsInput, usersUncheckedCreateWithoutCohort_membershipsInput>
+  }
+
+  export type training_cohortsCreateWithoutMembersInput = {
+    id?: string
+    name: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    training_program: training_programsCreateNestedOneWithoutCohortsInput
+    folders?: report_foldersCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsUncheckedCreateWithoutMembersInput = {
+    id?: string
+    name: string
+    training_program_id: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+    folders?: report_foldersUncheckedCreateNestedManyWithoutCohortInput
+  }
+
+  export type training_cohortsCreateOrConnectWithoutMembersInput = {
+    where: training_cohortsWhereUniqueInput
+    create: XOR<training_cohortsCreateWithoutMembersInput, training_cohortsUncheckedCreateWithoutMembersInput>
+  }
+
+  export type usersUpsertWithoutCohort_membershipsInput = {
+    update: XOR<usersUpdateWithoutCohort_membershipsInput, usersUncheckedUpdateWithoutCohort_membershipsInput>
+    create: XOR<usersCreateWithoutCohort_membershipsInput, usersUncheckedCreateWithoutCohort_membershipsInput>
+    where?: usersWhereInput
+  }
+
+  export type usersUpdateToOneWithWhereWithoutCohort_membershipsInput = {
+    where?: usersWhereInput
+    data: XOR<usersUpdateWithoutCohort_membershipsInput, usersUncheckedUpdateWithoutCohort_membershipsInput>
+  }
+
+  export type usersUpdateWithoutCohort_membershipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    training?: NullableStringFieldUpdateOperationsInput | string | null
+    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
+    guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
+    reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
+    reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    training_program?: training_programsUpdateOneWithoutUsersNestedInput
+  }
+
+  export type usersUncheckedUpdateWithoutCohort_membershipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    training?: NullableStringFieldUpdateOperationsInput | string | null
+    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
+    guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
+    reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
+    reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+  }
+
+  export type training_cohortsUpsertWithoutMembersInput = {
+    update: XOR<training_cohortsUpdateWithoutMembersInput, training_cohortsUncheckedUpdateWithoutMembersInput>
+    create: XOR<training_cohortsCreateWithoutMembersInput, training_cohortsUncheckedCreateWithoutMembersInput>
+    where?: training_cohortsWhereInput
+  }
+
+  export type training_cohortsUpdateToOneWithWhereWithoutMembersInput = {
+    where?: training_cohortsWhereInput
+    data: XOR<training_cohortsUpdateWithoutMembersInput, training_cohortsUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type training_cohortsUpdateWithoutMembersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    training_program?: training_programsUpdateOneRequiredWithoutCohortsNestedInput
+    folders?: report_foldersUpdateManyWithoutCohortNestedInput
+  }
+
+  export type training_cohortsUncheckedUpdateWithoutMembersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    training_program_id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    folders?: report_foldersUncheckedUpdateManyWithoutCohortNestedInput
   }
 
   export type uploaded_filesCreateManyReportsInput = {
@@ -16200,19 +21475,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type collectionsCreateManyUsersInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    is_public?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
   export type visitor_analyticsCreateManyUsersInput = {
     id: string
     ip_address?: string | null
@@ -16235,21 +21497,6 @@ export namespace Prisma {
     updated_at: Date | string
   }
 
-  export type limited_collectionsCreateManyUsersInput = {
-    id: string
-    title: string
-    description?: string | null
-    content: string
-    image_url?: string | null
-    category?: string | null
-    tags?: string | null
-    max_access?: number
-    current_access?: number
-    is_active?: boolean
-    created_at?: Date | string
-    updated_at: Date | string
-  }
-
   export type reportsCreateManyUsers_reports_assignee_idTousersInput = {
     id: string
     title: string
@@ -16259,6 +21506,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     author_id: string
     feedback?: string | null
     verified_at?: Date | string | null
@@ -16276,6 +21527,10 @@ export namespace Prisma {
     status?: $Enums.ReportStatus
     category?: string | null
     priority?: $Enums.Priority
+    is_public?: boolean
+    max_access?: number | null
+    current_access?: number | null
+    tags?: string | null
     assignee_id?: string | null
     feedback?: string | null
     verified_at?: Date | string | null
@@ -16304,49 +21559,21 @@ export namespace Prisma {
     id?: string
     year: string
     batch: string
+    report_type: string
     description?: string | null
+    training_program_id?: string | null
+    cohort_id?: string | null
     is_active?: boolean
     created_at?: Date | string
     updated_at?: Date | string
   }
 
-  export type collectionsUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    is_public?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type collectionsUncheckedUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    is_public?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type collectionsUncheckedUpdateManyWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    is_public?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type cohort_membersCreateManyUserInput = {
+    id?: string
+    cohort_id: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
   }
 
   export type visitor_analyticsUpdateWithoutUsersInput = {
@@ -16415,51 +21642,6 @@ export namespace Prisma {
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type limited_collectionsUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    max_access?: IntFieldUpdateOperationsInput | number
-    current_access?: IntFieldUpdateOperationsInput | number
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type limited_collectionsUncheckedUpdateWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    max_access?: IntFieldUpdateOperationsInput | number
-    current_access?: IntFieldUpdateOperationsInput | number
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type limited_collectionsUncheckedUpdateManyWithoutUsersInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    content?: StringFieldUpdateOperationsInput | string
-    image_url?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    tags?: NullableStringFieldUpdateOperationsInput | string | null
-    max_access?: IntFieldUpdateOperationsInput | number
-    current_access?: IntFieldUpdateOperationsInput | number
-    is_active?: BoolFieldUpdateOperationsInput | boolean
-    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
-    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type reportsUpdateWithoutUsers_reports_assignee_idTousersInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -16469,6 +21651,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejected_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16487,6 +21673,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     author_id?: StringFieldUpdateOperationsInput | string
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16505,6 +21695,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     author_id?: StringFieldUpdateOperationsInput | string
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16522,6 +21716,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     rejected_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16540,6 +21738,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     assignee_id?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16558,6 +21760,10 @@ export namespace Prisma {
     status?: EnumReportStatusFieldUpdateOperationsInput | $Enums.ReportStatus
     category?: NullableStringFieldUpdateOperationsInput | string | null
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    is_public?: BoolFieldUpdateOperationsInput | boolean
+    max_access?: NullableIntFieldUpdateOperationsInput | number | null
+    current_access?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: NullableStringFieldUpdateOperationsInput | string | null
     assignee_id?: NullableStringFieldUpdateOperationsInput | string | null
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
     verified_at?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16618,17 +21824,23 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     year?: StringFieldUpdateOperationsInput | string
     batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    training_program?: training_programsUpdateOneWithoutFoldersNestedInput
+    cohort?: training_cohortsUpdateOneWithoutFoldersNestedInput
   }
 
   export type report_foldersUncheckedUpdateWithoutCreatorInput = {
     id?: StringFieldUpdateOperationsInput | string
     year?: StringFieldUpdateOperationsInput | string
     batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
+    cohort_id?: NullableStringFieldUpdateOperationsInput | string | null
     is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16638,7 +21850,308 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     year?: StringFieldUpdateOperationsInput | string
     batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
+    cohort_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type cohort_membersUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    cohort?: training_cohortsUpdateOneRequiredWithoutMembersNestedInput
+  }
+
+  export type cohort_membersUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    cohort_id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type cohort_membersUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    cohort_id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type usersCreateManyTraining_programInput = {
+    id: string
+    username: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    name?: string | null
+    avatar?: string | null
+    training?: string | null
+    angkatan?: string | null
+    phone?: string | null
+    created_at?: Date | string
+    updated_at: Date | string
+  }
+
+  export type training_cohortsCreateManyTraining_programInput = {
+    id?: string
+    name: string
+    year: string
+    start_date?: Date | string | null
+    end_date?: Date | string | null
+    max_participants?: number | null
+    current_participants?: number
+    status?: $Enums.CohortStatus
+    description?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type report_foldersCreateManyTraining_programInput = {
+    id?: string
+    year: string
+    batch: string
+    report_type: string
+    description?: string | null
+    created_by: string
+    cohort_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type usersUpdateWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    training?: NullableStringFieldUpdateOperationsInput | string | null
+    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    visitor_analytics?: visitor_analyticsUpdateManyWithoutUsersNestedInput
+    guestbook_entries?: guestbook_entriesUpdateManyWithoutUsersNestedInput
+    reports_reports_assignee_idTousers?: reportsUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
+    reports_reports_author_idTousers?: reportsUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    uploaded_files?: uploaded_filesUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUpdateManyWithoutUserNestedInput
+  }
+
+  export type usersUncheckedUpdateWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    training?: NullableStringFieldUpdateOperationsInput | string | null
+    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    visitor_analytics?: visitor_analyticsUncheckedUpdateManyWithoutUsersNestedInput
+    guestbook_entries?: guestbook_entriesUncheckedUpdateManyWithoutUsersNestedInput
+    reports_reports_assignee_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_assignee_idTousersNestedInput
+    reports_reports_author_idTousers?: reportsUncheckedUpdateManyWithoutUsers_reports_author_idTousersNestedInput
+    uploaded_files?: uploaded_filesUncheckedUpdateManyWithoutUsersNestedInput
+    created_folders?: report_foldersUncheckedUpdateManyWithoutCreatorNestedInput
+    cohort_memberships?: cohort_membersUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type usersUncheckedUpdateManyWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    training?: NullableStringFieldUpdateOperationsInput | string | null
+    angkatan?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type training_cohortsUpdateWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: cohort_membersUpdateManyWithoutCohortNestedInput
+    folders?: report_foldersUpdateManyWithoutCohortNestedInput
+  }
+
+  export type training_cohortsUncheckedUpdateWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: cohort_membersUncheckedUpdateManyWithoutCohortNestedInput
+    folders?: report_foldersUncheckedUpdateManyWithoutCohortNestedInput
+  }
+
+  export type training_cohortsUncheckedUpdateManyWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    start_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    end_date?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    max_participants?: NullableIntFieldUpdateOperationsInput | number | null
+    current_participants?: IntFieldUpdateOperationsInput | number
+    status?: EnumCohortStatusFieldUpdateOperationsInput | $Enums.CohortStatus
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersUpdateWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: usersUpdateOneRequiredWithoutCreated_foldersNestedInput
+    cohort?: training_cohortsUpdateOneWithoutFoldersNestedInput
+  }
+
+  export type report_foldersUncheckedUpdateWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: StringFieldUpdateOperationsInput | string
+    cohort_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersUncheckedUpdateManyWithoutTraining_programInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: StringFieldUpdateOperationsInput | string
+    cohort_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type cohort_membersCreateManyCohortInput = {
+    id?: string
+    user_id: string
+    joined_at?: Date | string
+    status?: $Enums.MemberStatus
+    notes?: string | null
+  }
+
+  export type report_foldersCreateManyCohortInput = {
+    id?: string
+    year: string
+    batch: string
+    report_type: string
+    description?: string | null
+    created_by: string
+    training_program_id?: string | null
+    is_active?: boolean
+    created_at?: Date | string
+    updated_at?: Date | string
+  }
+
+  export type cohort_membersUpdateWithoutCohortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: usersUpdateOneRequiredWithoutCohort_membershipsNestedInput
+  }
+
+  export type cohort_membersUncheckedUpdateWithoutCohortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type cohort_membersUncheckedUpdateManyWithoutCohortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    user_id?: StringFieldUpdateOperationsInput | string
+    joined_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumMemberStatusFieldUpdateOperationsInput | $Enums.MemberStatus
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type report_foldersUpdateWithoutCohortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    creator?: usersUpdateOneRequiredWithoutCreated_foldersNestedInput
+    training_program?: training_programsUpdateOneWithoutFoldersNestedInput
+  }
+
+  export type report_foldersUncheckedUpdateWithoutCohortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: StringFieldUpdateOperationsInput | string
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
+    is_active?: BoolFieldUpdateOperationsInput | boolean
+    created_at?: DateTimeFieldUpdateOperationsInput | Date | string
+    updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type report_foldersUncheckedUpdateManyWithoutCohortInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    year?: StringFieldUpdateOperationsInput | string
+    batch?: StringFieldUpdateOperationsInput | string
+    report_type?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    created_by?: StringFieldUpdateOperationsInput | string
+    training_program_id?: NullableStringFieldUpdateOperationsInput | string | null
     is_active?: BoolFieldUpdateOperationsInput | boolean
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
