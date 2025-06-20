@@ -8,8 +8,23 @@ const publicRoutes = ["/", "/login", "/register", "/guestbook", "/public-collect
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // SECURITY: Enhanced file protection with logging and rate limiting
+  // ✅ PERBAIKAN: Enhanced file protection with better cover image handling
   if (pathname.startsWith("/uploads/")) {
+    // Special handling for cover images
+    if (pathname.startsWith("/uploads/covers/")) {
+      // Allow direct access to cover images with minimal restrictions
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
+      const hasImageExtension = imageExtensions.some(ext =>
+        pathname.toLowerCase().endsWith(ext)
+      )
+
+      if (hasImageExtension) {
+        console.log(`🖼️ Cover image request allowed: ${pathname}`)
+        return NextResponse.next()
+      }
+    }
+
+    // For other uploads, use file protection
     const protectionResponse = await FileProtectionMiddleware.protectFileAccess(request)
     if (protectionResponse) {
       return protectionResponse

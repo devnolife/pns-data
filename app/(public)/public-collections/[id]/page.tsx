@@ -249,6 +249,14 @@ export default function PublicCollectionDetailPage() {
                         alt={`Cover of ${report.title}`}
                         className="w-full max-h-80 object-cover"
                         onError={(e) => {
+                          // Enhanced debugging for cover image errors
+                          console.log(`❌ Cover image failed to load:`, {
+                            src: e.currentTarget.src,
+                            reportId: report.id,
+                            reportTitle: report.title,
+                            coverUrl: report.cover_image_url
+                          })
+
                           // Smart fallback logic
                           const img = e.currentTarget
                           if (!img.dataset.retryCount) {
@@ -256,17 +264,28 @@ export default function PublicCollectionDetailPage() {
                             // Try with different year path
                             const reportYear = new Date(report.created_at).getFullYear()
                             const filename = img.src.split('/').pop()
-                            img.src = `/uploads/covers/${reportYear}/${filename}`
+                            const newSrc = `/uploads/covers/${reportYear}/${filename}`
+                            console.log(`🔄 Retrying with year path: ${newSrc}`)
+                            img.src = newSrc
                           } else if (img.dataset.retryCount === '1') {
                             img.dataset.retryCount = '2'
                             // Try placeholder
+                            console.log(`🔄 Using placeholder image`)
                             img.src = '/placeholder-cover.svg'
                           } else {
                             // Final fallback - show beautiful gradient with title
+                            console.log(`🔄 Showing fallback design`)
                             img.style.display = 'none'
                             const fallback = img.parentElement?.nextElementSibling as HTMLElement
                             if (fallback) fallback.classList.remove('hidden')
                           }
+                        }}
+                        onLoad={(e) => {
+                          console.log(`✅ Cover image loaded successfully:`, {
+                            src: e.currentTarget.src,
+                            reportId: report.id,
+                            reportTitle: report.title
+                          })
                         }}
                       />
                     </div>

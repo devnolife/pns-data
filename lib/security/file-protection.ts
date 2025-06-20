@@ -125,7 +125,21 @@ export class FileProtectionMiddleware {
       return { suspicious: true, reason: 'Missing or suspicious user agent' }
     }
 
-    // Check for direct access (no referer from our domain)
+    // ✅ PERBAIKAN: More permissive referer check for cover images
+    // Allow direct access to cover images without strict referer validation
+    if (request.nextUrl.pathname.startsWith('/uploads/covers/')) {
+      // For cover images, only block if referer is clearly malicious
+      if (referer && (
+        referer.includes('malicious-site.com') ||
+        referer.includes('spam-site.com') ||
+        referer.includes('hacker-site.com')
+      )) {
+        return { suspicious: true, reason: 'Malicious referer detected' }
+      }
+      return { suspicious: false }
+    }
+
+    // For other files, keep stricter referer check
     if (referer && !referer.includes(request.nextUrl.hostname)) {
       return { suspicious: true, reason: 'External referer detected' }
     }
@@ -141,6 +155,18 @@ export class FileProtectionMiddleware {
     // Only protect uploads directory
     if (!pathname.startsWith('/uploads/')) {
       return null // Let other middleware handle
+    }
+
+    // ✅ PERBAIKAN: Enhanced logging for cover image debugging
+    if (pathname.startsWith('/uploads/covers/')) {
+      console.log(`🖼️ Cover image access attempt:`, {
+        pathname,
+        ip,
+        userAgent: request.headers.get('user-agent'),
+        referer: request.headers.get('referer'),
+        host: request.nextUrl.hostname,
+        protocol: request.nextUrl.protocol
+      })
     }
 
     // Check rate limits
@@ -182,8 +208,11 @@ export class FileProtectionMiddleware {
       )
 
       if (hasImageExtension) {
+        console.log(`✅ Cover image access allowed: ${pathname}`)
         this.logAccess(request, false, 'Cover image access allowed')
         return null // Allow access to cover images
+      } else {
+        console.log(`❌ Cover image access denied - not an image file: ${pathname}`)
       }
     }
 

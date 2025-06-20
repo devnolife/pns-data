@@ -19,6 +19,31 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['prisma']
   },
+  async headers() {
+    return [
+      {
+        source: '/uploads/covers/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: '*',
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, OPTIONS',
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type',
+          },
+        ],
+      },
+    ]
+  },
   webpack: (config, { isServer, dev }) => {
     // Configure watchOptions to ignore system directories and fix Windows permission issues
     config.watchOptions = {
