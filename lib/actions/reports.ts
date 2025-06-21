@@ -601,11 +601,21 @@ export async function deleteUploadedFileAction(fileId: string) {
       }
     }
 
-    // Check if user owns the file
+    // Check if user owns the file and get associated report info
     const file = await prisma.uploaded_files.findFirst({
       where: {
         id: fileId,
         author_id: currentUser.id
+      },
+      include: {
+        reports: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            author_id: true
+          }
+        }
       }
     })
 
@@ -616,17 +626,66 @@ export async function deleteUploadedFileAction(fileId: string) {
       }
     }
 
-    // Delete file from database
-    await prisma.uploaded_files.delete({
-      where: { id: fileId }
+    // Use transaction to ensure data consistency
+    const result = await prisma.$transaction(async (tx) => {
+      // Delete the file first
+      await tx.uploaded_files.delete({
+        where: { id: fileId }
+      })
+
+      let reportDeleted = false
+      let reportTitle = ''
+
+      // If file is associated with a report, check if we should delete the report too
+      if (file.report_id && file.reports) {
+        // Check if this was the only file in the report
+        const remainingFiles = await tx.uploaded_files.count({
+          where: { report_id: file.report_id }
+        })
+
+        // If no files remain and the report is still in PENDING status, delete the report
+        // This prevents empty reports from appearing in admin panel
+        if (remainingFiles === 0 && file.reports.status === 'PENDING') {
+          await tx.reports.delete({
+            where: { id: file.report_id }
+          })
+          reportDeleted = true
+          reportTitle = file.reports.title
+        }
+      }
+
+      return { reportDeleted, reportTitle }
     })
 
-    // TODO: Also delete physical file from filesystem
-    // This would require additional file system operations
+    // Delete physical file from filesystem
+    try {
+      const fs = require('fs').promises
+      const path = require('path')
+      const publicPath = path.join(process.cwd(), 'public')
+      const fullFilePath = path.join(publicPath, file.file_path)
+
+      // Check if file exists and delete it
+      try {
+        await fs.access(fullFilePath)
+        await fs.unlink(fullFilePath)
+        console.log(`✅ Physical file deleted: ${fullFilePath}`)
+      } catch (fsError) {
+        console.log(`⚠️ Physical file not found or already deleted: ${fullFilePath}`)
+      }
+    } catch (fsError) {
+      console.error('Error deleting physical file:', fsError)
+      // Don't fail the entire operation if physical file deletion fails
+    }
+
+    let message = 'File berhasil dihapus'
+    if (result.reportDeleted) {
+      message += ` dan laporan "${result.reportTitle}" juga dihapus karena tidak memiliki file lagi`
+    }
 
     return {
       success: true,
-      message: 'File berhasil dihapus'
+      message: message,
+      reportDeleted: result.reportDeleted
     }
   } catch (error) {
     console.error('Delete uploaded file error:', error)

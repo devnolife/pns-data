@@ -4,11 +4,12 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { FolderOpen, Upload, User, Activity, TrendingUp, Clock, Plus, FileText, MessageSquare, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
+import { FolderOpen, Upload, User, Activity, TrendingUp, Clock, Plus, FileText, MessageSquare, CheckCircle, AlertCircle, Loader2, RefreshCw } from "lucide-react"
 import { getUserDashboardStatsAction, getUserRecentActivitiesAction } from "@/lib/actions/users"
 import { Badge } from "@/components/ui/badge"
 import { formatDistanceToNow } from "date-fns"
 import { id } from "date-fns/locale"
+import { useDataSync } from "@/hooks/use-data-sync"
 
 interface DashboardStats {
   totalCollections: number
@@ -36,45 +37,60 @@ export default function UserDashboard() {
   const [activities, setActivities] = useState<ActivityItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+
+  const fetchDashboardData = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+
+      const [statsResult, activitiesResult] = await Promise.all([
+        getUserDashboardStatsAction(),
+        getUserRecentActivitiesAction(6)
+      ])
+
+      if (statsResult.error) {
+        setError(statsResult.error)
+        return
+      }
+
+      if (activitiesResult.error) {
+        setError(activitiesResult.error)
+        return
+      }
+
+      if (statsResult.success && statsResult.data) {
+        setStats(statsResult.data.stats)
+      }
+
+      if (activitiesResult.success && activitiesResult.data) {
+        setActivities(activitiesResult.data)
+      }
+
+      // Update last updated timestamp
+      setLastUpdated(new Date())
+    } catch (err) {
+      console.error('Error fetching dashboard data:', err)
+      setError('Gagal memuat data dashboard')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Use the data sync hook for automatic updates
+  useDataSync({
+    onDataUpdate: fetchDashboardData,
+    refreshInterval: 30000 // 30 seconds
+  })
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setIsLoading(true)
-        setError(null)
-
-        const [statsResult, activitiesResult] = await Promise.all([
-          getUserDashboardStatsAction(),
-          getUserRecentActivitiesAction(6)
-        ])
-
-        if (statsResult.error) {
-          setError(statsResult.error)
-          return
-        }
-
-        if (activitiesResult.error) {
-          setError(activitiesResult.error)
-          return
-        }
-
-        if (statsResult.success && statsResult.data) {
-          setStats(statsResult.data.stats)
-        }
-
-        if (activitiesResult.success && activitiesResult.data) {
-          setActivities(activitiesResult.data)
-        }
-      } catch (err) {
-        console.error('Error fetching dashboard data:', err)
-        setError('Gagal memuat data dashboard')
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
     fetchDashboardData()
   }, [])
+
+  // Function to manually refresh data
+  const refreshData = () => {
+    fetchDashboardData()
+  }
 
   const getActivityIcon = (type: string, action: string) => {
     switch (type) {
@@ -180,6 +196,23 @@ export default function UserDashboard() {
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Kelola koleksi digital Anda, unggah laporan, dan pantau kemajuan Anda dalam satu tempat.
         </p>
+        <div className="flex justify-center">
+          <Button
+            onClick={refreshData}
+            variant="outline"
+            size="sm"
+            disabled={isLoading}
+            className="flex items-center gap-2 hover:bg-blue-50 hover:border-blue-200 transition-colors"
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin text-blue-500' : 'text-gray-500'}`} />
+            {isLoading ? 'Memperbarui...' : 'Perbarui Data'}
+          </Button>
+        </div>
+        {lastUpdated && (
+          <p className="text-xs text-gray-500 text-center mt-2">
+            Terakhir diperbarui: {formatDistanceToNow(lastUpdated, { addSuffix: true, locale: id })}
+          </p>
+        )}
       </div>
 
       {/* Quick Stats */}

@@ -25,6 +25,7 @@ import {
   Zap
 } from "lucide-react"
 import { getUserUploadedFilesAction, deleteUploadedFileAction, getUserFileStatsAction } from "@/lib/actions/reports"
+import { useDataSync } from "@/hooks/use-data-sync"
 
 interface UploadedFile {
   id: string
@@ -65,6 +66,9 @@ export default function MyFilesPage() {
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [yearFilter, setYearFilter] = useState("all")
   const [batchFilter, setBatchFilter] = useState("all")
+
+  // Use the data sync hook
+  const { notifyDataUpdate } = useDataSync()
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -132,8 +136,13 @@ export default function MyFilesPage() {
           title: "Berhasil",
           description: "File berhasil dihapus"
         })
+
+        // Reload local data
         loadFiles()
         loadStats()
+
+        // Notify other pages about data update
+        notifyDataUpdate()
       } else {
         toast({
           title: "Error",

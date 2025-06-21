@@ -42,6 +42,65 @@ export interface ReportFolderData {
   }
 }
 
+// Add this utility function after the imports but before the interfaces
+/**
+ * Utility function to trigger comprehensive data sync notifications
+ * This ensures all relevant pages are updated when folder operations occur
+ */
+export async function triggerDataSyncNotification(type: string, data?: any) {
+  // Revalidate all relevant paths for real-time updates
+  const pathsToRevalidate = [
+    '/dashboard/admin/report-folders',
+    '/dashboard/admin/verify-reports',
+    '/dashboard/admin/manage-users',
+    '/dashboard/admin',
+    '/dashboard/user',
+    '/dashboard/user/my-files',
+    '/dashboard/user/digital-collection',
+    '/dashboard/user/verification-status',
+    '/dashboard/user/upload-report',
+    '/dashboard/collections',
+    '/dashboard/statistics',
+    '/(public)',
+    '/(public)/public-collections',
+    '/api/public-collections',
+    '/api/reports',
+    '/api/admin/reports'
+  ]
+
+  // Use Promise.all for parallel revalidation
+  const revalidationResults = await Promise.all(
+    pathsToRevalidate.map(async (path) => {
+      try {
+        revalidatePath(path)
+        console.log(`✅ Revalidated: ${path}`)
+        return { path, success: true }
+      } catch (error) {
+        console.log(`⚠️ Failed to revalidate: ${path}`, error)
+        return { path, success: false, error }
+      }
+    })
+  )
+
+  const successCount = revalidationResults.filter(r => r.success).length
+  const failureCount = revalidationResults.filter(r => !r.success).length
+
+  console.log(`🔄 Data sync notification completed:`)
+  console.log(`   - Type: ${type}`)
+  console.log(`   - Successful revalidations: ${successCount}/${pathsToRevalidate.length}`)
+  if (failureCount > 0) {
+    console.log(`   - Failed revalidations: ${failureCount}`)
+  }
+
+  return {
+    success: true,
+    revalidatedPaths: successCount,
+    failedPaths: failureCount,
+    type,
+    data
+  }
+}
+
 // Create report folder
 export async function createReportFolderAction(data: {
   reportType: string
@@ -99,7 +158,12 @@ export async function createReportFolderAction(data: {
       }
     })
 
-    revalidatePath('/dashboard/admin/report-folders')
+    // Trigger comprehensive data sync
+    await triggerDataSyncNotification('folder-created', {
+      folderId: reportFolder.id,
+      folderInfo: `${validatedData.year} - Angkatan ${validatedData.batch}`,
+      reportType: validatedData.reportType
+    })
 
     return {
       success: true,
@@ -281,7 +345,13 @@ export async function updateReportFolderAction(data: {
       }
     })
 
-    revalidatePath('/dashboard/admin/report-folders')
+    // Trigger comprehensive data sync
+    await triggerDataSyncNotification('folder-updated', {
+      folderId: reportFolder.id,
+      folderInfo: `${reportFolder.year} - Angkatan ${reportFolder.batch}`,
+      reportType: reportFolder.report_type,
+      isActive: reportFolder.is_active
+    })
 
     return {
       success: true,
@@ -314,7 +384,7 @@ export async function updateReportFolderAction(data: {
   }
 }
 
-// Delete report folder
+// Delete report folder with comprehensive cleanup
 export async function deleteReportFolderAction(id: string) {
   try {
     const currentUser = await getCurrentUser()
@@ -339,46 +409,109 @@ export async function deleteReportFolderAction(id: string) {
       }
     }
 
-    // Get all files related to this folder by year and batch
-    const [relatedReports, relatedCollections, relatedFiles] = await Promise.all([
-      // Get reports by matching users with training year and angkatan
+    console.log(`🗑️ Starting comprehensive deletion for folder: ${existingFolder.year} - Angkatan ${existingFolder.batch}`)
+
+    // Get all related data with more comprehensive queries
+    const [relatedReports, relatedFiles, relatedUsers] = await Promise.all([
+      // Get reports by matching users with training year and angkatan OR direct year/batch match
       prisma.reports.findMany({
         where: {
-          users_reports_author_idTousers: {
-            training: existingFolder.year,
-            angkatan: existingFolder.batch
-          }
+          OR: [
+            // Match by user's training and angkatan
+            {
+              users_reports_author_idTousers: {
+                training: existingFolder.year,
+                angkatan: existingFolder.batch
+              }
+            },
+            // Match by report category and files year/batch
+            {
+              files: {
+                some: {
+                  AND: [
+                    { year: existingFolder.year },
+                    { batch: existingFolder.batch }
+                  ]
+                }
+              }
+            }
+          ]
         },
         include: {
           files: true,
-          users_reports_author_idTousers: true
-        }
-      }),
-      // Get collections by matching users with training year and angkatan
-      prisma.collections.findMany({
-        where: {
-          users: {
-            training: existingFolder.year,
-            angkatan: existingFolder.batch
+          users_reports_author_idTousers: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              training: true,
+              angkatan: true
+            }
           }
-        },
-        include: {
-          users: true
         }
       }),
-      // Get uploaded files by year and batch
+      // Get uploaded files by year and batch (both exact match and user match)
       prisma.uploaded_files.findMany({
         where: {
-          AND: [
-            { year: existingFolder.year },
-            { batch: existingFolder.batch }
+          OR: [
+            // Direct year/batch match
+            {
+              AND: [
+                { year: existingFolder.year },
+                { batch: existingFolder.batch }
+              ]
+            },
+            // User training match
+            {
+              users: {
+                training: existingFolder.year,
+                angkatan: existingFolder.batch
+              }
+            }
           ]
+        },
+        include: {
+          users: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              training: true,
+              angkatan: true
+            }
+          },
+          reports: {
+            select: {
+              id: true,
+              title: true,
+              status: true
+            }
+          }
+        }
+      }),
+      // Get affected users for notification
+      prisma.users.findMany({
+        where: {
+          training: existingFolder.year,
+          angkatan: existingFolder.batch
+        },
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true
         }
       })
     ])
 
-    console.log(`🗑️ Preparing to delete folder: ${existingFolder.year} - Angkatan ${existingFolder.batch}`)
-    console.log(`📊 Found: ${relatedReports.length} reports, ${relatedCollections.length} collections, ${relatedFiles.length} files`)
+    // Separate public reports (collections) from regular reports
+    const publicReports = relatedReports.filter(report => report.is_public)
+    const privateReports = relatedReports.filter(report => !report.is_public)
+
+    console.log(`📊 Comprehensive scan found:`)
+    console.log(`   - ${relatedReports.length} total reports (${privateReports.length} private, ${publicReports.length} public collections)`)
+    console.log(`   - ${relatedFiles.length} uploaded files`)
+    console.log(`   - ${relatedUsers.length} affected users`)
 
     // Import filesystem utilities
     const fs = require('fs').promises
@@ -415,60 +548,77 @@ export async function deleteReportFolderAction(id: string) {
     let deletedFilesCount = 0
     const publicPath = path.join(process.cwd(), 'public')
 
-    // Delete physical files from uploads
+    // Delete physical files from filesystem
+    console.log(`🗂️ Deleting physical files...`)
     for (const file of relatedFiles) {
-      const fileDir = file.category === 'collection' ? 'collections' : 'reports'
-      const filePath = path.join(publicPath, 'uploads', fileDir, file.year || existingFolder.year, file.batch || existingFolder.batch, file.filename)
+      // Try multiple possible paths
+      const possiblePaths = [
+        // Standard path with category
+        path.join(publicPath, 'uploads', file.category || 'reports', file.year || existingFolder.year, file.batch || existingFolder.batch, file.filename),
+        // Direct file path
+        path.join(publicPath, file.file_path),
+        // Alternative path structure
+        path.join(publicPath, 'uploads', existingFolder.year, existingFolder.batch, file.filename)
+      ]
 
-      if (await safeDeleteFile(filePath)) {
-        deletedFilesCount++
-      }
-    }
-
-    // Also delete files that might be referenced in reports but not in uploaded_files table
-    for (const report of relatedReports) {
-      if (report.files && report.files.length > 0) {
-        for (const file of report.files) {
-          const fileDir = file.category === 'collection' ? 'collections' : 'reports'
-          const filePath = path.join(publicPath, 'uploads', fileDir, file.year || existingFolder.year, file.batch || existingFolder.batch, file.filename)
-
-          if (await safeDeleteFile(filePath)) {
-            deletedFilesCount++
-          }
+      for (const filePath of possiblePaths) {
+        if (await safeDeleteFile(filePath)) {
+          deletedFilesCount++
+          break // Exit loop once file is found and deleted
         }
       }
     }
 
-    // Delete directories if empty
-    const reportsDir = path.join(publicPath, 'uploads', 'reports', existingFolder.year, existingFolder.batch)
-    const collectionsDir = path.join(publicPath, 'uploads', 'collections', existingFolder.year, existingFolder.batch)
+    // Also delete cover images if they exist
+    console.log(`🖼️ Deleting cover images...`)
+    for (const report of relatedReports) {
+      if (report.cover_image_url) {
+        const coverPath = path.join(publicPath, report.cover_image_url)
+        await safeDeleteFile(coverPath)
+      }
+    }
 
-    await safeDeleteDir(reportsDir)
-    await safeDeleteDir(collectionsDir)
+    // Delete directories
+    console.log(`📁 Cleaning up directories...`)
+    const dirsToClean = [
+      path.join(publicPath, 'uploads', 'reports', existingFolder.year, existingFolder.batch),
+      path.join(publicPath, 'uploads', 'collections', existingFolder.year, existingFolder.batch),
+      path.join(publicPath, 'uploads', existingFolder.year, existingFolder.batch),
+      path.join(publicPath, 'uploads', 'covers', existingFolder.year, existingFolder.batch)
+    ]
 
-    // Delete from database using transaction
-    await prisma.$transaction(async (tx) => {
-      // Delete uploaded files
-      await tx.uploaded_files.deleteMany({
+    for (const dir of dirsToClean) {
+      await safeDeleteDir(dir)
+    }
+
+    // Delete from database using comprehensive transaction
+    console.log(`💾 Deleting database records...`)
+    const deletionResults = await prisma.$transaction(async (tx) => {
+      // Delete uploaded files first (to avoid foreign key constraints)
+      const deletedFiles = await tx.uploaded_files.deleteMany({
         where: {
-          AND: [
-            { year: existingFolder.year },
-            { batch: existingFolder.batch }
+          OR: [
+            {
+              AND: [
+                { year: existingFolder.year },
+                { batch: existingFolder.batch }
+              ]
+            },
+            {
+              users: {
+                training: existingFolder.year,
+                angkatan: existingFolder.batch
+              }
+            }
           ]
         }
       })
 
-      // Delete reports (files will be cascade deleted)
-      await tx.reports.deleteMany({
+      // Delete reports (cascade will handle files relationship)
+      // This includes both private reports and public collections
+      const deletedReports = await tx.reports.deleteMany({
         where: {
           id: { in: relatedReports.map(r => r.id) }
-        }
-      })
-
-      // Delete collections
-      await tx.collections.deleteMany({
-        where: {
-          id: { in: relatedCollections.map(c => c.id) }
         }
       })
 
@@ -476,26 +626,60 @@ export async function deleteReportFolderAction(id: string) {
       await tx.report_folders.delete({
         where: { id }
       })
+
+      return {
+        deletedFiles: deletedFiles.count,
+        deletedReports: deletedReports.count,
+        deletedPublicReports: publicReports.length,
+        deletedPrivateReports: privateReports.length
+      }
     })
 
-    revalidatePath('/dashboard/admin/report-folders')
-    revalidatePath('/dashboard/user/digital-collection')
+    // Trigger comprehensive real-time updates across the application
+    console.log(`🔄 Triggering comprehensive real-time updates...`)
+
+    const syncResult = await triggerDataSyncNotification('folder-deleted', {
+      folderId: id,
+      folderInfo: `${existingFolder.year} - Angkatan ${existingFolder.batch}`,
+      affectedUsers: relatedUsers.length,
+      deletedReports: deletionResults.deletedReports,
+      deletedFiles: deletionResults.deletedFiles,
+      deletedPublicReports: deletionResults.deletedPublicReports,
+      deletedPrivateReports: deletionResults.deletedPrivateReports
+    })
+
+    const successMessage = `🗑️ Folder ${existingFolder.year} - Angkatan ${existingFolder.batch} berhasil dihapus secara menyeluruh!
+    📊 Detail penghapusan:
+    • ${deletedFilesCount} file fisik dihapus
+    • ${deletionResults.deletedReports} laporan dihapus dari database
+    • ${deletionResults.deletedPrivateReports} laporan privat dihapus
+    • ${deletionResults.deletedPublicReports} koleksi publik dihapus
+    • ${deletionResults.deletedFiles} record file dihapus
+    • ${relatedUsers.length} user terpengaruh`
+
+    console.log(`✅ Folder deletion completed successfully`)
+    console.log(successMessage)
 
     return {
       success: true,
-      message: `Folder ${existingFolder.year} - Angkatan ${existingFolder.batch} berhasil dihapus beserta ${deletedFilesCount} file, ${relatedReports.length} laporan, dan ${relatedCollections.length} koleksi`,
+      message: successMessage,
       details: {
-        deletedFiles: deletedFilesCount,
-        deletedReports: relatedReports.length,
-        deletedCollections: relatedCollections.length,
-        folderInfo: `${existingFolder.year} - Angkatan ${existingFolder.batch}`
+        deletedPhysicalFiles: deletedFilesCount,
+        deletedReports: deletionResults.deletedReports,
+        deletedPrivateReports: deletionResults.deletedPrivateReports,
+        deletedPublicReports: deletionResults.deletedPublicReports,
+        deletedFileRecords: deletionResults.deletedFiles,
+        affectedUsers: relatedUsers.length,
+        folderInfo: `${existingFolder.year} - Angkatan ${existingFolder.batch}`,
+        revalidatedPaths: syncResult.revalidatedPaths,
+        failedPaths: syncResult.failedPaths
       }
     }
   } catch (error) {
-    console.error('Delete report folder error:', error)
+    console.error('❌ Delete report folder error:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Gagal menghapus folder'
+      error: error instanceof Error ? error.message : 'Gagal menghapus folder secara menyeluruh'
     }
   }
 }

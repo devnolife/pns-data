@@ -12,10 +12,12 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Progress } from "@/components/ui/progress"
 import { useToast } from "@/hooks/use-toast"
-import { Upload, File, X, Loader2, Sparkles, Star, Zap, CloudUpload, FileText, CheckCircle, ImageIcon } from "lucide-react"
+import { Upload, File, X, Loader2, Sparkles, Star, Zap, CloudUpload, FileText, CheckCircle, ImageIcon, Clock, BarChart3 } from "lucide-react"
 import { createReportWithFilesAction } from "@/lib/actions/reports"
 import { getAvailableYearBatchCombinationsAction } from "@/lib/actions/report-folders"
+import { useDataSync } from "@/hooks/use-data-sync"
 
 interface UploadedFile {
   id: string
@@ -31,10 +33,20 @@ interface AvailableYearBatch {
   folders: { year: string; batch: string; description: string | null }[]
 }
 
+interface UploadProgress {
+  fileName: string
+  progress: number
+  status: 'uploading' | 'completed' | 'error'
+  error?: string
+}
+
 export default function UploadReportPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
+
+  // Use the data sync hook
+  const { notifyDataUpdate } = useDataSync()
 
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
@@ -53,6 +65,8 @@ export default function UploadReportPage() {
   const [error, setError] = useState("")
   const [availableYearBatch, setAvailableYearBatch] = useState<AvailableYearBatch | null>(null)
   const [loadingYearBatch, setLoadingYearBatch] = useState(true)
+  const [uploadProgress, setUploadProgress] = useState<UploadProgress[]>([])
+  const [totalUploadProgress, setTotalUploadProgress] = useState(0)
 
   // Load available year/batch combinations on component mount
   useEffect(() => {
@@ -106,6 +120,14 @@ export default function UploadReportPage() {
     return batchesForYear
   }
 
+  // Validate file size (20MB limit)
+  const validateFileSize = (file: File, maxSize: number = 20 * 1024 * 1024) => {
+    if (file.size > maxSize) {
+      return `File ${file.name} terlalu besar. Maksimal ${(maxSize / 1024 / 1024).toFixed(0)}MB`
+    }
+    return null
+  }
+
   if (!isAuthenticated) {
     router.push("/login")
     return null
@@ -126,14 +148,54 @@ export default function UploadReportPage() {
 
     if (e.dataTransfer.files) {
       const newFiles = Array.from(e.dataTransfer.files)
-      setFiles((prev) => [...prev, ...newFiles])
+
+      // Validate file sizes
+      const validationErrors: string[] = []
+      const validFiles: File[] = []
+
+      newFiles.forEach(file => {
+        const sizeError = validateFileSize(file)
+        if (sizeError) {
+          validationErrors.push(sizeError)
+        } else {
+          validFiles.push(file)
+        }
+      })
+
+      if (validationErrors.length > 0) {
+        setError(validationErrors.join('\n'))
+        return
+      }
+
+      setFiles((prev) => [...prev, ...validFiles])
+      setError("") // Clear any previous errors
     }
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files)
-      setFiles((prev) => [...prev, ...newFiles])
+
+      // Validate file sizes
+      const validationErrors: string[] = []
+      const validFiles: File[] = []
+
+      newFiles.forEach(file => {
+        const sizeError = validateFileSize(file)
+        if (sizeError) {
+          validationErrors.push(sizeError)
+        } else {
+          validFiles.push(file)
+        }
+      })
+
+      if (validationErrors.length > 0) {
+        setError(validationErrors.join('\n'))
+        return
+      }
+
+      setFiles((prev) => [...prev, ...validFiles])
+      setError("") // Clear any previous errors
     }
   }
 
@@ -145,7 +207,18 @@ export default function UploadReportPage() {
     if (files.length === 0) return []
 
     setUploadingFiles(true)
+    setUploadProgress([])
+    setTotalUploadProgress(0)
+
     try {
+      // Initialize progress tracking for each file
+      const initialProgress: UploadProgress[] = files.map(file => ({
+        fileName: file.name,
+        progress: 0,
+        status: 'uploading'
+      }))
+      setUploadProgress(initialProgress)
+
       const formData = new FormData()
 
       files.forEach((file) => {
@@ -156,19 +229,69 @@ export default function UploadReportPage() {
       formData.append('year', year)
       formData.append('batch', batch)
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
+      // Create XMLHttpRequest for progress tracking
+      return new Promise<string[]>((resolve, reject) => {
+        const xhr = new XMLHttpRequest()
+
+        xhr.upload.addEventListener('progress', (event) => {
+          if (event.lengthComputable) {
+            const progress = Math.round((event.loaded / event.total) * 100)
+            setTotalUploadProgress(progress)
+
+            // Update individual file progress (simplified - all files progress together)
+            setUploadProgress(prev => prev.map(item => ({
+              ...item,
+              progress: progress
+            })))
+          }
+        })
+
+        xhr.addEventListener('load', () => {
+          if (xhr.status === 200) {
+            try {
+              const result = JSON.parse(xhr.responseText)
+              if (result.success) {
+                setUploadedFiles(result.files)
+                setUploadProgress(prev => prev.map(item => ({
+                  ...item,
+                  progress: 100,
+                  status: 'completed'
+                })))
+                resolve(result.files.map((file: any) => file.id))
+              } else {
+                throw new Error(result.error || 'Upload failed')
+              }
+            } catch (error) {
+              setUploadProgress(prev => prev.map(item => ({
+                ...item,
+                status: 'error',
+                error: 'Upload failed'
+              })))
+              reject(error)
+            }
+          } else {
+            setUploadProgress(prev => prev.map(item => ({
+              ...item,
+              status: 'error',
+              error: `HTTP ${xhr.status}`
+            })))
+            reject(new Error(`HTTP ${xhr.status}`))
+          }
+        })
+
+        xhr.addEventListener('error', () => {
+          setUploadProgress(prev => prev.map(item => ({
+            ...item,
+            status: 'error',
+            error: 'Network error'
+          })))
+          reject(new Error('Network error'))
+        })
+
+        xhr.open('POST', '/api/upload')
+        xhr.send(formData)
       })
 
-      const result = await response.json()
-
-      if (!result.success) {
-        throw new Error(result.error || 'Upload failed')
-      }
-
-      setUploadedFiles(result.files)
-      return result.files.map((file: any) => file.id)
     } catch (error) {
       console.error('File upload error:', error)
       throw error
@@ -189,8 +312,9 @@ export default function UploadReportPage() {
       }
 
       // Validasi file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setError("Ukuran file sampul maksimal 5MB! 📏")
+      const sizeError = validateFileSize(file, 5 * 1024 * 1024)
+      if (sizeError) {
+        setError(sizeError)
         return
       }
 
@@ -228,8 +352,9 @@ export default function UploadReportPage() {
         return
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        setError("Ukuran file sampul maksimal 5MB! 📏")
+      const sizeError = validateFileSize(file, 5 * 1024 * 1024)
+      if (sizeError) {
+        setError(sizeError)
         return
       }
 
@@ -368,6 +493,11 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
       setCoverImage(null)
       setCoverImagePreview(null)
       setUploadedFiles([])
+      setUploadProgress([])
+      setTotalUploadProgress(0)
+
+      // Notify other pages about data update
+      notifyDataUpdate()
 
       // Redirect to dashboard after a short delay to let user see the toast
       setTimeout(() => {
@@ -462,10 +592,11 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                     <Sparkles className="h-5 w-5 text-pink-300 animate-bounce" />
                   </div>
                 </div>
-              </CardHeader>              <CardContent className="p-6 space-y-6">
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
                 {error && (
                   <Alert className="border-red-200 bg-red-50/80 backdrop-blur-sm rounded-xl">
-                    <AlertDescription className="text-red-700 font-medium">{error}</AlertDescription>
+                    <AlertDescription className="text-red-700 font-medium whitespace-pre-line">{error}</AlertDescription>
                   </Alert>
                 )}
 
@@ -517,7 +648,8 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                         <SelectItem value="Latsar CPNS">🎓 Latsar CPNS</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>                  <div className="space-y-2">
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="year" className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                       📅 Tahun Pelatihan
                     </Label>
@@ -534,7 +666,8 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                       </SelectContent>
                     </Select>
                   </div>
-                </div>                {/* Batch Selection */}
+                </div>
+                {/* Batch Selection */}
                 <div className="space-y-2">
                   <Label htmlFor="batch" className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                     👥 Angkatan
@@ -745,8 +878,49 @@ File yang diunggah: ${files.map(f => f.name).join(', ')}`
                   </div>
                 </div>
 
+                {/* Upload Progress */}
+                {uploadProgress.length > 0 && (
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                      <BarChart3 className="h-4 w-4" />
+                      Progress Upload ({totalUploadProgress}%)
+                    </Label>
+                    <div className="space-y-2">
+                      {uploadProgress.map((item, index) => (
+                        <div key={index} className="bg-white/50 backdrop-blur-sm border border-white/20 rounded-xl p-3">
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className="text-lg">{getFileIcon(item.fileName)}</div>
+                              <div>
+                                <p className="font-semibold text-gray-800 text-sm truncate max-w-48">{item.fileName}</p>
+                                <p className="text-xs text-gray-600">{formatFileSize(files[index]?.size || 0)}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {item.status === 'uploading' && (
+                                <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
+                              )}
+                              {item.status === 'completed' && (
+                                <CheckCircle className="h-4 w-4 text-green-500" />
+                              )}
+                              {item.status === 'error' && (
+                                <X className="h-4 w-4 text-red-500" />
+                              )}
+                              <span className="text-xs font-medium text-gray-600">{item.progress}%</span>
+                            </div>
+                          </div>
+                          <Progress value={item.progress} className="h-2" />
+                          {item.error && (
+                            <p className="text-xs text-red-600 mt-1">{item.error}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Selected Files */}
-                {files.length > 0 && (
+                {files.length > 0 && uploadProgress.length === 0 && (
                   <div className="space-y-3">
                     <Label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                       📋 File yang Dipilih ({files.length})

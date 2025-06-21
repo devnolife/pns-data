@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useDataSync } from "@/hooks/use-data-sync"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,9 +33,7 @@ import {
   Rocket,
   Filter,
   Plus,
-  Settings,
   TrendingUp,
-  Activity,
   GraduationCap,
   UserPlus,
   Clock,
@@ -117,9 +116,12 @@ export default function ReportFoldersPage() {
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isCreateCohortDialogOpen, setIsCreateCohortDialogOpen] = useState(false)
   const [selectedFolder, setSelectedFolder] = useState<ReportFolderData | null>(null)
+  const [folderToDelete, setFolderToDelete] = useState<ReportFolderData | null>(null)
+  const [deleteConfirmation, setDeleteConfirmation] = useState("")
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<string | null>(null)
+  const [showEditForm, setShowEditForm] = useState<string | null>(null)
   const [formLoading, setFormLoading] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
 
@@ -146,6 +148,14 @@ export default function ReportFoldersPage() {
   })
 
   const { toast } = useToast()
+
+  // Add data sync for real-time updates
+  const { notifyDataUpdate } = useDataSync({
+    onDataUpdate: () => {
+      console.log('📡 Data sync triggered - refreshing folder data')
+      loadAllData(false)
+    }
+  })
 
   // Generate year options (current year and next 2 years, plus previous 8 years)
   const currentYear = new Date().getFullYear()
@@ -290,6 +300,10 @@ export default function ReportFoldersPage() {
           batch: "",
           description: ""
         })
+
+        // Trigger data sync notification for real-time updates
+        notifyDataUpdate()
+
         await loadAllData()
       } else {
         toast({
@@ -514,8 +528,12 @@ export default function ReportFoldersPage() {
           description: `${result.message} 🚀`,
           duration: 4000
         })
-        setIsEditDialogOpen(false)
+        setShowEditForm(null)
         setSelectedFolder(null)
+
+        // Trigger data sync notification for real-time updates
+        notifyDataUpdate()
+
         await loadAllData()
       } else {
         toast({
@@ -536,48 +554,107 @@ export default function ReportFoldersPage() {
     }
   }
 
-  const handleDeleteFolder = async (folder: ReportFolderData) => {
-    if (!confirm(`🗑️ Yakin mau hapus folder ${folder.year} - Angkatan ${folder.batch}? Aksi ini gak bisa dibatalin lho bestie! 💀`)) {
+  const openDeleteConfirmation = (folder: ReportFolderData) => {
+    setFolderToDelete(folder)
+    setDeleteConfirmation("")
+    setShowDeleteConfirmation(folder.id)
+  }
+
+  const cancelDeleteConfirmation = () => {
+    setShowDeleteConfirmation(null)
+    setFolderToDelete(null)
+    setDeleteConfirmation("")
+  }
+
+  const handleDeleteFolder = async () => {
+    if (!folderToDelete) return
+
+    if (deleteConfirmation !== "HAPUS") {
+      toast({
+        title: "❌ Konfirmasi Salah",
+        description: "Mohon ketik 'HAPUS' dengan benar untuk konfirmasi",
+        variant: "destructive"
+      })
       return
     }
 
     setDeleteLoading(true)
+    setShowDeleteConfirmation(null)
+
+    // Show loading toast
+    toast({
+      title: "🔄 Menghapus folder...",
+      description: `Sedang menghapus ${folderToDelete.year} - Angkatan ${folderToDelete.batch} secara menyeluruh...`,
+      duration: 0, // Don't auto dismiss
+    })
+
     try {
-      const result = await deleteReportFolderAction(folder.id)
+      console.log(`🗑️ Starting folder deletion: ${folderToDelete.year} - Angkatan ${folderToDelete.batch}`)
+      const result = await deleteReportFolderAction(folderToDelete.id)
 
       if (result.success) {
+        // Show detailed success message
+        const details = result.details
         toast({
-          title: "🗑️ Berhasil dihapus!",
-          description: `${result.message} 👋`,
-          duration: 4000
+          title: "🎉 Penghapusan Berhasil!",
+          description: `
+✅ Folder ${details?.folderInfo} dihapus menyeluruh!
+📊 Detail:
+• ${details?.deletedPhysicalFiles || 0} file fisik dihapus
+• ${details?.deletedReports || 0} total laporan dihapus
+• ${details?.deletedPrivateReports || 0} laporan privat dihapus
+• ${details?.deletedPublicReports || 0} koleksi publik dihapus
+• ${details?.deletedFileRecords || 0} record file dihapus
+• ${details?.affectedUsers || 0} user terpengaruh
+• ${details?.revalidatedPaths || 0} halaman diperbarui
+           `,
+          duration: 8000
         })
+
+        // Trigger data sync notification for real-time updates
+        notifyDataUpdate()
+
+        // Reload data to reflect changes
         await loadAllData()
+
+        console.log('✅ Folder deletion completed and data refreshed')
       } else {
         toast({
-          title: "❌ Gagal!",
-          description: result.error,
-          variant: "destructive"
+          title: "❌ Gagal Menghapus!",
+          description: result.error || "Terjadi kesalahan saat menghapus folder",
+          variant: "destructive",
+          duration: 6000
         })
       }
     } catch (error) {
-      console.error("Delete folder error:", error)
+      console.error("❌ Delete folder error:", error)
       toast({
-        title: "💥 Error!",
-        description: "Gagal menghapus folder",
-        variant: "destructive"
+        title: "💥 Error Sistem!",
+        description: "Terjadi kesalahan sistem saat menghapus folder. Silakan coba lagi atau hubungi administrator.",
+        variant: "destructive",
+        duration: 6000
       })
     } finally {
       setDeleteLoading(false)
     }
   }
 
-  const openEditDialog = (folder: ReportFolderData) => {
+  const openEditForm = (folder: ReportFolderData) => {
     setSelectedFolder(folder)
     setEditFormData({
       description: folder.description || "",
       is_active: folder.is_active
     })
-    setIsEditDialogOpen(true)
+    setShowEditForm(folder.id)
+  }
+
+  const cancelEditForm = () => {
+    setShowEditForm(null)
+    setSelectedFolder(null)
+    setEditFormData({
+      description: "",
+      is_active: true
+    })
   }
 
   // Get available batches for selected program and year
@@ -1162,13 +1239,13 @@ export default function ReportFoldersPage() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-white/90 backdrop-blur-md border-white/20 rounded-xl">
-                            <DropdownMenuItem onClick={() => openEditDialog(folder)}>
+                            <DropdownMenuItem onClick={() => openEditForm(folder)}>
                               <Edit2 className="mr-2 h-4 w-4" />
                               Edit
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
-                              onClick={() => handleDeleteFolder(folder)}
+                              onClick={() => openDeleteConfirmation(folder)}
                               className="text-red-600 focus:text-red-600"
                               disabled={deleteLoading}
                             >
@@ -1179,6 +1256,210 @@ export default function ReportFoldersPage() {
                         </DropdownMenu>
                       </div>
                     </div>
+
+                    {/* Inline Delete Confirmation */}
+                    {showDeleteConfirmation === folder.id && folderToDelete && (
+                      <div className="mt-4 p-6 bg-red-50/80 border-2 border-red-200 rounded-xl">
+                        <div className="space-y-4">
+                          {/* Header */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                              <Trash2 className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-bold text-red-800">
+                                ⚠️ Konfirmasi Penghapusan
+                              </h4>
+                              <p className="text-sm text-red-600">
+                                Folder: {folderToDelete.year} - Angkatan {folderToDelete.batch}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Warning */}
+                          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p className="text-sm text-yellow-800 font-medium mb-2">
+                              💀 Data yang akan dihapus PERMANEN:
+                            </p>
+                            <div className="text-xs text-yellow-700 space-y-1">
+                              <div>📁 Folder dan pengaturannya</div>
+                              <div>📄 SEMUA laporan dalam folder</div>
+                              <div>📎 SEMUA file yang terupload</div>
+                              <div>🗂️ Koleksi digital terkait</div>
+                              <div>🔄 Data dari tampilan publik</div>
+                            </div>
+                          </div>
+
+                          {/* Critical Warning */}
+                          <div className="p-4 bg-red-100 border-2 border-red-300 rounded-lg">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">!</span>
+                              <span className="text-red-800 font-bold text-sm">AKSI INI TIDAK BISA DIBATALKAN!</span>
+                            </div>
+                            <p className="text-red-700 text-xs">
+                              Semua data akan hilang permanen dan tidak dapat dipulihkan.
+                            </p>
+                          </div>
+
+                          {/* Confirmation Input */}
+                          <div className="space-y-3">
+                            <Label className="text-sm font-semibold text-gray-800">
+                              🔒 Ketik "HAPUS" untuk konfirmasi:
+                            </Label>
+                            <Input
+                              placeholder="Ketik HAPUS..."
+                              value={deleteConfirmation}
+                              onChange={(e) => setDeleteConfirmation(e.target.value)}
+                              className="text-center font-mono border-red-200 focus:border-red-400"
+                              autoComplete="off"
+                            />
+                            {deleteConfirmation && deleteConfirmation !== "HAPUS" && (
+                              <p className="text-red-500 text-xs">
+                                ❌ Konfirmasi tidak sesuai. Ketik "HAPUS" dengan tepat.
+                              </p>
+                            )}
+                            {deleteConfirmation === "HAPUS" && (
+                              <p className="text-green-600 text-xs">
+                                ✅ Konfirmasi benar. Tombol hapus akan aktif.
+                              </p>
+                            )}
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-3 pt-2">
+                            <Button
+                              variant="outline"
+                              onClick={cancelDeleteConfirmation}
+                              className="flex-1"
+                              disabled={deleteLoading}
+                            >
+                              ❌ Batal
+                            </Button>
+                            <Button
+                              onClick={handleDeleteFolder}
+                              disabled={deleteLoading || deleteConfirmation !== "HAPUS"}
+                              className={`flex-1 ${deleteConfirmation === "HAPUS"
+                                ? "bg-red-500 hover:bg-red-600 text-white"
+                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                }`}
+                            >
+                              {deleteLoading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Menghapus...
+                                </>
+                              ) : (
+                                <>
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  🗑️ HAPUS PERMANEN
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Inline Edit Form */}
+                    {showEditForm === folder.id && selectedFolder && (
+                      <div className="mt-4 p-6 bg-blue-50/80 border-2 border-blue-200 rounded-xl">
+                        <div className="space-y-4">
+                          {/* Header */}
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                              <Edit2 className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="text-lg font-bold text-blue-800">
+                                🔧 Edit Folder
+                              </h4>
+                              <p className="text-sm text-blue-600">
+                                Folder: {selectedFolder.year} - Angkatan {selectedFolder.batch}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Folder Info */}
+                          <div className="p-4 bg-white/70 border border-blue-200 rounded-lg">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="p-3 bg-blue-50 rounded-lg">
+                                <p className="text-sm text-blue-600 mb-1">Tahun Pelatihan</p>
+                                <p className="text-base font-semibold text-blue-800">📅 {selectedFolder.year}</p>
+                              </div>
+                              <div className="p-3 bg-blue-50 rounded-lg">
+                                <p className="text-sm text-blue-600 mb-1">Angkatan</p>
+                                <p className="text-base font-semibold text-blue-800">👥 Angkatan {selectedFolder.batch}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Edit Form Fields */}
+                          <div className="space-y-4">
+                            {/* Description */}
+                            <div className="space-y-2">
+                              <Label className="text-sm font-semibold text-gray-800">
+                                💭 Deskripsi Folder:
+                              </Label>
+                              <Textarea
+                                placeholder="Perbarui deskripsi folder pelatihan..."
+                                value={editFormData.description}
+                                onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
+                                rows={3}
+                                className="bg-white border-blue-200 focus:border-blue-400 rounded-lg resize-none"
+                              />
+                            </div>
+
+                            {/* Status Toggle */}
+                            <div className="flex items-center justify-between p-4 bg-white border border-blue-200 rounded-lg">
+                              <div className="flex-1">
+                                <Label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                                  ⚡ Status Folder
+                                </Label>
+                                <p className="text-xs text-gray-600 mt-1">
+                                  {editFormData.is_active ? '✅ Folder aktif dan dapat digunakan' : '❌ Folder nonaktif dan tersembunyi'}
+                                </p>
+                              </div>
+                              <div className="ml-4">
+                                <Switch
+                                  checked={editFormData.is_active}
+                                  onCheckedChange={(checked) => setEditFormData({ ...editFormData, is_active: checked })}
+                                  className="scale-110"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex gap-3 pt-2">
+                            <Button
+                              variant="outline"
+                              onClick={cancelEditForm}
+                              className="flex-1"
+                              disabled={formLoading}
+                            >
+                              ❌ Batal
+                            </Button>
+                            <Button
+                              onClick={handleEditFolder}
+                              disabled={formLoading}
+                              className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+                            >
+                              {formLoading ? (
+                                <>
+                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                  Menyimpan...
+                                </>
+                              ) : (
+                                <>
+                                  <Edit2 className="mr-2 h-4 w-4" />
+                                  💾 Simpan Perubahan
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -1186,103 +1467,9 @@ export default function ReportFoldersPage() {
           </CardContent>
         </Card>
 
-        {/* Edit Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="max-w-2xl bg-white/95 backdrop-blur-md border-0 shadow-2xl rounded-2xl">
-            <DialogHeader className="text-center pb-4">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mb-4">
-                <Settings className="h-6 w-6 text-white" />
-              </div>
-              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                Edit Folder 🔧
-              </DialogTitle>
-              <DialogDescription className="text-gray-600">
-                Perbarui pengaturan dan deskripsi folder ✨
-              </DialogDescription>
-            </DialogHeader>
 
-            {selectedFolder && (
-              <div className="space-y-8 py-6">
-                <div className="p-6 bg-gray-50/70 backdrop-blur-sm rounded-xl border border-gray-200/50">
-                  <h4 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    📁 Informasi Folder
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-3 bg-white/50 rounded-lg">
-                      <p className="text-sm text-gray-500 mb-1">Tahun Pelatihan</p>
-                      <p className="text-base font-semibold text-gray-800">📅 {selectedFolder.year}</p>
-                    </div>
-                    <div className="p-3 bg-white/50 rounded-lg">
-                      <p className="text-sm text-gray-500 mb-1">Angkatan</p>
-                      <p className="text-base font-semibold text-gray-800">👥 Angkatan {selectedFolder.batch}</p>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="edit-description" className="text-base font-semibold text-gray-800 flex items-center gap-2">
-                    💭 Deskripsi Folder
-                  </Label>
-                  <Textarea
-                    id="edit-description"
-                    placeholder="Perbarui deskripsi folder pelatihan... Tambahkan detail yang menarik! ✨"
-                    value={editFormData.description}
-                    onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
-                    rows={4}
-                    className="bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md focus:shadow-lg transition-all duration-300 resize-none text-base"
-                  />
-                </div>
 
-                <div className="flex items-center justify-between p-6 bg-gray-50/70 backdrop-blur-sm rounded-xl border border-gray-200/50">
-                  <div className="flex-1">
-                    <Label htmlFor="edit-active" className="text-base font-semibold text-gray-800 flex items-center gap-2 mb-2">
-                      ⚡ Status Folder
-                    </Label>
-                    <p className="text-sm text-gray-600">
-                      {editFormData.is_active ? '✅ Folder aktif dan dapat digunakan untuk upload laporan' : '❌ Folder nonaktif dan tersembunyi dari user'}
-                    </p>
-                  </div>
-                  <div className="ml-4">
-                    <Switch
-                      id="edit-active"
-                      checked={editFormData.is_active}
-                      onCheckedChange={(checked) => setEditFormData({ ...editFormData, is_active: checked })}
-                      className="scale-125"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-4 pt-6">
-              <Button
-                variant="outline"
-                onClick={() => setIsEditDialogOpen(false)}
-                className="flex-1 bg-white/70 backdrop-blur-sm border-white/20 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
-                disabled={formLoading}
-              >
-                Batal 😔
-              </Button>
-              <Button
-                onClick={handleEditFolder}
-                disabled={formLoading}
-                className="flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white border-0 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 h-12 text-base font-semibold"
-              >
-                {formLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Memperbarui Folder...
-                  </>
-                ) : (
-                  <>
-                    <Activity className="mr-2 h-5 w-5" />
-                    Perbarui Folder! 🔥
-                  </>
-                )}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
 
       </div>
     </div>
