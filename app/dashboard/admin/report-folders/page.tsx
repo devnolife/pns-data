@@ -543,7 +543,6 @@ export default function ReportFoldersPage() {
         })
       }
     } catch (error) {
-      console.error("Edit folder error:", error)
       toast({
         title: "💔 Error!",
         description: "Gagal memperbarui folder",
@@ -1373,50 +1372,75 @@ export default function ReportFoldersPage() {
                               <h4 className="text-lg font-bold text-blue-800">
                                 🔧 Edit Folder
                               </h4>
-                              <p className="text-sm text-blue-600">
+                              <p className="text-sm text-blue-600 mb-1">
                                 Folder: {selectedFolder.year} - Angkatan {selectedFolder.batch}
+                              </p>
+                              <p className="text-xs text-blue-500">
+                                ✏️ Hanya deskripsi dan status yang dapat diubah
                               </p>
                             </div>
                           </div>
 
-                          {/* Folder Info */}
+                          {/* Folder Info - Read Only */}
                           <div className="p-4 bg-white/70 border border-blue-200 rounded-lg">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div className="p-3 bg-blue-50 rounded-lg">
-                                <p className="text-sm text-blue-600 mb-1">Tahun Pelatihan</p>
-                                <p className="text-base font-semibold text-blue-800">📅 {selectedFolder.year}</p>
+                            <div className="mb-3">
+                              <p className="text-sm text-blue-600 mb-2">📋 Informasi Folder (Tidak dapat diubah)</p>
+                              <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                                <p className="text-xs text-gray-500 mb-2">⚠️ Tahun dan angkatan tidak dapat diubah setelah folder dibuat</p>
                               </div>
-                              <div className="p-3 bg-blue-50 rounded-lg">
-                                <p className="text-sm text-blue-600 mb-1">Angkatan</p>
-                                <p className="text-base font-semibold text-blue-800">👥 Angkatan {selectedFolder.batch}</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div className="p-3 bg-gray-100 border border-gray-200 rounded-lg opacity-75">
+                                <p className="text-sm text-gray-500 mb-1">📅 Tahun Pelatihan</p>
+                                <p className="text-base font-semibold text-gray-700">{selectedFolder.year}</p>
+                                <p className="text-xs text-gray-400 mt-1">🔒 Tidak dapat diubah</p>
+                              </div>
+                              <div className="p-3 bg-gray-100 border border-gray-200 rounded-lg opacity-75">
+                                <p className="text-sm text-gray-500 mb-1">👥 Angkatan</p>
+                                <p className="text-base font-semibold text-gray-700">Angkatan {selectedFolder.batch}</p>
+                                <p className="text-xs text-gray-400 mt-1">🔒 Tidak dapat diubah</p>
                               </div>
                             </div>
                           </div>
 
                           {/* Edit Form Fields */}
                           <div className="space-y-4">
+                            <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                              <p className="text-sm text-green-700 font-medium">
+                                ✏️ Field yang dapat diubah:
+                              </p>
+                              <p className="text-xs text-green-600 mt-1">
+                                Hanya deskripsi dan status aktif/nonaktif yang bisa diperbarui
+                              </p>
+                            </div>
+
                             {/* Description */}
                             <div className="space-y-2">
-                              <Label className="text-sm font-semibold text-gray-800">
-                                💭 Deskripsi Folder:
+                              <Label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                                💭 Deskripsi Folder
+                                <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">✏️ Dapat diubah</span>
                               </Label>
                               <Textarea
                                 placeholder="Perbarui deskripsi folder pelatihan..."
                                 value={editFormData.description}
                                 onChange={(e) => setEditFormData({ ...editFormData, description: e.target.value })}
                                 rows={3}
-                                className="bg-white border-blue-200 focus:border-blue-400 rounded-lg resize-none"
+                                className="bg-white border-blue-200 focus:border-blue-400 rounded-lg resize-none focus:shadow-md transition-all duration-200"
                               />
+                              <p className="text-xs text-gray-500">
+                                💡 Berikan deskripsi yang jelas untuk memudahkan identifikasi folder
+                              </p>
                             </div>
 
                             {/* Status Toggle */}
-                            <div className="flex items-center justify-between p-4 bg-white border border-blue-200 rounded-lg">
+                            <div className="flex items-center justify-between p-4 bg-white border border-blue-200 rounded-lg hover:shadow-md transition-all duration-200">
                               <div className="flex-1">
                                 <Label className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                                   ⚡ Status Folder
+                                  <span className="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full">✏️ Dapat diubah</span>
                                 </Label>
                                 <p className="text-xs text-gray-600 mt-1">
-                                  {editFormData.is_active ? '✅ Folder aktif dan dapat digunakan' : '❌ Folder nonaktif dan tersembunyi'}
+                                  {editFormData.is_active ? '✅ Folder aktif dan dapat digunakan untuk upload' : '❌ Folder nonaktif dan tersembunyi dari pengguna'}
                                 </p>
                               </div>
                               <div className="ml-4">
